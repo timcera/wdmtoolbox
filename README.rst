@@ -24,7 +24,7 @@ part of the LD\_LIBRARY_PATH environment variable.
 Python requirements for all platforms
 -------------------------------------
 * scikits.timeseries - on Windows this is part of the Python(x,y) distribution
-  (http://www.pythonxy.com/) 
+  (http://code.google.com/p/pythonxy/)
 
 * baker - command line parser
 
@@ -33,9 +33,10 @@ Python requirements for all platforms
 Installation
 ============
 Once the ``hass_ent`` library is installed and available, should be as easy as
-running ``easy_install wdmtoolbox`` at any command line.  Not sure on Windows
-whether this will bring in scikits.timeseries, but as mentioned above, if you
-start with Python(x,y) then you won't have a problem.
+running ``easy_install wdmtoolbox`` or ``pip install wdmtoolbox``` at any
+command line.  Not sure on Windows whether this will bring in
+scikits.timeseries, but as mentioned above, if you start with Python(x,y) then
+you won't have a problem.
 
 The wdmtoolbox script is actually made up of two parts, 'wdmtoolbox.py' which
 handles all command line interaction and 'wdmutil.py' which is a library of
@@ -53,9 +54,11 @@ Just run 'wdmtoolbox.py' to get a list of subcommands::
      createnewdsn    Create a new DSN.
      createnewwdm    Create a new WDM file, optional to overwrite.
      csvtowdm        Writes data from a CSV file to a DSN.
+     deletedsn       Delete DSN
      describedsn     Prints out a description of a single DSN.
      hydhrseqtowdm   Writes HYDHR sequential file to a DSN.
      listdsns        Prints out a table describing all DSNs in the WDM.
+     renumberdsn     Renumber olddsn to newdsn
      stdtowdm        Writes data from a CSV file to a DSN.
      wdmtostd        Prints out DSN data to the screen with ISO-8601 dates.
      wdmtoswmm5rdii  Prints out DSN data to the screen in SWMM5 RDII format.

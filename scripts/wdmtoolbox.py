@@ -131,8 +131,8 @@ def wdmtostd(wdmpath, *dsns, **kwds): #start_date=None, end_date=None):
     start_date = kwds.setdefault('start_date', None)
     end_date = kwds.setdefault('end_date', None)
     for dsn in dsns:
-        ts = wdm.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
-        tsutils.printiso(ts)
+        nts = wdm.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
+        tsutils.printiso(nts)
 
 @baker.command
 def describedsn(wdmpath, dsn):
@@ -225,7 +225,11 @@ def stdtowdm(wdmpath, dsn, infile='-'):
 
 @baker.command
 def csvtowdm(wdmpath, dsn, input=sys.stdin):
-    ''' Writes data from a CSV file to a DSN.
+    ''' Writes data from a CSV file to a DSN.\n
+    File can have comma separated\n
+    'year', 'month', 'day', 'hour', 'minute', 'second', 'value'\n
+    OR\n
+    'date/time string', 'value'
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: The Data Set Number in the WDM file.
     :param input: Input filename, defaults to standard input.
@@ -313,6 +317,7 @@ def __writetodsn(wdmpath, dsn, dates, data):
         raise FrequencyDoesNotMatchError
 
     # Write the data...
+    data = ts.time_series(data, dates, freq=freq)
     wdm.write_dsn(wdmpath, dsn, data, dates[0])
 
 baker.run()

@@ -549,9 +549,11 @@ class WDM():
         self.__close(wdmpath)
 
         # Convert time series to scikits.timeseries object
-        return ts.time_series(dataout,
-                              start_date=ts.Date(MAPTCODE[TCODE.value],
-                              datetime=tstart))
+        tmpval = ts.time_series(dataout,
+                              start_date=ts.Date(MAPTCODE[TCODE.value], datetime=tstart),
+                              freq = MAPTCODE[TCODE.value]
+                              )
+        return tmpval
 
     def read_dsn_por(self, wdmpath, dsn):
         ''' Read the period of record for a DSN.
