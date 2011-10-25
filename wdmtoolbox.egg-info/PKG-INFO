@@ -1,0 +1,106 @@
+Metadata-Version: 1.0
+Name: wdmtoolbox
+Version: 0.1
+Summary: Read and write Watershed Data Management (WDM) files
+Home-page: http://
+Author: Tim Cera, P.E.
+Author-email: tim@cerazone.net
+License: GPL
+Description: WDMTOOLBOX
+        ==========
+        The wdmtoolbox is a Python script to read/write/manage Watershed Data
+        Management (WDM) files used for time-series in hydrology and hydrological
+        simulation.  
+        
+        Requirements
+        ============
+        
+        Windows
+        -------
+        Installation of EPA BASINS which supplies the ``hass_ent.dll`` library.  See
+        http://water.epa.gov/scitech/datait/models/basins/BASINS4_index.cfm for
+        download and installation information.
+        
+        Linux
+        -----
+        The ``hass_ent`` library is a meta-library made up of component libraries.  On
+        Linux (and possibly other POSIX) you have to compile and link the code.  You
+        will have to ask Aqua Terra (http://www.aquaterra.com) for the code.  The
+        ``hass_ent.so`` library has to then be available in a directory included as
+        part of the LD\_LIBRARY_PATH environment variable.
+        
+        Python requirements for all platforms
+        -------------------------------------
+        * scikits.timeseries - on Windows this is part of the Python(x,y) distribution
+          (http://www.pythonxy.com/) 
+        
+        * baker - command line parser
+        
+        * python-dateutil - used for parsing date/time strings
+        
+        Installation
+        ============
+        Once the ``hass_ent`` library is installed and available, should be as easy as
+        running ``easy_install wdmtoolbox`` at any command line.  Not sure on Windows
+        whether this will bring in scikits.timeseries, but as mentioned above, if you
+        start with Python(x,y) then you won't have a problem.
+        
+        The wdmtoolbox script is actually made up of two parts, 'wdmtoolbox.py' which
+        handles all command line interaction and 'wdmutil.py' which is a library of
+        functions that 'wdmtoolbox.py' uses.  This means that you can write your own
+        scripts to access WDM files by importing the functionality from 'wdmutil.py'.
+        
+        Running
+        =======
+        Just run 'wdmtoolbox.py' to get a list of subcommands::
+        
+            Usage: /sjr/beodata/local/bin/wdmtoolbox.py COMMAND <options>
+            
+            Available commands:
+            
+             createnewdsn    Create a new DSN.
+             createnewwdm    Create a new WDM file, optional to overwrite.
+             csvtowdm        Writes data from a CSV file to a DSN.
+             describedsn     Prints out a description of a single DSN.
+             hydhrseqtowdm   Writes HYDHR sequential file to a DSN.
+             listdsns        Prints out a table describing all DSNs in the WDM.
+             stdtowdm        Writes data from a CSV file to a DSN.
+             wdmtostd        Prints out DSN data to the screen with ISO-8601 dates.
+             wdmtoswmm5rdii  Prints out DSN data to the screen in SWMM5 RDII format.
+            
+            Use "/sjr/beodata/local/bin/wdmtoolbox.py <command> --help" for individual command help.
+        
+        If a subcommand accepts an input file for an arguement, you can use '-' to
+        indicate that the input is from a pipe.  For the subcommands that output data
+        it is printed to the screen and you can then redirect to a file.
+        
+        
+        
+        .. This is your project NEWS file which will contain the release notes.
+        .. Example: http://www.python.org/download/releases/2.6/NEWS.txt
+        .. The content of this file, along with README.rst, will appear in your
+        .. project's PyPI page.
+        
+        News
+        ====
+        
+        0.1
+        ---
+        
+        *Release date: 22-Apr-2011*
+        
+        * Initial release
+        
+        
+Keywords: WDM watershed data_management data hydrology hydrological simulation fortran HSPF
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Environment :: Console
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Natural Language :: English
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: Microsoft
+Classifier: Programming Language :: Python :: 2
+Classifier: Topic :: Scientific/Engineering

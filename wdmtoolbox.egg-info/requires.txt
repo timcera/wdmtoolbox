@@ -1,0 +1,4 @@
+baker >= 1.1
+python-dateutil >= 1.5, < 2.0
+scikits.timeseries >= 0.91.3
+tstoolbox >= 0.1

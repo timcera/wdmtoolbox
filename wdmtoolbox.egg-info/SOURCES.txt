@@ -1,0 +1,12 @@
+MANIFEST.in
+NEWS.txt
+README.rst
+setup.py
+wdmutil.py
+scripts/wdmtoolbox.py
+wdmtoolbox.egg-info/PKG-INFO
+wdmtoolbox.egg-info/SOURCES.txt
+wdmtoolbox.egg-info/dependency_links.txt
+wdmtoolbox.egg-info/not-zip-safe
+wdmtoolbox.egg-info/requires.txt
+wdmtoolbox.egg-info/top_level.txt
