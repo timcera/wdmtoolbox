@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: wdmtoolbox
-Version: 0.1
+Version: 0.2
 Summary: Read and write Watershed Data Management (WDM) files
 Home-page: http://
 Author: Tim Cera, P.E.
@@ -90,6 +90,15 @@ Description: WDMTOOLBOX
         *Release date: 22-Apr-2011*
         
         * Initial release
+        
+        0.2
+        ---
+        
+        *Release date: 14-Jul-2011*
+        
+        * Added 'deletedsn' to delete a time-series from a WDM file
+        * Added 'renumberdsn' to change a DSN number
+        * The 'createnewdsn' subcommand checks it isn't overwriting a DSN
         
         
 Keywords: WDM watershed data_management data hydrology hydrological simulation fortran HSPF

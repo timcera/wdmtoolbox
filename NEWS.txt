@@ -13,3 +13,12 @@ News
 
 * Initial release
 
+0.2
+---
+
+*Release date: 14-Jul-2011*
+
+* Added 'deletedsn' to delete a time-series from a WDM file
+* Added 'renumberdsn' to change a DSN number
+* The 'createnewdsn' subcommand checks it isn't overwriting a DSN
+

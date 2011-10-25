@@ -46,6 +46,23 @@ def __describedsn(wdmpath, dsn):
         return resp
 
 @baker.command
+def renumberdsn(wdmpath, olddsn, newdsn):
+    ''' Renumber olddsn to newdsn
+    :param wdmpath: Path and WDM filename (<64 characters).
+    :param olddsn: Old DSN to renumber.
+    :param newdsn: New DSN to change old DSN to.
+    '''
+    wdm.renumber_dsn(wdmpath, olddsn, newdsn)
+
+@baker.command
+def deletedsn(wdmpath, dsn):
+    ''' Delete DSN
+    :param wdmpath: Path and WDM filename (<64 characters).
+    :param dsn: DSN to delete.
+    '''
+    wdm.delete_dsn(wdmpath, dsn)
+
+@baker.command
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     ''' Prints out DSN data to the screen in SWMM5 RDII format.
     :param wdmpath: Path and WDM filename (<64 characters).
@@ -130,11 +147,11 @@ def listdsns(wdmpath):
     ''' Prints out a table describing all DSNs in the WDM.
     :param wdmpath: Path and WDM filename (<64 characters).
     '''
-    print '#{0:<4} {1:>8} {2:<19} {3:<19} {4:>5} {5}'.format('DSN', 'LOCATION', 'START DATE', 'END DATE', 'TCODE', 'TSTEP')
+    print '#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format('DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE', 'END DATE', 'TCODE', 'TSTEP')
     for i in range(32001)[1:]:
         testv = __describedsn(wdmpath, i)
         if testv:
-            print '{dsn:5} {location:8} {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv)
+            print '{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv)
 
 @baker.command
 def createnewwdm(wdmpath, overwrite=False):
@@ -145,7 +162,7 @@ def createnewwdm(wdmpath, overwrite=False):
     wdm.create_new_wdm(wdmpath, overwrite=overwrite)
 
 @baker.command
-def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1, statid='', scenario='', location='', description='', constituent=''):
+def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1, statid='', scenario='', location='', description='', constituent='', tsfill=-999.0):
     ''' Create a new DSN.
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: The Data Set Number in the WDM file.
@@ -158,8 +175,9 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1, sta
     :param location: The location, defaults to ''.
     :param description: Descriptive text, defaults to ''.
     :param constituent: The constituent that the time series represents, defaults to ''.
+    :param tsfill: The value used as placeholder for missing values.
     '''
-    wdm.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year, tcode=tcode, tsstep=tsstep, statid=statid, scenario=scenario, location=location, description=description, constituent=constituent)
+    wdm.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year, tcode=tcode, tsstep=tsstep, statid=statid, scenario=scenario, location=location, description=description, constituent=constituent, tsfill=tsfill)
 
 @baker.command
 def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
@@ -244,6 +262,7 @@ def __writetodsn(wdmpath, dsn, dates, data):
     dsn = int(dsn)
     # Find ALL unique intervals in the data set and convert to seconds
     import numpy as np
+    import numpy.ma as ma
 
     if not isinstance(dates[0], datetime.datetime):
         dates = np.array(dates.tolist())
