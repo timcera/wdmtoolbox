@@ -28,3 +28,12 @@ News
 *Release date: 2011-10-25*
 
 * When creating scikits.timeseries should specify the frequency.
+
+0.3
+---
+
+*Release date: 2012-08-30*
+
+* Added 'cleancopywdm' function
+* Added 'copydsn' function
+* Fixed processing of monthly and yearly data

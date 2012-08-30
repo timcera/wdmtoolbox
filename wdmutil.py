@@ -107,6 +107,7 @@ class WDM():
         # wdtput: Write time-series data
         # wddsrn: Renumber a DSN
         # wddsdl: Delete a DSN
+        # wddscl: Copy a label
 
         # hass_ent.dll has different names than libhass_ent.so on Linux
         if os.name == 'posix':
@@ -128,6 +129,7 @@ class WDM():
             self.wtfndt = self.libhass_ent.f90_wtfndt_
             self.wddsrn = self.libhass_ent.f90_wddsrn_
             self.wddsdl = self.libhass_ent.f90_wddsdl_
+            self.wddscl = self.libhass_ent.f90_wddscl_
         if os.name == 'nt':
             wdbfin = self.libhass_ent.F90_WDBFIN
             self.timcvt = self.libhass_ent.F90_TIMCVT
@@ -147,6 +149,7 @@ class WDM():
             self.wtfndt = self.libhass_ent.F90_WTFNDT
             self.wddsrn = self.libhass_ent.F90_WDDSRN
             self.wddsdl = self.libhass_ent.F90_WDDSDL
+            self.wddscl = self.libhass_ent.F90_WDDSCL
 
         # Initialize WDM environment
         wdbfin()
@@ -164,7 +167,7 @@ class WDM():
                 afilename = os.path.join(os.environ['USGSHOME'], 'share', 'usgs', 'message.wdm')
             except KeyError:
                 afilename = os.path.join('usr', 'local', 'share', 'usgs', 'message.wdm')
-        return self.__open(afilename, ronwfg=1)
+        return self._open(afilename, ronwfg=1)
 
     def dateconverter(self, datestr):
         # This is copied from tsutils.py - don't like that but was having a problem
@@ -205,7 +208,7 @@ class WDM():
                              second=int(words[5]))
         return tsdate
 
-    def __open(self, wdmpath, ronwfg=0):
+    def _open(self, wdmpath, ronwfg=0):
         ''' Private method to open WDM file.
         '''
         if wdmpath not in self.openfiles:
@@ -219,12 +222,12 @@ class WDM():
             self.openfiles[wdmpath] = c_int(wdmfp)
         return self.openfiles[wdmpath]
 
-    def __retcode_check(self, retcode, additional_info=' '):
+    def _retcode_check(self, retcode, additional_info=' '):
         if retcode.value < 0:
             raise WDMError('WDM library function returned error code {0}. {1}'.format(retcode.value, additional_info))
 
     def renumber_dsn(self, wdmpath, odsn, ndsn):
-        wdmfp = self.__open(wdmpath)
+        wdmfp = self._open(wdmpath)
         odsn = c_int(int(odsn))
         ndsn = c_int(int(ndsn))
 
@@ -232,22 +235,42 @@ class WDM():
                     byref(odsn),
                     byref(ndsn),
                     byref(RETCODE))
-        self.__retcode_check(RETCODE, additional_info='wddsrn')
+        self._retcode_check(RETCODE, additional_info='wddsrn')
+        self._close(wdmpath)
 
     def delete_dsn(self, wdmpath, dsn):
-        wdmfp = self.__open(wdmpath)
+        wdmfp = self._open(wdmpath)
         dsn = c_int(int(dsn))
 
-        self.wddsdl(byref(wdmfp),
-                    byref(dsn),
+        if self.wdckdt(byref(wdmfp), byref(dsn)) != 0:
+            self.wddsdl(byref(wdmfp),
+                        byref(dsn),
+                        byref(RETCODE))
+            self._retcode_check(RETCODE, additional_info='wddsdl')
+        self._close(wdmpath)
+
+    def copydsnlabel(self, inwdmpath, indsn, outwdmpath, outdsn):
+        inwdmfp = self._open(inwdmpath)
+        indsn = c_int(int(indsn))
+        outwdmfp = self._open(outwdmpath)
+        outdsn = c_int(int(outdsn))
+        type = c_int(0)
+        self.wddscl(byref(inwdmfp),
+                    byref(indsn),
+                    byref(outwdmfp),
+                    byref(outdsn),
+                    byref(type),
                     byref(RETCODE))
-        self.__retcode_check(RETCODE, additional_info='wddsdl')
+        self._retcode_check(RETCODE, additional_info='wddscl')
+        self._close(inwdmpath)
+        self._close(outwdmpath)
 
     def describe_dsn(self, wdmpath, dsn):
-        wdmfp = self.__open(wdmpath)
+        wdmfp = self._open(wdmpath)
         dsn = c_int(int(dsn))
         if self.wdckdt(byref(wdmfp), byref(dsn)) == 0:
-            return None
+            raise DSNDoesNotExist
+
         tdsfrc = c_int(1)
         self.wtfndt(byref(wdmfp),
                     byref(dsn),
@@ -260,7 +283,7 @@ class WDM():
         # It it is a new dsn, of course it doesn't have any data.
         if RETCODE.value == -6:
             RETCODE.value = 0
-        self.__retcode_check(RETCODE, additional_info='wtfndt')
+        self._retcode_check(RETCODE, additional_info='wtfndt')
         self.timcvt(byref(LLSDAT))
         self.timcvt(byref(LLEDAT))
         try:
@@ -278,7 +301,7 @@ class WDM():
                     byref(c_int(1)),  # salen
                     byref(TSTEP),
                     byref(RETCODE))
-        self.__retcode_check(RETCODE, additional_info='wdbsgi')
+        self._retcode_check(RETCODE, additional_info='wdbsgi')
 
         self.wdbsgi(byref(wdmfp),
                     byref(dsn),
@@ -286,7 +309,7 @@ class WDM():
                     byref(c_int(1)),  # salen
                     byref(TCODE),
                     byref(RETCODE))
-        self.__retcode_check(RETCODE, additional_info='wdbsgi')
+        self._retcode_check(RETCODE, additional_info='wdbsgi')
 
         self.wdbsgr(byref(wdmfp),
                     byref(dsn),
@@ -299,7 +322,7 @@ class WDM():
             # Since I use TSFILL if not found will set to default.
             TSFILL.value = -999.0
             RETCODE.value = 0
-        self.__retcode_check(RETCODE, additional_info='wdbsgr')
+        self._retcode_check(RETCODE, additional_info='wdbsgr')
 
         salen = 8
         sints = c_int * salen
@@ -343,6 +366,7 @@ class WDM():
                 'scenario':    scen_ostr.strip(),
                 'constituent': con_ostr.strip(),
                 'tsfill':      TSFILL.value}
+        self._close(wdmpath)
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         ''' Create a new WDM fileronwfg
@@ -352,12 +376,12 @@ class WDM():
         elif os.path.exists(wdmpath):
             raise WDMFileExists(wdmpath)
         ronwfg = 2
-        wdmfp = self.__open(wdmpath, ronwfg=ronwfg)
-        self.__close(wdmpath)
+        wdmfp = self._open(wdmpath, ronwfg=ronwfg)
+        self._close(wdmpath)
 
     def create_new_dsn(self, wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1, statid='', scenario='', location='', description='', constituent='', tsfill=-999.0):
         ''' Create self.wdmfp/dsn. '''
-        wdmfp = self.__open(wdmpath)
+        wdmfp = self._open(wdmpath)
         messfp = self.wmsgop()
         dsn = c_int(int(dsn))
 
@@ -375,7 +399,7 @@ class WDM():
                     byref(c_int(100)), # NSASP  - amount of search attribute space
                     byref(c_int(300)), # NDP    - number of data pointers
                     byref(c_int(1)))   # PSA    - pointer to search attribute space
-        self.__retcode_check(RETCODE, additional_info='wdlbax')
+        self._retcode_check(RETCODE, additional_info='wdlbax')
 
         for saind, salen, val in [(34, 1, 6), #tgroup
                                   (83, 1, 1), #compfg
@@ -395,7 +419,7 @@ class WDM():
                         byref(salen),
                         byref(val),
                         byref(RETCODE))
-            self.__retcode_check(RETCODE, additional_info='wdbsai')
+            self._retcode_check(RETCODE, additional_info='wdbsai')
 
         for saind, salen, val in [(32, 1, tsfill)]: #tsfill
             saind = c_int(saind)
@@ -408,7 +432,7 @@ class WDM():
                         byref(salen),
                         byref(val),
                         byref(RETCODE))
-            self.__retcode_check(RETCODE, additional_info='wdbsar')
+            self._retcode_check(RETCODE, additional_info='wdbsar')
 
         for saind, salen, val, error_name in [(2, 16, statid, 'Station ID'),
                                   (1, 4, tstype.upper(), 'Time series type - tstype'),
@@ -434,12 +458,12 @@ class WDM():
                         byref(RETCODE),
                         byref(ostr),
                         byref(salen))
-            self.__retcode_check(RETCODE, additional_info='wdbsac')
-        self.__close(wdmpath)
+            self._retcode_check(RETCODE, additional_info='wdbsac')
+        self._close(wdmpath)
 
-    def __tcode_date(self, tcode, date):
+    def _tcode_date(self, tcode, date):
         ''' Uses tcode to set the significant parts of the date tuple. '''
-        rdate = [0]*6
+        rdate = [1,1,1,0,0,0]
         if tcode <= 6:
             rdate[0] = date[0]
         if tcode <= 5:
@@ -454,19 +478,26 @@ class WDM():
             rdate[5] = date[5]
         return rdate
 
-    def write_dsn(self, wdmpath, dsn, data, start_date):
+    def write_dsn(self, wdmpath, dsn, data, start_date, fill=False):
         ''' Write to self.wdmfp/dsn the time-series data. '''
         import numpy.ma as ma
 
-        wdmfp = self.__open(wdmpath)
+        wdmfp = self._open(wdmpath)
         dsn_desc = self.describe_dsn(wdmpath, dsn)
         TCODE.value = dsn_desc['tcode']
         TSTEP.value = dsn_desc['tstep']
 
-        LLSDAT[:] = self.__tcode_date(TCODE.value, (start_date.year, start_date.month, start_date.day, start_date.hour, start_date.minute, start_date.second))
+        LLSDAT[:] = self._tcode_date(TCODE.value, (start_date.year, start_date.month, start_date.day, start_date.hour, start_date.minute, start_date.second))
 
         # Fill missing data with tsfill
-        data = data.filled(dsn_desc['tsfill'])
+        # Use try:/except: to allow for time-series data from pandas
+        if fill:
+            try:
+                # scikits.timeseries
+                data = data.filled(dsn_desc['tsfill'])
+            except AttributeError:
+                data = data.asfreq(MAPTCODE[TCODE.value][0])
+                data = data.fillna(dsn_desc['tsfill'])
 
         nvals = c_int(len(data))
         # Create array to hold the time series data
@@ -484,14 +515,14 @@ class WDM():
                     byref(TCODE),
                     byref(dataout),
                     byref(RETCODE))
-        self.__retcode_check(RETCODE, additional_info='wdtput')
-        self.__close(wdmpath)
+        self._retcode_check(RETCODE, additional_info='wdtput')
+        self._close(wdmpath)
 
     def read_dsn(self, wdmpath, dsn, start_date=None, end_date=None):
         ''' Read from a DSN.
         '''
 
-        wdmfp = self.__open(wdmpath)
+        wdmfp = self._open(wdmpath)
         # Call wdatim_ to get LLSDAT, LLEDAT, TSTEP, TCODE
         desc_dsn = self.describe_dsn(wdmpath, dsn)
 
@@ -501,7 +532,7 @@ class WDM():
         TSTEP.value = desc_dsn['tstep']
 
         dsn = c_int(int(dsn))
-        self.__retcode_check(RETCODE, additional_info='wdatim')
+        self._retcode_check(RETCODE, additional_info='wdatim')
 
         # These calls convert 24 to midnight of the next day
         self.timcvt(byref(LLSDAT))
@@ -536,7 +567,7 @@ class WDM():
                     byref(TCODE),
                     byref(dataout),
                     byref(RETCODE))
-        self.__retcode_check(RETCODE, additional_info='wdtget')
+        self._retcode_check(RETCODE, additional_info='wdtget')
 
         # Find the begining in datetime.datetime format
         tstart = datetime.datetime(LLSDAT[0],
@@ -546,7 +577,7 @@ class WDM():
                                    LLSDAT[4],
                                    LLSDAT[5])
 
-        self.__close(wdmpath)
+        self._close(wdmpath)
 
         # Convert time series to scikits.timeseries object
         tmpval = ts.time_series(dataout,
@@ -560,12 +591,12 @@ class WDM():
         '''
         return self.read_dsn(wdmpath, dsn, start_date=None, end_date=None)
 
-    def __close(self, wdmpath):
+    def _close(self, wdmpath):
         ''' Close the WDM file.
         '''
         if wdmpath in self.openfiles:
             RETCODE.value = self.wdflcl(byref(self.openfiles[wdmpath]))
-            self.__retcode_check(RETCODE, additional_info='wdflcl')
+            self._retcode_check(RETCODE, additional_info='wdflcl')
             toss = self.openfiles.pop(wdmpath)
 
 

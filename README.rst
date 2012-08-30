@@ -47,10 +47,11 @@ Running
 =======
 Just run 'wdmtoolbox.py' to get a list of subcommands::
 
-    Usage: /sjr/beodata/local/bin/wdmtoolbox.py COMMAND <options>
+    Usage: /sjr/beodata/local/python_linux/bin/wdmtoolbox.py COMMAND <options>
     
     Available commands:
-    
+     cleancopywdm    Make a clean copy of a WDM file.
+     copydsn         Make a copy of a DSN.
      createnewdsn    Create a new DSN.
      createnewwdm    Create a new WDM file, optional to overwrite.
      csvtowdm        Writes data from a CSV file to a DSN.
@@ -63,9 +64,19 @@ Just run 'wdmtoolbox.py' to get a list of subcommands::
      wdmtostd        Prints out DSN data to the screen with ISO-8601 dates.
      wdmtoswmm5rdii  Prints out DSN data to the screen in SWMM5 RDII format.
     
-    Use "/sjr/beodata/local/bin/wdmtoolbox.py <command> --help" for individual command help.
+    Use '/sjr/beodata/local/python_linux/bin/wdmtoolbox.py <command> --help' for individual command help.
 
 If a subcommand accepts an input file for an arguement, you can use '-' to
 indicate that the input is from a pipe.  For the subcommands that output data
 it is printed to the screen and you can then redirect to a file.
+
+Author
+======
+
+Tim Cera, P.E.
+
+tim at cerazone dot net
+
+Please send me a note if you find this useful, found a bug, submit a patch,
+...etc.
 

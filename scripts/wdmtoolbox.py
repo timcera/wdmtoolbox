@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/sjr/beodata/local/python_linux/bin/python
 '''
 '''
 # Python batteries included imports
@@ -28,7 +28,7 @@ class MissingValuesInInputError(Exception):
     pass
 
 
-def __find_gcf(dividend, divisor):
+def _find_gcf(dividend, divisor):
     remainder = -1
     while remainder != 0:
         qoutient = dividend/divisor
@@ -40,10 +40,47 @@ def __find_gcf(dividend, divisor):
     return divisor
 
 # Foundation functions that allow other functions to print or use the returned
-def __describedsn(wdmpath, dsn):
-    resp = wdm.describe_dsn(wdmpath, int(dsn))
-    if resp:
-        return resp
+def _describedsn(wdmpath, dsn):
+    try:
+        return wdm.describe_dsn(wdmpath, int(dsn))
+    except:
+        return None
+
+def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
+    wdm.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
+    nts = wdm.read_dsn(inwdmpath, indsn)
+    wdm.write_dsn(outwdmpath, int(outdsn), nts, nts.dates[0])
+
+@baker.command
+def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
+    ''' Make a copy of a DSN.
+    :param inwdmpath: Path to input WDM file (<64 characters).
+    :param indsn: Source DSN.
+    :param outwdmpath: Path to clean copy WDM file (<64 characters).
+    :param outdsn: Target DSN.
+    '''
+    _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn)
+
+@baker.command
+def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
+    ''' Make a clean copy of a WDM file.
+    :param inwdmpath: Path to input WDM file (<64 characters).
+    :param outwdmpath: Path to clean copy WDM file (<64 characters).
+    :param overwrite: Whether to overwrite an existing outwdmpath.
+    '''
+    if inwdmpath == outwdmpath:
+        raise ValueError('The "inwdmpath" cannot be the same as "outwdmpath"')
+    createnewwdm(outwdmpath, overwrite=overwrite)
+    activedsn = []
+    for i in range(1,32001):
+        try:
+            activedsn.append(_describedsn(inwdmpath, i)['dsn'])
+        except TypeError:
+            continue
+    # Copy labels then data
+    for i in activedsn:
+        _copy_dsn(inwdmpath, i, outwdmpath, i)
+
 
 @baker.command
 def renumberdsn(wdmpath, olddsn, newdsn):
@@ -78,7 +115,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     collect_tsteps = {}
     collect_keys = []
     for dsn in dsns:
-        dsn_desc = __describedsn(wdmpath, dsn)
+        dsn_desc = _describedsn(wdmpath, dsn)
         collect_tcodes[dsn_desc['tcode']] = 1
         collect_tsteps[dsn_desc['tstep']] = 1
         if start_date:
@@ -140,7 +177,7 @@ def describedsn(wdmpath, dsn):
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn:     The Data Set Number in the WDM file.
     '''
-    print __describedsn(wdmpath, dsn)
+    print _describedsn(wdmpath, dsn)
 
 @baker.command
 def listdsns(wdmpath):
@@ -148,8 +185,8 @@ def listdsns(wdmpath):
     :param wdmpath: Path and WDM filename (<64 characters).
     '''
     print '#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format('DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE', 'END DATE', 'TCODE', 'TSTEP')
-    for i in range(32001)[1:]:
-        testv = __describedsn(wdmpath, i)
+    for i in range(1,32001):
+        testv = _describedsn(wdmpath, i)
         if testv:
             print '{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv)
 
@@ -211,7 +248,7 @@ def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
                 #dates = np.append(dates, datetime.datetime(year, month, day, 23) + datetime.timedelta(hours = 1))
         except ValueError:
             print start_century, line
-    __writetodsn(wdmpath, dsn, dates, data)
+    _writetodsn(wdmpath, dsn, dates, data)
 
 @baker.command
 def stdtowdm(wdmpath, dsn, infile='-'):
@@ -221,7 +258,7 @@ def stdtowdm(wdmpath, dsn, infile='-'):
     :param infile: Input filename, defaults to standard input.
     '''
     tsd = tsutils.read_iso_ts(baker.openinput(infile))
-    __writetodsn(wdmpath, dsn, tsd.dates, tsd)
+    _writetodsn(wdmpath, dsn, tsd.dates, tsd)
 
 @baker.command
 def csvtowdm(wdmpath, dsn, input=sys.stdin):
@@ -259,17 +296,22 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
     sorted_indices = np.argsort(dates)
     dates = dates[sorted_indices]
     data = data[sorted_indices]
-    __writetodsn(wdmpath, dsn, dates, data)
+    _writetodsn(wdmpath, dsn, dates, data)
 
-def __writetodsn(wdmpath, dsn, dates, data):
+def _writetodsn(wdmpath, dsn, dates, data):
     # Convert string to int
     dsn = int(dsn)
     # Find ALL unique intervals in the data set and convert to seconds
     import numpy as np
     import numpy.ma as ma
 
+    tmpdates = []
     if not isinstance(dates[0], datetime.datetime):
-        dates = np.array(dates.tolist())
+        for i in dates:
+            tmpdates.append(i.datetime)
+        dates = np.array(tmpdates)
+    else:
+        dates = np.array(dates)
     interval = np.unique(dates[1:] - dates[:-1])
     interval = [i.days*86400 + i.seconds for i in interval]
 
@@ -278,17 +320,13 @@ def __writetodsn(wdmpath, dsn, dates, data):
     # least one 1 hour interval, this should correctly say the interval
     # is one hour.
     ninterval = {}
-    if len(interval) > 1:
+    if len(interval) > 1 and np.all(interval < 2419200):
         for i, aval in enumerate(interval):
             for j, bval in enumerate(interval[i+1:]):
-                ninterval[__find_gcf(aval, bval)] = 1
+                ninterval[_find_gcf(aval, bval)] = 1
         ninterval = ninterval.keys()
         ninterval.sort()
         interval = ninterval
-
-    # If the number of intervals is STILL greater than 1
-    if len(interval) > 1:
-        raise MissingValuesInInputError
     interval = interval[0]
 
     # Have the interval in seconds, need to convert to
@@ -311,14 +349,14 @@ def __writetodsn(wdmpath, dsn, dates, data):
         tstep = int(round(interval/29.5))
 
     # Make sure that input data interval match target DSN
-    desc_dsn = __describedsn(wdmpath, dsn)
+    desc_dsn = _describedsn(wdmpath, dsn)
     dsntcode = desc_dsn['tcode']
     if wdmutil.MAPFREQ[freq] != dsntcode:
         raise FrequencyDoesNotMatchError
 
     # Write the data...
     data = ts.time_series(data, dates, freq=freq)
-    wdm.write_dsn(wdmpath, dsn, data, dates[0])
+    wdm.write_dsn(wdmpath, dsn, data, dates[0], fill=True)
 
 baker.run()
 

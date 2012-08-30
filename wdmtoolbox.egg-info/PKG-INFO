@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: wdmtoolbox
-Version: 0.2
+Version: 0.3
 Summary: Read and write Watershed Data Management (WDM) files
 Home-page: http://
 Author: Tim Cera, P.E.
@@ -32,7 +32,7 @@ Description: WDMTOOLBOX
         Python requirements for all platforms
         -------------------------------------
         * scikits.timeseries - on Windows this is part of the Python(x,y) distribution
-          (http://www.pythonxy.com/) 
+          (http://code.google.com/p/pythonxy/)
         
         * baker - command line parser
         
@@ -41,9 +41,10 @@ Description: WDMTOOLBOX
         Installation
         ============
         Once the ``hass_ent`` library is installed and available, should be as easy as
-        running ``easy_install wdmtoolbox`` at any command line.  Not sure on Windows
-        whether this will bring in scikits.timeseries, but as mentioned above, if you
-        start with Python(x,y) then you won't have a problem.
+        running ``easy_install wdmtoolbox`` or ``pip install wdmtoolbox``` at any
+        command line.  Not sure on Windows whether this will bring in
+        scikits.timeseries, but as mentioned above, if you start with Python(x,y) then
+        you won't have a problem.
         
         The wdmtoolbox script is actually made up of two parts, 'wdmtoolbox.py' which
         handles all command line interaction and 'wdmutil.py' which is a library of
@@ -54,25 +55,38 @@ Description: WDMTOOLBOX
         =======
         Just run 'wdmtoolbox.py' to get a list of subcommands::
         
-            Usage: /sjr/beodata/local/bin/wdmtoolbox.py COMMAND <options>
+            Usage: /sjr/beodata/local/python_linux/bin/wdmtoolbox.py COMMAND <options>
             
             Available commands:
-            
+             cleancopywdm    Make a clean copy of a WDM file.
+             copydsn         Make a copy of a DSN.
              createnewdsn    Create a new DSN.
              createnewwdm    Create a new WDM file, optional to overwrite.
              csvtowdm        Writes data from a CSV file to a DSN.
+             deletedsn       Delete DSN
              describedsn     Prints out a description of a single DSN.
              hydhrseqtowdm   Writes HYDHR sequential file to a DSN.
              listdsns        Prints out a table describing all DSNs in the WDM.
+             renumberdsn     Renumber olddsn to newdsn
              stdtowdm        Writes data from a CSV file to a DSN.
              wdmtostd        Prints out DSN data to the screen with ISO-8601 dates.
              wdmtoswmm5rdii  Prints out DSN data to the screen in SWMM5 RDII format.
             
-            Use "/sjr/beodata/local/bin/wdmtoolbox.py <command> --help" for individual command help.
+            Use '/sjr/beodata/local/python_linux/bin/wdmtoolbox.py <command> --help' for individual command help.
         
         If a subcommand accepts an input file for an arguement, you can use '-' to
         indicate that the input is from a pipe.  For the subcommands that output data
         it is printed to the screen and you can then redirect to a file.
+        
+        Author
+        ======
+        
+        Tim Cera, P.E.
+        
+        tim at cerazone dot net
+        
+        Please send me a note if you find this useful, found a bug, submit a patch,
+        ...etc.
         
         
         
@@ -87,19 +101,34 @@ Description: WDMTOOLBOX
         0.1
         ---
         
-        *Release date: 22-Apr-2011*
+        *Release date: 2011-03-22*
         
         * Initial release
         
         0.2
         ---
         
-        *Release date: 14-Jul-2011*
+        *Release date: 2011-07-14*
         
         * Added 'deletedsn' to delete a time-series from a WDM file
         * Added 'renumberdsn' to change a DSN number
         * The 'createnewdsn' subcommand checks it isn't overwriting a DSN
         
+        0.2.1
+        -----
+        
+        *Release date: 2011-10-25*
+        
+        * When creating scikits.timeseries should specify the frequency.
+        
+        0.3
+        ---
+        
+        *Release date: 2012-08-30*
+        
+        * Added 'cleancopywdm' function
+        * Added 'copydsn' function
+        * Fixed processing of monthly and yearly data
         
 Keywords: WDM watershed data_management data hydrology hydrological simulation fortran HSPF
 Platform: UNKNOWN
