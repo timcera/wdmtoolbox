@@ -8,7 +8,6 @@ import datetime
 # Third party imports
 import baker
 from dateutil.parser import parse as dateparser
-import scikits.timeseries as ts
 
 # Local imports
 # Load in WDM subroutines
@@ -30,6 +29,8 @@ class MissingValuesInInputError(Exception):
 
 def _find_gcf(dividend, divisor):
     remainder = -1
+    dividend = dividend.astype('i')
+    divisor = divisor.astype('i')
     while remainder != 0:
         qoutient = dividend/divisor
         remainder = dividend%divisor
@@ -49,7 +50,7 @@ def _describedsn(wdmpath, dsn):
 def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
     wdm.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
     nts = wdm.read_dsn(inwdmpath, indsn)
-    wdm.write_dsn(outwdmpath, int(outdsn), nts, nts.dates[0])
+    wdm.write_dsn(outwdmpath, int(outdsn), nts.values, nts.index[0])
 
 @baker.command
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
@@ -167,6 +168,11 @@ def wdmtostd(wdmpath, *dsns, **kwds): #start_date=None, end_date=None):
     '''
     start_date = kwds.setdefault('start_date', None)
     end_date = kwds.setdefault('end_date', None)
+    if len(kwds) > 2:
+        kwds_list = kwds.keys()
+        kwds_list.remove('start_date')
+        kwds_list.remove('end_date')
+        raise ValueError('The only allowed keywords are "--start_date=..." and "--end_date=...". You passed in {0}'.format(kwds_list))
     for dsn in dsns:
         nts = wdm.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
         tsutils.printiso(nts)
@@ -258,7 +264,7 @@ def stdtowdm(wdmpath, dsn, infile='-'):
     :param infile: Input filename, defaults to standard input.
     '''
     tsd = tsutils.read_iso_ts(baker.openinput(infile))
-    _writetodsn(wdmpath, dsn, tsd.dates, tsd)
+    _writetodsn(wdmpath, dsn, tsd)
 
 @baker.command
 def csvtowdm(wdmpath, dsn, input=sys.stdin):
@@ -298,29 +304,24 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
     data = data[sorted_indices]
     _writetodsn(wdmpath, dsn, dates, data)
 
-def _writetodsn(wdmpath, dsn, dates, data):
+def _writetodsn(wdmpath, dsn, data):
     # Convert string to int
     dsn = int(dsn)
     # Find ALL unique intervals in the data set and convert to seconds
     import numpy as np
     import numpy.ma as ma
+    import pandas as pa
 
-    tmpdates = []
-    if not isinstance(dates[0], datetime.datetime):
-        for i in dates:
-            tmpdates.append(i.datetime)
-        dates = np.array(tmpdates)
-    else:
-        dates = np.array(dates)
-    interval = np.unique(dates[1:] - dates[:-1])
-    interval = [i.days*86400 + i.seconds for i in interval]
+    interval = np.unique(data.index.values[1:] - data.index.values[:-1])
+    interval = [np.timedelta64(i, 's') for i in interval]
+    interval = np.array(interval)
 
     # If there are more than one interval lets see if the are caused by
     # missing values.  Say there is at least one 2 hour interval and at
     # least one 1 hour interval, this should correctly say the interval
     # is one hour.
     ninterval = {}
-    if len(interval) > 1 and np.all(interval < 2419200):
+    if len(interval) > 1 and np.all(interval < np.timedelta64(28, 'D')):
         for i, aval in enumerate(interval):
             for j, bval in enumerate(interval[i+1:]):
                 ninterval[_find_gcf(aval, bval)] = 1
@@ -330,22 +331,24 @@ def _writetodsn(wdmpath, dsn, dates, data):
     interval = interval[0]
 
     # Have the interval in seconds, need to convert to
-    # scikits.timeseries interval identifier and calculate time step.
-    freq = 'YEAR'
+    # interval identifier and calculate time step.
+    interval = np.timedelta64(interval, 's').tolist()
+    interval = interval.days*86400 + interval.seconds
+    freq = 'A'
     tstep = 1
     if interval < 3600 and interval % 60 == 0:
-        freq = 'MINUTE'
+        freq = 'T'
         tstep = interval/60
     elif interval < 86400 and interval % 3600 == 0:
-        freq = 'HOUR'
+        freq = 'H'
         tstep = interval/3600
     # The DAY and MONTH tests are not the best, could be fooled by day interval
     # with monthly/yearly time steps.
     elif interval not in 86400*np.array([28, 29, 30, 31, 365, 366]) and interval % 86400 == 0:
-        freq = 'DAY'
+        freq = 'D'
         tstep = interval/86400
     elif interval in 86400*np.array([28, 29, 30, 31]):
-        freq = 'MONTH'
+        freq = 'M'
         tstep = int(round(interval/29.5))
 
     # Make sure that input data interval match target DSN
@@ -355,8 +358,12 @@ def _writetodsn(wdmpath, dsn, dates, data):
         raise FrequencyDoesNotMatchError
 
     # Write the data...
-    data = ts.time_series(data, dates, freq=freq)
-    wdm.write_dsn(wdmpath, dsn, data, dates[0], fill=True)
+    #data = pa.Series(data.values, data.index.values)
+    # Eventually have to figure out why the following doesn't work...
+    nindex = pa.date_range(data.index[0], data.index[-1],
+            freq=data.index.inferred_freq)
+    data = data.reindex(nindex.values, fill_value=-999)
+    wdm.write_dsn(wdmpath, dsn, data.values, data.index[0])
 
 baker.run()
 

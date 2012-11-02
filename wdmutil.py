@@ -8,35 +8,34 @@ possible subroutine calls since ctypes does not allow bringing in more than
 one library.
 '''
 
-from ctypes import c_int, c_float, c_char, byref, c_char_p, create_string_buffer
+from ctypes import c_int, c_float, c_char, byref
 from ctypes.util import find_library
 import datetime
 import os
 import os.path
-import random
 import re
 
-import scikits.timeseries as ts
+import pandas as pa
 
 # Load in WDM subroutines
 
-# Mapping between WDM TCODE and scikits.timeseries interval code
+# Mapping between WDM TCODE and pandas interval code
 MAPTCODE = {
-            1: 'SECOND',
-            2: 'MINUTE',
-            3: 'HOUR',
-            4: 'DAY',
-            5: 'MONTH',
-            6: 'YEAR',
+            1: 'S',
+            2: 'T',
+            3: 'H',
+            4: 'D',
+            5: 'M',
+            6: 'A',
             }
 
 MAPFREQ = {
-           'SECOND': 1,
-           'MINUTE': 2,
-           'HOUR':   3,
-           'DAY':    4,
-           'MONTH':  5,
-           'YEAR':   6,
+           'S': 1,
+           'T': 2,
+           'H':   3,
+           'D':    4,
+           'M':  5,
+           'A':   6,
            }
 # Setup some WDM variables
 RETCODE = c_int(1)
@@ -169,44 +168,14 @@ class WDM():
                 afilename = os.path.join('usr', 'local', 'share', 'usgs', 'message.wdm')
         return self._open(afilename, ronwfg=1)
 
+
     def dateconverter(self, datestr):
-        # This is copied from tsutils.py - don't like that but was having a problem
-        # import tsutils tstoolbox - don't know why.
         words = re.findall(r'\d+', str(datestr))
-        if len(words) == 1:
-            tsdate = ts.Date(freq='yearly',
-                             year=int(words[0]))
-        if len(words) == 2:
-            tsdate = ts.Date(freq='monthly',
-                             year=int(words[0]),
-                             month=int(words[1]))
-        if len(words) == 3:
-            tsdate = ts.Date(freq='daily',
-                             year=int(words[0]),
-                             month=int(words[1]),
-                             day=int(words[2]))
-        if len(words) == 4:
-            tsdate = ts.Date(freq='hourly',
-                             year=int(words[0]),
-                             month=int(words[1]),
-                             day=int(words[2]),
-                             hour=int(words[3]))
-        if len(words) == 5:
-            tsdate = ts.Date(freq='minutely',
-                             year=int(words[0]),
-                             month=int(words[1]),
-                             day=int(words[2]),
-                             hour=int(words[3]),
-                             minute=int(words[4]))
-        if len(words) == 6:
-            tsdate = ts.Date(freq='secondly',
-                             year=int(words[0]),
-                             month=int(words[1]),
-                             day=int(words[2]),
-                             hour=int(words[3]),
-                             minute=int(words[4]),
-                             second=int(words[5]))
-        return tsdate
+        words = [int(i) for i in words]
+        dtime = [1900,1,1,0,0,0]
+        dtime[:len(words)] = words
+        return dtime
+
 
     def _open(self, wdmpath, ronwfg=0):
         ''' Private method to open WDM file.
@@ -478,26 +447,15 @@ class WDM():
             rdate[5] = date[5]
         return rdate
 
-    def write_dsn(self, wdmpath, dsn, data, start_date, fill=False):
+    def write_dsn(self, wdmpath, dsn, data, start_date):
         ''' Write to self.wdmfp/dsn the time-series data. '''
-        import numpy.ma as ma
-
         wdmfp = self._open(wdmpath)
         dsn_desc = self.describe_dsn(wdmpath, dsn)
         TCODE.value = dsn_desc['tcode']
         TSTEP.value = dsn_desc['tstep']
 
-        LLSDAT[:] = self._tcode_date(TCODE.value, (start_date.year, start_date.month, start_date.day, start_date.hour, start_date.minute, start_date.second))
-
-        # Fill missing data with tsfill
-        # Use try:/except: to allow for time-series data from pandas
-        if fill:
-            try:
-                # scikits.timeseries
-                data = data.filled(dsn_desc['tsfill'])
-            except AttributeError:
-                data = data.asfreq(MAPTCODE[TCODE.value][0])
-                data = data.fillna(dsn_desc['tsfill'])
+        dstart_date = start_date.timetuple()[:6]
+        LLSDAT[:] = self._tcode_date(TCODE.value, dstart_date)
 
         nvals = c_int(len(data))
         # Create array to hold the time series data
@@ -539,10 +497,10 @@ class WDM():
         self.timcvt(byref(LLEDAT))
 
         if start_date != None:
-            start_date = self.dateconverter(start_date).datetime.timetuple()[:6]
+            start_date = self.dateconverter(start_date)
             LLSDAT[:] = start_date
         if end_date != None:
-            end_date = self.dateconverter(end_date).datetime.timetuple()[:6]
+            end_date = self.dateconverter(end_date)
             LLEDAT[:] = end_date
 
         # Determine the number of values (ITERM) from LLSDAT to LLEDAT
@@ -579,11 +537,11 @@ class WDM():
 
         self._close(wdmpath)
 
-        # Convert time series to scikits.timeseries object
-        tmpval = ts.time_series(dataout,
-                              start_date=ts.Date(MAPTCODE[TCODE.value], datetime=tstart),
-                              freq = MAPTCODE[TCODE.value]
-                              )
+        # Convert time series to pandas Series
+        index = pa.date_range(tstart, periods=len(dataout),
+                              freq=MAPTCODE[TCODE.value])
+
+        tmpval = pa.Series(dataout, index)
         return tmpval
 
     def read_dsn_por(self, wdmpath, dsn):

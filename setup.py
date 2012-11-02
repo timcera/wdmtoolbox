@@ -6,7 +6,7 @@ README = open(os.path.join(here, 'README.rst')).read()
 NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 
 
-version = '0.3'
+version = '0.4'
 
 install_requires = [
     # List your project dependencies here.
@@ -14,8 +14,8 @@ install_requires = [
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
     'baker >= 1.3',
     'python-dateutil >= 1.5, < 2.0',    # python-dateutil-2.0 is for Python 3.0
-    'scikits.timeseries >= 0.91.3',
-    'tstoolbox >= 0.1',
+    'pandas >= 0.9.0',
+    'tstoolbox >= 0.2',
 ]
 
 

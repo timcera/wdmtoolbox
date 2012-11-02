@@ -37,3 +37,10 @@ News
 * Added 'cleancopywdm' function
 * Added 'copydsn' function
 * Fixed processing of monthly and yearly data
+
+0.4
+---
+
+*Release date: 2012-11-02*
+
+* Shifted from deprecated scikits.timeseries to pandas

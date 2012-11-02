@@ -23,7 +23,7 @@ part of the LD\_LIBRARY_PATH environment variable.
 
 Python requirements for all platforms
 -------------------------------------
-* scikits.timeseries - on Windows this is part of the Python(x,y) distribution
+* pandas - on Windows this is part of the Python(x,y) distribution
   (http://code.google.com/p/pythonxy/)
 
 * baker - command line parser
@@ -35,7 +35,7 @@ Installation
 Once the ``hass_ent`` library is installed and available, should be as easy as
 running ``easy_install wdmtoolbox`` or ``pip install wdmtoolbox``` at any
 command line.  Not sure on Windows whether this will bring in
-scikits.timeseries, but as mentioned above, if you start with Python(x,y) then
+pandas but as mentioned above, if you start with Python(x,y) then
 you won't have a problem.
 
 The wdmtoolbox script is actually made up of two parts, 'wdmtoolbox.py' which
