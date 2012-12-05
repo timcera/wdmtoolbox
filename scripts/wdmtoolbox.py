@@ -173,9 +173,13 @@ def wdmtostd(wdmpath, *dsns, **kwds): #start_date=None, end_date=None):
         kwds_list.remove('start_date')
         kwds_list.remove('end_date')
         raise ValueError('The only allowed keywords are "--start_date=..." and "--end_date=...". You passed in {0}'.format(kwds_list))
-    for dsn in dsns:
+    for index,dsn in enumerate(dsns):
         nts = wdm.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
-        tsutils.printiso(nts)
+        if index == 0:
+            result = nts
+        else:
+            result = result.join(nts, how='outer')
+    tsutils.printiso(result)
 
 @baker.command
 def describedsn(wdmpath, dsn):

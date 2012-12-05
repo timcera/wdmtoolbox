@@ -15,7 +15,7 @@ install_requires = [
     'baker >= 1.3',
     'python-dateutil >= 1.5, < 2.0',    # python-dateutil-2.0 is for Python 3.0
     'pandas >= 0.9.0',
-    'tstoolbox >= 0.2',
+    'tstoolbox >= 0.3',
 ]
 
 

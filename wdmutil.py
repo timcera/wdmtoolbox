@@ -15,7 +15,7 @@ import os
 import os.path
 import re
 
-import pandas as pa
+import pandas as pd
 
 # Load in WDM subroutines
 
@@ -537,11 +537,12 @@ class WDM():
 
         self._close(wdmpath)
 
-        # Convert time series to pandas Series
-        index = pa.date_range(tstart, periods=len(dataout),
+        # Convert time series to pandas DataFrame
+        index = pd.date_range(tstart, periods=len(dataout),
                               freq=MAPTCODE[TCODE.value])
 
-        tmpval = pa.Series(dataout, index)
+        tmpval = pd.DataFrame(pd.Series(dataout, index=index,
+            name='{0}_DSN_{1}'.format(os.path.basename(wdmpath), dsn.value)))
         return tmpval
 
     def read_dsn_por(self, wdmpath, dsn):
