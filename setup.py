@@ -39,10 +39,15 @@ setup(name='wdmtoolbox',
     keywords='WDM watershed data_management data hydrology hydrological simulation fortran HSPF',
     author='Tim Cera, P.E.',
     author_email='tim@cerazone.net',
-    url='http://',
-    license='GPL',
+    url='http://pypi.python.org/pypi/wdmtoolbox',
+    license='GPL2',
+    packages=find_packages('src'),
+    package_dir = {'': 'src'},include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
     py_modules=['wdmutil'],
-    scripts=['scripts/wdmtoolbox.py'],
+    entry_points={
+        'console_scripts':
+            ['wdmtoolbox=wdmtoolbox:main']
+    }
 )
