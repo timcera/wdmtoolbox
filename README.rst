@@ -47,7 +47,7 @@ Running
 =======
 Just run 'wdmtoolbox.py' to get a list of subcommands::
 
-    Usage: /sjr/beodata/local/python_linux/bin/wdmtoolbox.py COMMAND <options>
+    Usage: /sjr/beodata/local/python_linux/bin/wdmtoolbox COMMAND <options>
     
     Available commands:
      cleancopywdm    Make a clean copy of a WDM file.

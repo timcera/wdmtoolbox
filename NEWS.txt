@@ -46,3 +46,10 @@ News
 * Shifted from deprecated scikits.timeseries to pandas
 * Now prints multiple DSNs into a table format - compatible with tstoolbox
 
+0.5
+---
+
+*Release date: 2013-02-06*
+
+* Moved completely to a 'paster' format for the project.
+* Tidying up.
