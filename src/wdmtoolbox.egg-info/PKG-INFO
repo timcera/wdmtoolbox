@@ -1,11 +1,11 @@
 Metadata-Version: 1.0
 Name: wdmtoolbox
-Version: 0.4
+Version: 0.5
 Summary: Read and write Watershed Data Management (WDM) files
-Home-page: http://
+Home-page: http://pypi.python.org/pypi/wdmtoolbox
 Author: Tim Cera, P.E.
 Author-email: tim@cerazone.net
-License: GPL
+License: GPL2
 Description: WDMTOOLBOX
         ==========
         The wdmtoolbox is a Python script to read/write/manage Watershed Data
@@ -55,7 +55,7 @@ Description: WDMTOOLBOX
         =======
         Just run 'wdmtoolbox.py' to get a list of subcommands::
         
-            Usage: /sjr/beodata/local/python_linux/bin/wdmtoolbox.py COMMAND <options>
+            Usage: /sjr/beodata/local/python_linux/bin/wdmtoolbox COMMAND <options>
             
             Available commands:
              cleancopywdm    Make a clean copy of a WDM file.
@@ -138,6 +138,13 @@ Description: WDMTOOLBOX
         * Shifted from deprecated scikits.timeseries to pandas
         * Now prints multiple DSNs into a table format - compatible with tstoolbox
         
+        0.5
+        ---
+        
+        *Release date: 2013-02-06*
+        
+        * Moved completely to a 'paster' format for the project.
+        * Tidying up.
         
 Keywords: WDM watershed data_management data hydrology hydrological simulation fortran HSPF
 Platform: UNKNOWN
