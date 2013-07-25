@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: wdmtoolbox
-Version: 0.5
+Version: 0.5.1
 Summary: Read and write Watershed Data Management (WDM) files
 Home-page: http://pypi.python.org/pypi/wdmtoolbox
 Author: Tim Cera, P.E.
@@ -145,6 +145,14 @@ Description: WDMTOOLBOX
         
         * Moved completely to a 'paster' format for the project.
         * Tidying up.
+        
+        0.5.1
+        -----
+        
+        *Release date: 2013-03-12*
+        
+        * Allowed all python-dateutil > 1.5 since PANDAS install kept on messing up
+          wdmtoolbox requirements
         
 Keywords: WDM watershed data_management data hydrology hydrological simulation fortran HSPF
 Platform: UNKNOWN

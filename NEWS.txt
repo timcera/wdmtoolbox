@@ -53,3 +53,11 @@ News
 
 * Moved completely to a 'paster' format for the project.
 * Tidying up.
+
+0.5.1
+-----
+
+*Release date: 2013-03-12*
+
+* Allowed all python-dateutil > 1.5 since PANDAS install kept on messing up
+  wdmtoolbox requirements

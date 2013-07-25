@@ -32,10 +32,10 @@ MAPTCODE = {
 MAPFREQ = {
            'S': 1,
            'T': 2,
-           'H':   3,
-           'D':    4,
-           'M':  5,
-           'A':   6,
+           'H': 3,
+           'D': 4,
+           'M': 5,
+           'A': 6,
            }
 # Setup some WDM variables
 RETCODE = c_int(1)
