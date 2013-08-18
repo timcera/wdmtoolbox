@@ -1,6 +1,8 @@
 #!/sjr/beodata/local/python_linux/bin/python
 '''
 '''
+from __future__ import print_function
+
 # Python batteries included imports
 import sys
 import datetime
@@ -144,19 +146,19 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
         4: 86400,
         }
 
-    print 'SWMM5'
-    print 'RDII dump of DSNS {0} from {1}'.format(dsns, wdmpath)
-    print MAPTCODE[collect_tcodes.keys()[0]]*collect_tsteps.keys()[0]
-    print 1
-    print 'FLOW CFS'
-    print len(dsns)
+    print('SWMM5')
+    print('RDII dump of DSNS {0} from {1}'.format(dsns, wdmpath))
+    print(MAPTCODE[collect_tcodes.keys()[0]]*collect_tsteps.keys()[0])
+    print(1)
+    print('FLOW CFS')
+    print(len(dsns))
     for dsn, location in collect_keys:
-        print str(dsn) + '_' + location
-    print 'Node Year Mon Day Hr Min Sec Flow'
+        print(str(dsn) + '_' + location)
+    print('Node Year Mon Day Hr Min Sec Flow')
     # Can pick any time series because they should all have the same interval and start and end dates.
     for date in collected_ts[collect_keys[0]].dates:
         for dsn, location in collect_keys:
-            print '{0}_{1}  {2}  {3:02}  {4:02}  {5:02}  {6:02}  {7:02}  {8:f}'.format(dsn, location, date.year, date.month, date.day, date.hour, date.minute, date.second, collected_ts[(dsn, location)][date])
+            print('{0}_{1}  {2}  {3:02}  {4:02}  {5:02}  {6:02}  {7:02}  {8:f}'.format(dsn, location, date.year, date.month, date.day, date.hour, date.minute, date.second, collected_ts[(dsn, location)][date]))
 
 @baker.command
 def wdmtostd(wdmpath, *dsns, **kwds): #start_date=None, end_date=None):
@@ -187,18 +189,18 @@ def describedsn(wdmpath, dsn):
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn:     The Data Set Number in the WDM file.
     '''
-    print _describedsn(wdmpath, dsn)
+    print(_describedsn(wdmpath, dsn))
 
 @baker.command
 def listdsns(wdmpath):
     ''' Prints out a table describing all DSNs in the WDM.
     :param wdmpath: Path and WDM filename (<64 characters).
     '''
-    print '#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format('DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE', 'END DATE', 'TCODE', 'TSTEP')
+    print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format('DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE', 'END DATE', 'TCODE', 'TSTEP'))
     for i in range(1,32001):
         testv = _describedsn(wdmpath, i)
         if testv:
-            print '{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv)
+            print('{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv))
 
 @baker.command
 def createnewwdm(wdmpath, overwrite=False):
@@ -257,7 +259,7 @@ def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
                 dates = np.append(dates, [datetime.datetime(year, month, day, i) for i in range(12,24)])
                 #dates = np.append(dates, datetime.datetime(year, month, day, 23) + datetime.timedelta(hours = 1))
         except ValueError:
-            print start_century, line
+            print(start_century, line)
     _writetodsn(wdmpath, dsn, dates, data)
 
 @baker.command

@@ -1,6 +1,6 @@
-Metadata-Version: 1.0
+Metadata-Version: 1.1
 Name: wdmtoolbox
-Version: 0.5.1
+Version: 0.5.2
 Summary: Read and write Watershed Data Management (WDM) files
 Home-page: http://pypi.python.org/pypi/wdmtoolbox
 Author: Tim Cera, P.E.

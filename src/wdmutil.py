@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+from __future__ import print_function
+
 '''
 The WDM class supplies a series of utilities for working with WDM files
 with Python.  The class uses ctypes to wrap a specially aggregated library
@@ -37,6 +40,7 @@ MAPFREQ = {
            'M': 5,
            'A': 6,
            }
+
 # Setup some WDM variables
 RETCODE = c_int(1)
 TSTEP = c_int(1)
@@ -50,26 +54,34 @@ LLSDAT = FDATE()
 LLEDAT = FDATE()
 AFILE = c_char*64
 
+
 class WDMError(Exception):
     pass
+
 
 class DSNDoesNotExist(Exception):
     pass
 
+
 class LibraryNotFoundError(Exception):
     pass
+
 
 class WDMFileExists(Exception):
     def __init__(self, filename):
         self.filename = filename
+
     def __str__(self):
         return 'File {0} exists.'.format(self.filename)
+
 
 class DSNExistsError(Exception):
     def __init__(self, dsn):
         self.dsn = dsn
+
     def __str__(self):
         return 'DSN {0} exists.'.format(self.dsn)
+
 
 class WDM():
     ''' Class to open and read from WDM files.
@@ -83,11 +95,11 @@ class WDM():
 
         # Need to try this anyway because find_library does not search
         # LD_LIBRARY_PATH on Linux
-        if flpath == None:
+        if flpath is None:
             flpath = 'libhass_ent.so'
 
         if os.name == 'nt':
-            from ctypes import windll,cdll
+            from ctypes import windll, cdll
             self.libhass_ent = windll.LoadLibrary(flpath)
         else:
             from ctypes import cdll
@@ -163,19 +175,23 @@ class WDM():
             afilename = r'C:\Basins\models\HSPF\bin\hspfmsg.wdm'
         elif os.name == 'posix':
             try:
-                afilename = os.path.join(os.environ['USGSHOME'], 'share', 'usgs', 'message.wdm')
+                afilename = os.path.join(
+                            os.environ['USGSHOME'],
+                            'share', 'usgs', 'message.wdm')
             except KeyError:
-                afilename = os.path.join('usr', 'local', 'share', 'usgs', 'message.wdm')
+                afilename = os.path.join('usr',
+                                         'local',
+                                         'share',
+                                         'usgs',
+                                         'message.wdm')
         return self._open(afilename, ronwfg=1)
-
 
     def dateconverter(self, datestr):
         words = re.findall(r'\d+', str(datestr))
         words = [int(i) for i in words]
-        dtime = [1900,1,1,0,0,0]
+        dtime = [1900, 1, 1, 0, 0, 0]
         dtime[:len(words)] = words
         return dtime
-
 
     def _open(self, wdmpath, ronwfg=0):
         ''' Private method to open WDM file.
@@ -186,8 +202,8 @@ class WDM():
             afile = AFILE()
             afile.value = nwdmpath
             wdmfp = self.wdbopn(byref(c_int(ronwfg)),
-                        byref(afile),
-                        byref(c_int(len(nwdmpath))))
+                                byref(afile),
+                                byref(c_int(len(nwdmpath))))
             self.openfiles[wdmpath] = c_int(wdmfp)
         return self.openfiles[wdmpath]
 
@@ -223,12 +239,12 @@ class WDM():
         indsn = c_int(int(indsn))
         outwdmfp = self._open(outwdmpath)
         outdsn = c_int(int(outdsn))
-        type = c_int(0)
+        dsntype = c_int(0)
         self.wddscl(byref(inwdmfp),
                     byref(indsn),
                     byref(outwdmfp),
                     byref(outdsn),
-                    byref(type),
+                    byref(dsntype),
                     byref(RETCODE))
         self._retcode_check(RETCODE, additional_info='wddscl')
         self._close(inwdmpath)
@@ -243,10 +259,10 @@ class WDM():
         tdsfrc = c_int(1)
         self.wtfndt(byref(wdmfp),
                     byref(dsn),
-                    byref(c_int(1)), # GPFLG  - get(1)/put(2) flag
-                    byref(tdsfrc),   # TDSFRC - data-set first record number
-                    byref(LLSDAT),   # SDAT   - starting date of data in dsn
-                    byref(LLEDAT),   # EDAT   - ending date of data in dsn
+                    byref(c_int(1)),  # GPFLG  - get(1)/put(2) flag
+                    byref(tdsfrc),    # TDSFRC - data-set first record number
+                    byref(LLSDAT),    # SDAT   - starting date of data in dsn
+                    byref(LLEDAT),    # EDAT   - ending date of data in dsn
                     byref(RETCODE))
         # Ignore RETCODE == -6 which means that the dsn doesn't have any data.
         # It it is a new dsn, of course it doesn't have any data.
@@ -266,24 +282,24 @@ class WDM():
 
         self.wdbsgi(byref(wdmfp),
                     byref(dsn),
-                    byref(c_int(33)), # saind = 33 for time step
-                    byref(c_int(1)),  # salen
+                    byref(c_int(33)),  # saind = 33 for time step
+                    byref(c_int(1)),   # salen
                     byref(TSTEP),
                     byref(RETCODE))
         self._retcode_check(RETCODE, additional_info='wdbsgi')
 
         self.wdbsgi(byref(wdmfp),
                     byref(dsn),
-                    byref(c_int(17)), # saind = 17 for time code
-                    byref(c_int(1)),  # salen
+                    byref(c_int(17)),  # saind = 17 for time code
+                    byref(c_int(1)),   # salen
                     byref(TCODE),
                     byref(RETCODE))
         self._retcode_check(RETCODE, additional_info='wdbsgi')
 
         self.wdbsgr(byref(wdmfp),
                     byref(dsn),
-                    byref(c_int(32)), # saind = 32 for tsfill
-                    byref(c_int(1)),  # salen
+                    byref(c_int(32)),  # saind = 32 for tsfill
+                    byref(c_int(1)),   # salen
                     byref(TSFILL),
                     byref(RETCODE))
         # RETCODE = -107 if attribute not present
@@ -298,7 +314,7 @@ class WDM():
         ostr = sints()
         self.wdbsgc(byref(wdmfp),
                     byref(dsn),
-                    byref(c_int(290)), # saind = 290 for location
+                    byref(c_int(290)),    # saind = 290 for location
                     byref(c_int(salen)),  # salen
                     byref(ostr))
         ostr = ''.join([chr(i) for i in ostr[:] if i != 0])
@@ -308,7 +324,7 @@ class WDM():
         scen_ostr = sints()
         self.wdbsgc(byref(wdmfp),
                     byref(dsn),
-                    byref(c_int(288)), # saind = 288 for scenario
+                    byref(c_int(288)),    # saind = 288 for scenario
                     byref(c_int(salen)),  # salen
                     byref(scen_ostr))
         scen_ostr = ''.join([chr(i) for i in scen_ostr[:] if i != 0])
@@ -318,7 +334,7 @@ class WDM():
         con_ostr = sints()
         self.wdbsgc(byref(wdmfp),
                     byref(dsn),
-                    byref(c_int(289)), # saind = 289 for constitiuent
+                    byref(c_int(289)),    # saind = 289 for constitiuent
                     byref(c_int(salen)),  # salen
                     byref(con_ostr))
         con_ostr = ''.join([chr(i) for i in con_ostr[:] if i != 0])
@@ -354,29 +370,28 @@ class WDM():
         messfp = self.wmsgop()
         dsn = c_int(int(dsn))
 
-        tstyp = self.wdckdt(byref(wdmfp), byref(dsn))
         if self.wdckdt(byref(wdmfp), byref(dsn)) == 1:
             raise DSNExistsError(dsn.value)
 
         # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
         self.wdlbax(byref(wdmfp),
                     byref(dsn),
-                    byref(c_int(1)),   # DSTYPE - always 1 for time series
-                    byref(c_int(10)),  # NDN    - number of down pointers
-                    byref(c_int(10)),  # NUP    - number of up pointers
-                    byref(c_int(30)),  # NSA    - number of search attributes
-                    byref(c_int(100)), # NSASP  - amount of search attribute space
-                    byref(c_int(300)), # NDP    - number of data pointers
-                    byref(c_int(1)))   # PSA    - pointer to search attribute space
+                    byref(c_int(1)),    # DSTYPE - always 1 for time series
+                    byref(c_int(10)),   # NDN    - number of down pointers
+                    byref(c_int(10)),   # NUP    - number of up pointers
+                    byref(c_int(30)),   # NSA    - number of search attributes
+                    byref(c_int(100)),  # NSASP  - amount of search attribute space
+                    byref(c_int(300)),  # NDP    - number of data pointers
+                    byref(c_int(1)))    # PSA    - pointer to search attribute space
         self._retcode_check(RETCODE, additional_info='wdlbax')
 
-        for saind, salen, val in [(34, 1, 6), #tgroup
-                                  (83, 1, 1), #compfg
-                                  (84, 1, 1), #tsform
-                                  (85, 1, 1), #vbtime
-                                  (17, 1, int(tcode)), #tcode
-                                  (33, 1, int(tsstep)), #tsstep
-                                  (27, 1, int(base_year)), #tsbyr
+        for saind, salen, val in [(34, 1, 6),  # tgroup
+                                  (83, 1, 1),  # compfg
+                                  (84, 1, 1),  # tsform
+                                  (85, 1, 1),  # vbtime
+                                  (17, 1, int(tcode)),  # tcode
+                                  (33, 1, int(tsstep)),  # tsstep
+                                  (27, 1, int(base_year)),  # tsbyr
                                  ]:
             saind = c_int(saind)
             salen = c_int(salen)
@@ -390,7 +405,7 @@ class WDM():
                         byref(RETCODE))
             self._retcode_check(RETCODE, additional_info='wdbsai')
 
-        for saind, salen, val in [(32, 1, tsfill)]: #tsfill
+        for saind, salen, val in [(32, 1, tsfill)]:  # tsfill
             saind = c_int(saind)
             salen = c_int(salen)
             val = c_float(val)
@@ -432,7 +447,7 @@ class WDM():
 
     def _tcode_date(self, tcode, date):
         ''' Uses tcode to set the significant parts of the date tuple. '''
-        rdate = [1,1,1,0,0,0]
+        rdate = [1, 1, 1, 0, 0, 0]
         if tcode <= 6:
             rdate[0] = date[0]
         if tcode <= 5:
@@ -496,10 +511,10 @@ class WDM():
         self.timcvt(byref(LLSDAT))
         self.timcvt(byref(LLEDAT))
 
-        if start_date != None:
+        if start_date is not None:
             start_date = self.dateconverter(start_date)
             LLSDAT[:] = start_date
-        if end_date != None:
+        if end_date is not None:
             end_date = self.dateconverter(end_date)
             LLEDAT[:] = end_date
 
@@ -542,7 +557,8 @@ class WDM():
                               freq=MAPTCODE[TCODE.value])
 
         tmpval = pd.DataFrame(pd.Series(dataout, index=index,
-            name='{0}_DSN_{1}'.format(os.path.basename(wdmpath), dsn.value)))
+                     name='{0}_DSN_{1}'.format(os.path.basename(wdmpath),
+                     dsn.value)))
         return tmpval
 
     def read_dsn_por(self, wdmpath, dsn):
@@ -565,7 +581,7 @@ if __name__ == '__main__':
     if os.name == 'nt':
         fname = r'c:\test.wdm'
     wdm_obj.create_new_wdm(fname, overwrite=True)
-    listonumbers = [34.2, 35.0, 36.9, 38.2, 40.2 , 20.1, 18.4, 23.6]
+    listonumbers = [34.2, 35.0, 36.9, 38.2, 40.2, 20.1, 18.4, 23.6]
     wdm_obj.create_new_dsn(fname, 1003, tstype='EXAM', scenario='OBSERVED', tcode=4, location='EXAMPLE')
-    wdm_obj.write_dsn(fname, 1003, listonumbers, datetime.datetime(2000,1,1))
-    print wdm_obj.read_dsn_por(fname, 1003)
+    wdm_obj.write_dsn(fname, 1003, listonumbers, datetime.datetime(2000, 1, 1))
+    print(wdm_obj.read_dsn_por(fname, 1003))

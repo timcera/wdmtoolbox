@@ -1,6 +1,7 @@
 MANIFEST.in
 NEWS.txt
 README.rst
+VERSION
 setup.py
 src/wdmutil.py
 src/wdmtoolbox/__init__.py
