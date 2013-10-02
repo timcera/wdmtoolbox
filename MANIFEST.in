@@ -1,3 +1,8 @@
-include README.rst
-include NEWS.txt
+include *.txt
+include apps/astronomia_params.txt
 include VERSION
+include AUTHORS.rst
+include CONTRIBUTING.rst
+include CHANGES.rst
+include LICENSE.txt
+include README.rst

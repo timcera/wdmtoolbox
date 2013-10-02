@@ -1,0 +1,64 @@
+.. This is your project NEWS file which will contain the release notes.
+.. Example: http://www.python.org/download/releases/2.6/NEWS.txt
+.. The content of this file, along with README.rst, will appear in your
+.. project's PyPI page.
+
+Changes
+=======
+
+0.5.1
+-----
+
+*Release date: 2013-03-12*
+
+* Allowed all python-dateutil > 1.5 since PANDAS install kept on messing up
+  wdmtoolbox requirements
+
+0.5
+---
+
+*Release date: 2013-02-06*
+
+* Moved completely to a 'paster' format for the project.
+* Tidying up.
+
+0.4
+---
+
+*Release date: 2012-11-02*
+
+* Shifted from deprecated scikits.timeseries to pandas
+* Now prints multiple DSNs into a table format - compatible with tstoolbox
+
+0.3
+---
+
+*Release date: 2012-08-30*
+
+* Added 'cleancopywdm' function
+* Added 'copydsn' function
+* Fixed processing of monthly and yearly data
+
+0.2.1
+-----
+
+*Release date: 2011-10-25*
+
+* When creating scikits.timeseries should specify the frequency.
+
+0.2
+---
+
+*Release date: 2011-07-14*
+
+* Added 'deletedsn' to delete a time-series from a WDM file
+* Added 'renumberdsn' to change a DSN number
+* The 'createnewdsn' subcommand checks it isn't overwriting a DSN
+
+0.1
+---
+
+*Release date: 2011-03-22*
+
+* Initial release
+

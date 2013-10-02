@@ -1,9 +1,9 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 import sys, os
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
-NEWS = open(os.path.join(here, 'NEWS.txt')).read()
+CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 version=open("VERSION").readline().strip()
 
@@ -14,14 +14,14 @@ install_requires = [
     'baker >= 1.3',
     'python-dateutil >= 1.5',    # python-dateutil-2.0 is for Python 3.0
     'pandas >= 0.9.0',
-    'tstoolbox >= 0.3',
+    'tstoolbox >= 0.5',
 ]
 
 
 setup(name='wdmtoolbox',
     version=version,
     description="Read and write Watershed Data Management (WDM) files",
-    long_description=README + '\n\n' + NEWS,
+    long_description=README + '\n\n' + CHANGES,
     classifiers=[
       # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 4 - Beta',
@@ -40,8 +40,8 @@ setup(name='wdmtoolbox',
     author_email='tim@cerazone.net',
     url='http://pypi.python.org/pypi/wdmtoolbox',
     license='GPL2',
-    packages=find_packages('src'),
-    package_dir = {'': 'src'},include_package_data=True,
+    packages=['wdmtoolbox'],
+    include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
     py_modules=['wdmutil'],
