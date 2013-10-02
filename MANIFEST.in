@@ -1,5 +1,4 @@
 include *.txt
-include apps/astronomia_params.txt
 include VERSION
 include AUTHORS.rst
 include CONTRIBUTING.rst

@@ -14,7 +14,7 @@ from dateutil.parser import parse as dateparser
 # Local imports
 # Load in WDM subroutines
 import wdmtoolbox.wdmutil as wdmutil
-import tstoolbox.tsutils as tsutils
+import tsutils
 
 wdm = wdmutil.WDM()
 
