@@ -269,7 +269,7 @@ def stdtowdm(wdmpath, dsn, infile='-'):
     :param dsn: The Data Set Number in the WDM file.
     :param infile: Input filename, defaults to standard input.
     '''
-    tsd = tsutils.read_iso_ts(baker.openinput(infile))
+    tsd = tsutils.read_iso_ts(infile)
     _writetodsn(wdmpath, dsn, tsd)
 
 @baker.command
@@ -294,7 +294,7 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
         words = line.split(',')
         if len(words) == 2:
             if words[0]:
-                dates = np.append(dates, dateparser(words[0], default=datetime.datetime(2000,1,1)))
+                dates = np.append(dates, dateparser(words[0].strip(), default=datetime.datetime(2000,1,1)))
                 data = np.append(data, float(words[1]))
         elif len(words) == 7:
             for i in range(6):
