@@ -1,11 +1,10 @@
 from setuptools import setup
-import sys, os
+import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
-CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
-version=open("VERSION").readline().strip()
+version = open("VERSION").readline().strip()
 
 install_requires = [
     # List your project dependencies here.
@@ -19,33 +18,35 @@ install_requires = [
 
 
 setup(name='wdmtoolbox',
-    version=version,
-    description="Read and write Watershed Data Management (WDM) files",
-    long_description=README + '\n\n' + CHANGES,
-    classifiers=[
-      # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Science/Research',
-        'Intended Audience :: End Users/Desktop',
-        'Environment :: Console',
-        'License :: OSI Approved :: GNU General Public License (GPL)',
-        'Natural Language :: English',
-        'Operating System :: POSIX',
-        'Operating System :: Microsoft',
-        'Programming Language :: Python :: 2',
-        'Topic :: Scientific/Engineering',
-    ],
-    keywords='WDM watershed data_management data hydrology hydrological simulation fortran HSPF',
-    author='Tim Cera, P.E.',
-    author_email='tim@cerazone.net',
-    url='http://pypi.python.org/pypi/wdmtoolbox',
-    license='GPL2',
-    packages=['wdmtoolbox'],
-    include_package_data=True,
-    zip_safe=False,
-    install_requires=install_requires,
-    entry_points={
-        'console_scripts':
-            ['wdmtoolbox=wdmtoolbox:main']
-    }
-)
+      version=version,
+      description="Read and write Watershed Data Management (WDM) files",
+      long_description=README,
+      classifiers=[
+          # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+          'Development Status :: 5 - Production/Stable',
+          'Intended Audience :: Science/Research',
+          'Intended Audience :: End Users/Desktop',
+          'Intended Audience :: Developers',
+          'Environment :: Console',
+          'License :: OSI Approved :: BSD License',
+          'Natural Language :: English',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 3',
+          'Topic :: Scientific/Engineering',
+          'Topic :: Software Development :: Libraries :: Python Modules',
+          ],
+      keywords='WDM watershed data_management data hydrology hydrological simulation fortran HSPF',
+      author='Tim Cera, P.E.',
+      author_email='tim@cerazone.net',
+      url='http://pypi.python.org/pypi/wdmtoolbox',
+      license='GPL2',
+      packages=['wdmtoolbox'],
+      include_package_data=True,
+      zip_safe=False,
+      install_requires=install_requires,
+      entry_points={
+          'console_scripts':
+              ['wdmtoolbox=wdmtoolbox:main']
+      }
+      )

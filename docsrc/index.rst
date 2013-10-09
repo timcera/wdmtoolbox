@@ -22,7 +22,6 @@ Table of Contents
    readme
    contributing
    authors
-   changes
    license
 
 Indices and tables
