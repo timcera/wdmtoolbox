@@ -311,6 +311,19 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
     _writetodsn(wdmpath, dsn, dates, data)
 
 def _writetodsn(wdmpath, dsn, data):
+
+    mapcode = {365*86400: 6,
+               366*86400: 6,
+               31*86400:  5,
+               30*86400:  5,
+               29*86400:  5,
+               28*86400:  5,
+               86400:     4,
+               3600:      3,
+               60:        2,
+               1:         1
+              }
+
     # Convert string to int
     dsn = int(dsn)
     # Find ALL unique intervals in the data set and convert to seconds
@@ -334,40 +347,43 @@ def _writetodsn(wdmpath, dsn, data):
         ninterval = ninterval.keys()
         ninterval.sort()
         interval = ninterval
-    interval = interval[0]
 
-    # Have the interval in seconds, need to convert to
-    # interval identifier and calculate time step.
-    interval = np.timedelta64(interval, 's').tolist()
-    interval = interval.days*86400 + interval.seconds
-    freq = 'A'
-    tstep = 1
-    if interval < 3600 and interval % 60 == 0:
-        freq = 'T'
-        tstep = interval/60
-    elif interval < 86400 and interval % 3600 == 0:
-        freq = 'H'
-        tstep = interval/3600
-    # The DAY and MONTH tests are not the best, could be fooled by day interval
-    # with monthly/yearly time steps.
-    elif interval not in 86400*np.array([28, 29, 30, 31, 365, 366]) and interval % 86400 == 0:
-        freq = 'D'
-        tstep = interval/86400
-    elif interval in 86400*np.array([28, 29, 30, 31]):
-        freq = 'M'
-        tstep = int(round(interval/29.5))
+    # If len of intervai is STILL > than 1, must be large time spans between
+    # data.  Lets try to figure out the largest common interval that will
+    # evenly fit in the observation intervals.
+    if len(interval) > 1:
+        accumulate_freq = []
+        accumulate_tstep = []
+        for inter in interval:
+            # Have the interval in seconds, need to convert to
+            # interval identifier
+            intertmp = np.timedelta64(inter, 's').tolist()
+            intertmp = intertmp.days*86400 + intertmp.seconds
+
+            for seconds in sorted(mapcode, reverse=True):
+                freq = mapcode[seconds]
+                if intertmp % seconds == 0:
+                    accumulate_freq.append(freq)
+                    break
+
+        accumulate_freq.sort()
+        finterval = accumulate_freq[0]
+    else:
+        intertmp = np.timedelta64(interval[0], 's').tolist()
+        intertmp = intertmp.days*86400 + intertmp.seconds
+        finterval = mapcode[intertmp]
 
     # Make sure that input data interval match target DSN
     desc_dsn = _describedsn(wdmpath, dsn)
     dsntcode = desc_dsn['tcode']
-    if wdmutil.MAPFREQ[freq] != dsntcode:
+    if finterval != dsntcode:
         raise FrequencyDoesNotMatchError
 
     # Write the data...
     #data = pa.Series(data.values, data.index.values)
     # Eventually have to figure out why the following doesn't work...
     nindex = pa.date_range(data.index[0], data.index[-1],
-            freq=data.index.inferred_freq)
+            freq=wdmutil.MAPTCODE[finterval])
     data = data.reindex(nindex.values, fill_value=-999)
     wdm.write_dsn(wdmpath, dsn, data.values, data.index[0])
 

@@ -93,17 +93,23 @@ class WDM():
         # hass_ent.dll -> Windows
         flpath = find_library('hass_ent')
 
-        # Need to try this anyway because find_library does not search
-        # LD_LIBRARY_PATH on Linux
-        if flpath is None:
-            flpath = 'libhass_ent.so'
-
         if os.name == 'nt':
-            from ctypes import windll, cdll
-            self.libhass_ent = windll.LoadLibrary(flpath)
+            from ctypes import windll as loadlib
+            if flpath is None:
+                flpath = 'hass_ent.dll'
+                for lib in [r'C:\Windows\System32\hass_ent.dll',
+                            r'C:\Windows\SysWOW64\hass_ent.dll']:
+                    if os.path.exists(lib):
+                        flpath = lib
+                        break
         else:
-            from ctypes import cdll
-            self.libhass_ent = cdll.LoadLibrary(flpath)
+            from ctypes import cdll as loadlib
+            # Need to try this anyway because find_library does not search
+            # LD_LIBRARY_PATH on Linux
+            if flpath is None:
+                flpath = 'libhass_ent.so'
+
+        self.libhass_ent = loadlib.LoadLibrary(flpath)
 
         # timcvt: Convert times to account for 24 hour
         # timdif: Time difference
