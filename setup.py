@@ -1,4 +1,5 @@
 from setuptools import setup
+from numpy.distutils.core import Extension
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -11,11 +12,32 @@ install_requires = [
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
     'baker >= 1.3',
-    'python-dateutil >= 1.5',    # python-dateutil-2.0 is for Python 3.0
+    'python-dateutil >= 2.1',
     'pandas >= 0.9.0',
     'tstoolbox >= 0.5',
 ]
 
+wdm_support = Extension('wdm', [
+    'wdm_support/DTTM90.f',
+    'wdm_support/TSBUFR.f',
+    'wdm_support/UTCHAR.f',
+    'wdm_support/UTCP90.f',
+    'wdm_support/UTDATE.f',
+    'wdm_support/UTNUMB.f',
+    'wdm_support/UTWDMD.f',
+    'wdm_support/UTWDMF.f',
+    'wdm_support/UTWDT1.f',
+    'wdm_support/WDATM1.f',
+    'wdm_support/WDATM2.f',
+    'wdm_support/WDATRB.f',
+    'wdm_support/WDBTCH.f',
+    'wdm_support/WDMESS.f',
+    'wdm_support/WDMID.f',
+    'wdm_support/WDOP.f',
+    'wdm_support/WDTMS1.f',
+    'wdm_support/WDTMS2.f',
+    ],
+    include_dirs = ['wdm_support'])
 
 setup(name='wdmtoolbox',
       version=version,
@@ -45,6 +67,7 @@ setup(name='wdmtoolbox',
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
+      ext_modules=[wdm_support],
       entry_points={
           'console_scripts':
               ['wdmtoolbox=wdmtoolbox:main']
