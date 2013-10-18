@@ -61,7 +61,3 @@ Author
 Tim Cera, P.E.
 
 tim at cerazone dot net
-
-Please send me a note if you find this useful, found a bug, submit a patch,
-...etc.
-
