@@ -18,12 +18,15 @@ import tsutils
 
 wdm = wdmutil.WDM()
 
+
 # Errors
 class DSNDoesNotExist(Exception):
     pass
 
+
 class FrequencyDoesNotMatchError(Exception):
     pass
+
 
 class MissingValuesInInputError(Exception):
     pass
@@ -42,6 +45,7 @@ def _find_gcf(dividend, divisor):
     gcf = divisor
     return divisor
 
+
 # Foundation functions that allow other functions to print or use the returned
 def _describedsn(wdmpath, dsn):
     try:
@@ -49,10 +53,12 @@ def _describedsn(wdmpath, dsn):
     except:
         return None
 
+
 def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
     wdm.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
     nts = wdm.read_dsn(inwdmpath, indsn)
     wdm.write_dsn(outwdmpath, int(outdsn), nts.values, nts.index[0])
+
 
 @baker.command
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
@@ -62,7 +68,19 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
     :param outwdmpath: Path to clean copy WDM file (<64 characters).
     :param outdsn: Target DSN.
     '''
-    _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn)
+    if inwdmpath == outwdmpath:
+        import tempfile
+        import os
+        tempdir = tempfile.mkdtemp()
+        tmpwdmpath = os.path.join(tempdir, 'temp.wdm')
+        createnewwdm(tmpwdmpath)
+        _copy_dsn(inwdmpath, indsn, tmpwdmpath, outdsn)
+        _copy_dsn(tmpwdmpath, outdsn, outwdmpath, outdsn)
+        os.remove(tmpwdmpath)
+        os.removedirs(tempdir)
+    else:
+        _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn)
+
 
 @baker.command
 def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
@@ -75,7 +93,7 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
         raise ValueError('The "inwdmpath" cannot be the same as "outwdmpath"')
     createnewwdm(outwdmpath, overwrite=overwrite)
     activedsn = []
-    for i in range(1,32001):
+    for i in range(1, 32001):
         try:
             activedsn.append(_describedsn(inwdmpath, i)['dsn'])
         except TypeError:
@@ -94,6 +112,7 @@ def renumberdsn(wdmpath, olddsn, newdsn):
     '''
     wdm.renumber_dsn(wdmpath, olddsn, newdsn)
 
+
 @baker.command
 def deletedsn(wdmpath, dsn):
     ''' Delete DSN
@@ -101,6 +120,7 @@ def deletedsn(wdmpath, dsn):
     :param dsn: DSN to delete.
     '''
     wdm.delete_dsn(wdmpath, dsn)
+
 
 @baker.command
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
@@ -113,7 +133,8 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     start_date = kwds.setdefault('start_date', None)
     end_date = kwds.setdefault('end_date', None)
 
-    # Need to make sure that all DSNs are the same interval and all are within start and end dates.
+    # Need to make sure that all DSNs are the same interval and all are within
+    # start and end dates.
     collect_tcodes = {}
     collect_tsteps = {}
     collect_keys = []
@@ -133,9 +154,12 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     collected_end_dates = []
     collected_ts = {}
     for dsn, location in collect_keys:
-        collected_ts[(dsn,location)] = wdm.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
-        collected_start_dates.append(collected_ts[(dsn,location)].dates[0])
-        collected_end_dates.append(collected_ts[(dsn,location)].dates[-1])
+        collected_ts[(dsn, location)] = wdm.read_dsn(wdmpath,
+                                                     int(dsn),
+                                                     start_date=start_date,
+                                                     end_date=end_date)
+        collected_start_dates.append(collected_ts[(dsn, location)].dates[0])
+        collected_end_dates.append(collected_ts[(dsn, location)].dates[-1])
     stdate = max(collected_start_dates)
     endate = min(collected_end_dates)
 
@@ -155,13 +179,15 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     for dsn, location in collect_keys:
         print(str(dsn) + '_' + location)
     print('Node Year Mon Day Hr Min Sec Flow')
-    # Can pick any time series because they should all have the same interval and start and end dates.
+    # Can pick any time series because they should all have the same interval
+    # and start and end dates.
     for date in collected_ts[collect_keys[0]].dates:
         for dsn, location in collect_keys:
             print('{0}_{1}  {2}  {3:02}  {4:02}  {5:02}  {6:02}  {7:02}  {8:f}'.format(dsn, location, date.year, date.month, date.day, date.hour, date.minute, date.second, collected_ts[(dsn, location)][date]))
 
+
 @baker.command
-def wdmtostd(wdmpath, *dsns, **kwds): #start_date=None, end_date=None):
+def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsns:     The Data Set Numbers in the WDM file.
@@ -174,14 +200,24 @@ def wdmtostd(wdmpath, *dsns, **kwds): #start_date=None, end_date=None):
         kwds_list = kwds.keys()
         kwds_list.remove('start_date')
         kwds_list.remove('end_date')
-        raise ValueError('The only allowed keywords are "--start_date=..." and "--end_date=...". You passed in {0}'.format(kwds_list))
-    for index,dsn in enumerate(dsns):
-        nts = wdm.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
+        raise ValueError('''
+
+    The only allowed keywords are "--start_date=..." and "--end_date=...". You
+    passed in {0}
+
+'''.format(kwds_list))
+
+    for index, dsn in enumerate(dsns):
+        nts = wdm.read_dsn(wdmpath,
+                           int(dsn),
+                           start_date=start_date,
+                           end_date=end_date)
         if index == 0:
             result = nts
         else:
             result = result.join(nts, how='outer')
     tsutils.printiso(result)
+
 
 @baker.command
 def describedsn(wdmpath, dsn):
@@ -191,16 +227,18 @@ def describedsn(wdmpath, dsn):
     '''
     print(_describedsn(wdmpath, dsn))
 
+
 @baker.command
 def listdsns(wdmpath):
     ''' Prints out a table describing all DSNs in the WDM.
     :param wdmpath: Path and WDM filename (<64 characters).
     '''
     print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format('DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE', 'END DATE', 'TCODE', 'TSTEP'))
-    for i in range(1,32001):
+    for i in range(1, 32001):
         testv = _describedsn(wdmpath, i)
         if testv:
             print('{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv))
+
 
 @baker.command
 def createnewwdm(wdmpath, overwrite=False):
@@ -210,23 +248,33 @@ def createnewwdm(wdmpath, overwrite=False):
     '''
     wdm.create_new_wdm(wdmpath, overwrite=overwrite)
 
+
 @baker.command
-def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1, statid='', scenario='', location='', description='', constituent='', tsfill=-999.0):
+def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
+                 statid='', scenario='', location='', description='',
+                 constituent='', tsfill=-999.0):
     ''' Create a new DSN.
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: The Data Set Number in the WDM file.
     :param tstype: Time series type, defaults to ''.
     :param base_year: Base year of time series, defaults to 1900.
-    :param tcode: Time series code, (1=second, 2=minute, 3=hour, 4=day, 5=month, 6= year) defaults to 4 = daily.
+    :param tcode: Time series code, (1=second, 2=minute, 3=hour, 4=day,
+                  5=month, 6= year) defaults to 4 = daily.
     :param tsstep: Time series steps, defaults (and almost always is) 1.
     :param statid: The station name, defaults to ''.
     :param scenario: The name of the the scenario, defaults to ''.
     :param location: The location, defaults to ''.
     :param description: Descriptive text, defaults to ''.
-    :param constituent: The constituent that the time series represents, defaults to ''.
+    :param constituent: The constituent that the time series represents,
+                        defaults to ''.
     :param tsfill: The value used as placeholder for missing values.
     '''
-    wdm.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year, tcode=tcode, tsstep=tsstep, statid=statid, scenario=scenario, location=location, description=description, constituent=constituent, tsfill=tsfill)
+    wdm.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year,
+                       tcode=tcode, tsstep=tsstep, statid=statid,
+                       scenario=scenario, location=location,
+                       description=description, constituent=constituent,
+                       tsfill=tsfill)
+
 
 @baker.command
 def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
@@ -234,11 +282,12 @@ def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: The Data Set Number in the WDM file.
     :param input: Input filename, defaults to standard input.
-    :param start_century: Since 2 digit years are used, need century, defaults to 1900.
+    :param start_century: Since 2 digit years are used, need century, defaults
+                          to 1900.
     '''
     dsn = int(dsn)
     import numpy as np
-    if isinstance(input, basestring):
+    if isinstance(input, str):
         input = open(input, 'r')
     dates = np.array([])
     data = np.array([])
@@ -254,13 +303,17 @@ def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
         data = np.append(data, [float(i) for i in words[4:16]])
         try:
             if ampmflag == 1:
-                dates = np.append(dates, [datetime.datetime(year, month, day, i) for i in range(0,12)])
+                dates = np.append(dates,
+                                  [datetime.datetime(year, month, day, i)
+                                   for i in range(0, 12)])
             if ampmflag == 2:
-                dates = np.append(dates, [datetime.datetime(year, month, day, i) for i in range(12,24)])
-                #dates = np.append(dates, datetime.datetime(year, month, day, 23) + datetime.timedelta(hours = 1))
+                dates = np.append(dates,
+                                  [datetime.datetime(year, month, day, i)
+                                   for i in range(12, 24)])
         except ValueError:
             print(start_century, line)
     _writetodsn(wdmpath, dsn, dates, data)
+
 
 @baker.command
 def stdtowdm(wdmpath, dsn, infile='-'):
@@ -271,6 +324,7 @@ def stdtowdm(wdmpath, dsn, infile='-'):
     '''
     tsd = tsutils.read_iso_ts(infile)
     _writetodsn(wdmpath, dsn, tsd)
+
 
 @baker.command
 def csvtowdm(wdmpath, dsn, input=sys.stdin):
@@ -284,7 +338,7 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
     :param input: Input filename, defaults to standard input.
     '''
     import numpy as np
-    if isinstance(input, basestring):
+    if isinstance(input, str):
         input = open(input, 'r')
     dates = np.array([])
     data = np.array([])
@@ -294,7 +348,9 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
         words = line.split(',')
         if len(words) == 2:
             if words[0]:
-                dates = np.append(dates, dateparser(words[0].strip(), default=datetime.datetime(2000,1,1)))
+                dates = np.append(dates,
+                                  dateparser(words[0].strip(),
+                                             default=datetime.datetime(2000, 1, 1)))
                 data = np.append(data, float(words[1]))
         elif len(words) == 7:
             for i in range(6):
@@ -310,8 +366,8 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
     data = data[sorted_indices]
     _writetodsn(wdmpath, dsn, dates, data)
 
-def _writetodsn(wdmpath, dsn, data):
 
+def _writetodsn(wdmpath, dsn, data):
     mapcode = {365*86400: 6,
                366*86400: 6,
                31*86400:  5,
@@ -322,13 +378,12 @@ def _writetodsn(wdmpath, dsn, data):
                3600:      3,
                60:        2,
                1:         1
-              }
+               }
 
     # Convert string to int
     dsn = int(dsn)
     # Find ALL unique intervals in the data set and convert to seconds
     import numpy as np
-    import numpy.ma as ma
     import pandas as pa
 
     interval = np.unique(data.index.values[1:] - data.index.values[:-1])
@@ -353,7 +408,6 @@ def _writetodsn(wdmpath, dsn, data):
     # evenly fit in the observation intervals.
     if len(interval) > 1:
         accumulate_freq = []
-        accumulate_tstep = []
         for inter in interval:
             # Have the interval in seconds, need to convert to
             # interval identifier
@@ -383,10 +437,10 @@ def _writetodsn(wdmpath, dsn, data):
     #data = pa.Series(data.values, data.index.values)
     # Eventually have to figure out why the following doesn't work...
     nindex = pa.date_range(data.index[0], data.index[-1],
-            freq=wdmutil.MAPTCODE[finterval])
+                           freq=wdmutil.MAPTCODE[finterval])
     data = data.reindex(nindex.values, fill_value=-999)
     wdm.write_dsn(wdmpath, dsn, data.values, data.index[0])
 
+
 def main():
     baker.run()
-

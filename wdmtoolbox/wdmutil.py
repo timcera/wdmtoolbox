@@ -1,58 +1,43 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 from __future__ import print_function
 
 '''
 The WDM class supplies a series of utilities for working with WDM files
-with Python.  The class uses ctypes to wrap a specially aggregated library
-of WDM subroutines called 'libhass_ent'.  The aggregation of component libraries
-'adwdm', 'aide', 'stats', 'util', and 'wdm' is necessary to capture all
-possible subroutine calls since ctypes does not allow bringing in more than
-one library.
+with Python.  The class uses f2py to wrap the minimally necessary WDM
+routines.
 '''
 
-from ctypes import c_int, c_float, c_char, byref
-from ctypes.util import find_library
 import datetime
 import os
 import os.path
 import re
+import sys
 
 import pandas as pd
+
+import wdm
 
 # Load in WDM subroutines
 
 # Mapping between WDM TCODE and pandas interval code
 MAPTCODE = {
-            1: 'S',
-            2: 'T',
-            3: 'H',
-            4: 'D',
-            5: 'M',
-            6: 'A',
-            }
+    1: 'S',
+    2: 'T',
+    3: 'H',
+    4: 'D',
+    5: 'M',
+    6: 'A',
+    }
 
 MAPFREQ = {
-           'S': 1,
-           'T': 2,
-           'H': 3,
-           'D': 4,
-           'M': 5,
-           'A': 6,
-           }
-
-# Setup some WDM variables
-RETCODE = c_int(1)
-TSTEP = c_int(1)
-TCODE = c_int(1)
-TSFILL = c_float(1)
-ITERM = c_int(1)
-DTRAN = c_int(0)
-QUALFG = c_int(30)
-FDATE = c_int * 6
-LLSDAT = FDATE()
-LLEDAT = FDATE()
-AFILE = c_char*64
+    'S': 1,
+    'T': 2,
+    'H': 3,
+    'D': 4,
+    'M': 5,
+    'A': 6,
+    }
 
 
 class WDMError(Exception):
@@ -87,29 +72,6 @@ class WDM():
     ''' Class to open and read from WDM files.
     '''
     def __init__(self, libhass_entpath=None):
-        ''' Load libhass_ent and initialize WDM environment.
-        '''
-        # libhass_ent.so -> Linux/Unix library
-        # hass_ent.dll -> Windows
-        flpath = find_library('hass_ent')
-
-        if os.name == 'nt':
-            from ctypes import windll as loadlib
-            if flpath is None:
-                flpath = 'hass_ent.dll'
-                for lib in [r'C:\Windows\System32\hass_ent.dll',
-                            r'C:\Windows\SysWOW64\hass_ent.dll']:
-                    if os.path.exists(lib):
-                        flpath = lib
-                        break
-        else:
-            from ctypes import cdll as loadlib
-            # Need to try this anyway because find_library does not search
-            # LD_LIBRARY_PATH on Linux
-            if flpath is None:
-                flpath = 'libhass_ent.so'
-
-        self.libhass_ent = loadlib.LoadLibrary(flpath)
 
         # timcvt: Convert times to account for 24 hour
         # timdif: Time difference
@@ -126,71 +88,35 @@ class WDM():
         # wddsdl: Delete a DSN
         # wddscl: Copy a label
 
-        # hass_ent.dll has different names than libhass_ent.so on Linux
-        if os.name == 'posix':
-            wdbfin = self.libhass_ent.f90_wdbfin_
-            self.timcvt = self.libhass_ent.f90_timcvt_
-            self.timdif = self.libhass_ent.f90_timdif_
-            self.wdbopn = self.libhass_ent.f90_wdbopn_
-            self.wdbsac = self.libhass_ent.f90_wdbsac_
-            self.wdbsai = self.libhass_ent.f90_wdbsai_
-            self.wdbsar = self.libhass_ent.f90_wdbsar_
-            self.wdbsgc = self.libhass_ent.f90_wdbsgc_xx_
-            self.wdbsgi = self.libhass_ent.f90_wdbsgi_
-            self.wdbsgr = self.libhass_ent.f90_wdbsgr_
-            self.wdckdt = self.libhass_ent.f90_wdckdt_
-            self.wdflcl = self.libhass_ent.f90_wdflcl_
-            self.wdlbax = self.libhass_ent.f90_wdlbax_
-            self.wdtget = self.libhass_ent.f90_wdtget_
-            self.wdtput = self.libhass_ent.f90_wdtput_
-            self.wtfndt = self.libhass_ent.f90_wtfndt_
-            self.wddsrn = self.libhass_ent.f90_wddsrn_
-            self.wddsdl = self.libhass_ent.f90_wddsdl_
-            self.wddscl = self.libhass_ent.f90_wddscl_
-        if os.name == 'nt':
-            wdbfin = self.libhass_ent.F90_WDBFIN
-            self.timcvt = self.libhass_ent.F90_TIMCVT
-            self.timdif = self.libhass_ent.F90_TIMDIF
-            self.wdbopn = self.libhass_ent.F90_WDBOPN
-            self.wdbsac = self.libhass_ent.F90_WDBSAC
-            self.wdbsai = self.libhass_ent.F90_WDBSAI
-            self.wdbsar = self.libhass_ent.F90_WDBSAR
-            self.wdbsgc = self.libhass_ent.F90_WDBSGC_XX
-            self.wdbsgi = self.libhass_ent.F90_WDBSGI
-            self.wdbsgr = self.libhass_ent.F90_WDBSGR
-            self.wdckdt = self.libhass_ent.F90_WDCKDT
-            self.wdflcl = self.libhass_ent.F90_WDFLCL
-            self.wdlbax = self.libhass_ent.F90_WDLBAX
-            self.wdtget = self.libhass_ent.F90_WDTGET
-            self.wdtput = self.libhass_ent.F90_WDTPUT
-            self.wtfndt = self.libhass_ent.F90_WTFNDT
-            self.wddsrn = self.libhass_ent.F90_WDDSRN
-            self.wddsdl = self.libhass_ent.F90_WDDSDL
-            self.wddscl = self.libhass_ent.F90_WDDSCL
-
-        # Initialize WDM environment
-        wdbfin()
+        self.timcvt = wdm.timcvt
+        self.timdif = wdm.timdif
+        self.wdbopn = wdm.wdbopn
+        self.wdbsac = wdm.wdbsac
+        self.wdbsai = wdm.wdbsai
+        self.wdbsar = wdm.wdbsar
+        self.wdbsgc = wdm.wdbsgc
+        self.wdbsgi = wdm.wdbsgi
+        self.wdbsgr = wdm.wdbsgr
+        self.wdckdt = wdm.wdckdt
+        self.wdflcl = wdm.wdflcl
+        self.wdlbax = wdm.wdlbax
+        self.wdtget = wdm.wdtget
+        self.wdtput = wdm.wdtput
+        self.wtfndt = wdm.wtfndt
+        self.wddsrn = wdm.wddsrn
+        self.wddsdl = wdm.wddsdl
+        self.wddscl = wdm.wddscl
 
         self.openfiles = {}
 
     def wmsgop(self):
         # WMSGOP is a simple open of the message file
 
-        if os.name == 'nt':
-            # The following is the default location on Windows.
-            afilename = r'C:\Basins\models\HSPF\bin\hspfmsg.wdm'
-        elif os.name == 'posix':
-            try:
-                afilename = os.path.join(
-                            os.environ['USGSHOME'],
-                            'share', 'usgs', 'message.wdm')
-            except KeyError:
-                afilename = os.path.join('usr',
-                                         'local',
-                                         'share',
-                                         'usgs',
-                                         'message.wdm')
-        return self._open(afilename, ronwfg=1)
+        afilename = os.path.join(sys.prefix,
+                                 'share',
+                                 'wdmtoolbox',
+                                 'message.wdm')
+        return self._open(afilename, 100, ronwfg=1)
 
     def dateconverter(self, datestr):
         words = re.findall(r'\d+', str(datestr))
@@ -199,165 +125,171 @@ class WDM():
         dtime[:len(words)] = words
         return dtime
 
-    def _open(self, wdmpath, ronwfg=0):
+    def _open(self, wdname, wdmsfl, ronwfg=0):
         ''' Private method to open WDM file.
         '''
-        if wdmpath not in self.openfiles:
-            assert len(wdmpath) <= 64
-            nwdmpath = '{0:64}'.format(wdmpath)
-            afile = AFILE()
-            afile.value = nwdmpath
-            wdmfp = self.wdbopn(byref(c_int(ronwfg)),
-                                byref(afile),
-                                byref(c_int(len(nwdmpath))))
-            self.openfiles[wdmpath] = c_int(wdmfp)
-        return self.openfiles[wdmpath]
+        if wdname not in self.openfiles:
+            wdname = wdname.strip()
+            assert len(wdname) <= 64
+            if ronwfg == 1:
+                if not os.path.exists(wdname):
+                    raise ValueError('''
+
+    Trying to open
+    {0}
+    in read-only mode and it cannot be found.
+
+    '''.format(wdname))
+            retcode = self.wdbopn(wdmsfl,
+                                  wdname,
+                                  ronwfg)
+            self._retcode_check(retcode, additional_info='wdbopn')
+            self.openfiles[wdname] = wdmsfl
+        return wdmsfl
 
     def _retcode_check(self, retcode, additional_info=' '):
-        if retcode.value < 0:
-            raise WDMError('WDM library function returned error code {0}. {1}'.format(retcode.value, additional_info))
+        if retcode < 0:
+            raise WDMError('''
+
+    WDM library function returned error code {0}. {1}
+
+'''.format(retcode, additional_info))
 
     def renumber_dsn(self, wdmpath, odsn, ndsn):
-        wdmfp = self._open(wdmpath)
-        odsn = c_int(int(odsn))
-        ndsn = c_int(int(ndsn))
+        odsn = int(odsn)
+        ndsn = int(ndsn)
 
-        self.wddsrn(byref(wdmfp),
-                    byref(odsn),
-                    byref(ndsn),
-                    byref(RETCODE))
-        self._retcode_check(RETCODE, additional_info='wddsrn')
+        wdmfp = self._open(wdmpath, 101)
+        retcode = self.wddsrn(
+            wdmfp,
+            odsn,
+            ndsn)
         self._close(wdmpath)
+        self._retcode_check(retcode, additional_info='wddsrn')
 
     def delete_dsn(self, wdmpath, dsn):
-        wdmfp = self._open(wdmpath)
-        dsn = c_int(int(dsn))
+        dsn = int(dsn)
 
-        if self.wdckdt(byref(wdmfp), byref(dsn)) != 0:
-            self.wddsdl(byref(wdmfp),
-                        byref(dsn),
-                        byref(RETCODE))
-            self._retcode_check(RETCODE, additional_info='wddsdl')
+        wdmfp = self._open(wdmpath, 101)
+        if self.wdckdt(wdmfp, dsn) != 0:
+            retcode = self.wddsdl(
+                wdmfp,
+                dsn)
+            self._retcode_check(retcode, additional_info='wddsdl')
         self._close(wdmpath)
 
     def copydsnlabel(self, inwdmpath, indsn, outwdmpath, outdsn):
-        inwdmfp = self._open(inwdmpath)
-        indsn = c_int(int(indsn))
-        outwdmfp = self._open(outwdmpath)
-        outdsn = c_int(int(outdsn))
-        dsntype = c_int(0)
-        self.wddscl(byref(inwdmfp),
-                    byref(indsn),
-                    byref(outwdmfp),
-                    byref(outdsn),
-                    byref(dsntype),
-                    byref(RETCODE))
-        self._retcode_check(RETCODE, additional_info='wddscl')
+        assert inwdmpath != outwdmpath
+        indsn = int(indsn)
+        outdsn = int(outdsn)
+        dsntype = 0
+        inwdmfp = self._open(inwdmpath, 101)
+        outwdmfp = self._open(outwdmpath, 102)
+        retcode = self.wddscl(
+            inwdmfp,
+            indsn,
+            outwdmfp,
+            outdsn,
+            dsntype)
         self._close(inwdmpath)
         self._close(outwdmpath)
+        self._retcode_check(retcode, additional_info='wddscl')
 
     def describe_dsn(self, wdmpath, dsn):
-        wdmfp = self._open(wdmpath)
-        dsn = c_int(int(dsn))
-        if self.wdckdt(byref(wdmfp), byref(dsn)) == 0:
+        wdmfp = self._open(wdmpath, 101)
+        if self.wdckdt(wdmfp, dsn) == 0:
             raise DSNDoesNotExist
 
-        tdsfrc = c_int(1)
-        self.wtfndt(byref(wdmfp),
-                    byref(dsn),
-                    byref(c_int(1)),  # GPFLG  - get(1)/put(2) flag
-                    byref(tdsfrc),    # TDSFRC - data-set first record number
-                    byref(LLSDAT),    # SDAT   - starting date of data in dsn
-                    byref(LLEDAT),    # EDAT   - ending date of data in dsn
-                    byref(RETCODE))
-        # Ignore RETCODE == -6 which means that the dsn doesn't have any data.
+        tdsfrc, llsdat, lledat, retcode = self.wtfndt(
+            wdmfp,
+            dsn,
+            1)  # GPFLG  - get(1)/put(2) flag
+        # Ignore retcode == -6 which means that the dsn doesn't have any data.
         # It it is a new dsn, of course it doesn't have any data.
-        if RETCODE.value == -6:
-            RETCODE.value = 0
-        self._retcode_check(RETCODE, additional_info='wtfndt')
-        self.timcvt(byref(LLSDAT))
-        self.timcvt(byref(LLEDAT))
+        if retcode == -6:
+            retcode = 0
+        self._retcode_check(retcode, additional_info='wtfndt')
+
+        tstep, retcode = self.wdbsgi(
+            wdmfp,
+            dsn,
+            33,  # saind = 33 for time step
+            1)   # salen
+        self._retcode_check(retcode, additional_info='wdbsgi')
+
+        tcode, retcode = self.wdbsgi(
+            wdmfp,
+            dsn,
+            17,  # saind = 17 for time code
+            1)   # salen
+        self._retcode_check(retcode, additional_info='wdbsgi')
+
+        tsfill, retcode = self.wdbsgr(
+            wdmfp,
+            dsn,
+            32,  # saind = 32 for tsfill
+            1)   # salen
+        # retcode = -107 if attribute not present
+        if retcode == -107:
+            # Since I use tsfill if not found will set to default.
+            tsfill = -999.0
+            retcode = 0
+        else:
+            tsfill = tsfill[0]
+        self._retcode_check(retcode, additional_info='wdbsgr')
+
+        ostr, retcode = self.wdbsgc(
+            wdmfp,
+            dsn,
+            290,    # saind = 290 for location
+            8)      # salen
+        self._retcode_check(retcode, additional_info='wdbsgr')
+
+        scen_ostr, retcode = self.wdbsgc(
+            wdmfp,
+            dsn,
+            288,    # saind = 288 for scenario
+            8)      # salen
+        self._retcode_check(retcode, additional_info='wdbsgr')
+
+        con_ostr, retcode = self.wdbsgc(
+            wdmfp,
+            dsn,
+            289,    # saind = 289 for constitiuent
+            8)      # salen
+        self._retcode_check(retcode, additional_info='wdbsgr')
+
+        self._close(wdmpath)
+
+        self.timcvt(llsdat)
+        self.timcvt(lledat)
         try:
-            sdate = datetime.datetime(*LLSDAT[:]).isoformat()
+            sdate = datetime.datetime(*llsdat).isoformat()
         except ValueError:
             sdate = None
         try:
-            edate = datetime.datetime(*LLEDAT[:]).isoformat()
+            edate = datetime.datetime(*lledat).isoformat()
         except ValueError:
             edate = None
 
-        self.wdbsgi(byref(wdmfp),
-                    byref(dsn),
-                    byref(c_int(33)),  # saind = 33 for time step
-                    byref(c_int(1)),   # salen
-                    byref(TSTEP),
-                    byref(RETCODE))
-        self._retcode_check(RETCODE, additional_info='wdbsgi')
+        tstep = tstep[0]
+        tcode = tcode[0]
+        ostr = ''.join(ostr.tolist())
+        scen_ostr = ''.join(scen_ostr.tolist())
+        con_ostr = ''.join(con_ostr.tolist())
 
-        self.wdbsgi(byref(wdmfp),
-                    byref(dsn),
-                    byref(c_int(17)),  # saind = 17 for time code
-                    byref(c_int(1)),   # salen
-                    byref(TCODE),
-                    byref(RETCODE))
-        self._retcode_check(RETCODE, additional_info='wdbsgi')
-
-        self.wdbsgr(byref(wdmfp),
-                    byref(dsn),
-                    byref(c_int(32)),  # saind = 32 for tsfill
-                    byref(c_int(1)),   # salen
-                    byref(TSFILL),
-                    byref(RETCODE))
-        # RETCODE = -107 if attribute not present
-        if RETCODE.value == -107:
-            # Since I use TSFILL if not found will set to default.
-            TSFILL.value = -999.0
-            RETCODE.value = 0
-        self._retcode_check(RETCODE, additional_info='wdbsgr')
-
-        salen = 8
-        sints = c_int * salen
-        ostr = sints()
-        self.wdbsgc(byref(wdmfp),
-                    byref(dsn),
-                    byref(c_int(290)),    # saind = 290 for location
-                    byref(c_int(salen)),  # salen
-                    byref(ostr))
-        ostr = ''.join([chr(i) for i in ostr[:] if i != 0])
-
-        salen = 8
-        sints = c_int * salen
-        scen_ostr = sints()
-        self.wdbsgc(byref(wdmfp),
-                    byref(dsn),
-                    byref(c_int(288)),    # saind = 288 for scenario
-                    byref(c_int(salen)),  # salen
-                    byref(scen_ostr))
-        scen_ostr = ''.join([chr(i) for i in scen_ostr[:] if i != 0])
-
-        salen = 8
-        sints = c_int * salen
-        con_ostr = sints()
-        self.wdbsgc(byref(wdmfp),
-                    byref(dsn),
-                    byref(c_int(289)),    # saind = 289 for constitiuent
-                    byref(c_int(salen)),  # salen
-                    byref(con_ostr))
-        con_ostr = ''.join([chr(i) for i in con_ostr[:] if i != 0])
-
-        return {'dsn':         dsn.value,
+        return {'dsn':         dsn,
                 'start_date':  sdate,
                 'end_date':    edate,
-                'LLSDAT':      LLSDAT[:],
-                'LLEDAT':      LLEDAT[:],
-                'tstep':       TSTEP.value,
-                'tcode':       TCODE.value,
-                'tcode_name':  MAPTCODE[TCODE.value],
+                'llsdat':      llsdat,
+                'lledat':      lledat,
+                'tstep':       tstep,
+                'tcode':       tcode,
+                'tcode_name':  MAPTCODE[tcode],
                 'location':    ostr.strip(),
                 'scenario':    scen_ostr.strip(),
                 'constituent': con_ostr.strip(),
-                'tsfill':      TSFILL.value}
-        self._close(wdmpath)
+                'tsfill':      tsfill}
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         ''' Create a new WDM fileronwfg
@@ -367,88 +299,85 @@ class WDM():
         elif os.path.exists(wdmpath):
             raise WDMFileExists(wdmpath)
         ronwfg = 2
-        wdmfp = self._open(wdmpath, ronwfg=ronwfg)
+        wdmfp = self._open(wdmpath, 101, ronwfg=ronwfg)
         self._close(wdmpath)
 
-    def create_new_dsn(self, wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1, statid='', scenario='', location='', description='', constituent='', tsfill=-999.0):
+    def create_new_dsn(self, wdmpath, dsn, tstype='', base_year=1900, tcode=4,
+                       tsstep=1, statid=' ', scenario='', location='',
+                       description='', constituent='', tsfill=-999.0):
         ''' Create self.wdmfp/dsn. '''
-        wdmfp = self._open(wdmpath)
+        wdmfp = self._open(wdmpath, 101)
         messfp = self.wmsgop()
-        dsn = c_int(int(dsn))
 
-        if self.wdckdt(byref(wdmfp), byref(dsn)) == 1:
-            raise DSNExistsError(dsn.value)
+        if self.wdckdt(wdmfp, dsn) == 1:
+            raise DSNExistsError(dsn)
 
         # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
-        self.wdlbax(byref(wdmfp),
-                    byref(dsn),
-                    byref(c_int(1)),    # DSTYPE - always 1 for time series
-                    byref(c_int(10)),   # NDN    - number of down pointers
-                    byref(c_int(10)),   # NUP    - number of up pointers
-                    byref(c_int(30)),   # NSA    - number of search attributes
-                    byref(c_int(100)),  # NSASP  - amount of search attribute space
-                    byref(c_int(300)),  # NDP    - number of data pointers
-                    byref(c_int(1)))    # PSA    - pointer to search attribute space
-        self._retcode_check(RETCODE, additional_info='wdlbax')
+        psa = self.wdlbax(
+            wdmfp,
+            dsn,
+            1,    # DSTYPE - always 1 for time series
+            10,   # NDN    - number of down pointers
+            10,   # NUP    - number of up pointers
+            30,   # NSA    - number of search attributes
+            100,  # NSASP  - amount of search attribute space
+            300)  # NDP    - number of data pointers
+                  # PSA    - pointer to search attribute space
 
-        for saind, salen, val in [(34, 1, 6),  # tgroup
-                                  (83, 1, 1),  # compfg
-                                  (84, 1, 1),  # tsform
-                                  (85, 1, 1),  # vbtime
-                                  (17, 1, int(tcode)),  # tcode
-                                  (33, 1, int(tsstep)),  # tsstep
-                                  (27, 1, int(base_year)),  # tsbyr
-                                 ]:
-            saind = c_int(saind)
-            salen = c_int(salen)
-            val = c_int(val)
-            self.wdbsai(byref(wdmfp),
-                        byref(dsn),
-                        byref(messfp),
-                        byref(saind),
-                        byref(salen),
-                        byref(val),
-                        byref(RETCODE))
-            self._retcode_check(RETCODE, additional_info='wdbsai')
+        for saind, salen, saval in [(34, 1, 6),  # tgroup
+                                    (83, 1, 1),  # compfg
+                                    (84, 1, 1),  # tsform
+                                    (85, 1, 1),  # vbtime
+                                    (17, 1, int(tcode)),  # tcode
+                                    (33, 1, int(tsstep)),  # tsstep
+                                    (27, 1, int(base_year)),  # tsbyr
+                                    ]:
+            retcode = self.wdbsai(
+                wdmfp,
+                dsn,
+                messfp,
+                saind,
+                salen,
+                saval)
+            self._retcode_check(retcode, additional_info='wdbsai')
 
-        for saind, salen, val in [(32, 1, tsfill)]:  # tsfill
-            saind = c_int(saind)
-            salen = c_int(salen)
-            val = c_float(val)
-            self.wdbsar(byref(wdmfp),
-                        byref(dsn),
-                        byref(messfp),
-                        byref(saind),
-                        byref(salen),
-                        byref(val),
-                        byref(RETCODE))
-            self._retcode_check(RETCODE, additional_info='wdbsar')
+        for saind, salen, saval in [(32, 1, tsfill)]:  # tsfill
+            retcode = self.wdbsar(
+                wdmfp,
+                dsn,
+                messfp,
+                saind,
+                salen,
+                saval)
+            self._retcode_check(retcode, additional_info='wdbsar')
 
-        for saind, salen, val, error_name in [(2, 16, statid, 'Station ID'),
-                                  (1, 4, tstype.upper(), 'Time series type - tstype'),
-                                  (45, 48, description.upper(), 'Description'),
-                                  (288, 8, scenario.upper(), 'Scenario'),
-                                  (289, 8, constituent.upper(), 'Constituent'),
-                                  (290, 8, location.upper(), 'Location'),
-                                 ]:
-            saind = c_int(saind)
-            ostring = c_char * salen
-            ostr = ostring()
-            try:
-                ostr.value = '{0:{1}}'.format(val, salen)
-            except ValueError:
-                raise ValueError('String "{0}" is too long for {1}.  Must have a length equal or less than {2}.'.format(val, error_name, salen))
+        for saind, salen, saval, error_name in [
+            (2, 16, statid, 'Station ID'),
+            (1, 4, tstype.upper(), 'Time series type - tstype'),
+            (45, 48, description.upper(), 'Description'),
+            (288, 8, scenario.upper(), 'Scenario'),
+            (289, 8, constituent.upper(), 'Constituent'),
+            (290, 8, location.upper(), 'Location'),
+                ]:
+            saval = saval.strip()
+            if len(saval) > salen:
+                raise ValueError('''
 
-            salen = c_int(salen)
-            self.wdbsac(byref(wdmfp),
-                        byref(dsn),
-                        byref(messfp),
-                        byref(saind),
-                        byref(salen),
-                        byref(RETCODE),
-                        byref(ostr),
-                        byref(salen))
-            self._retcode_check(RETCODE, additional_info='wdbsac')
+    String "{0}" is too long for {1}.  Must
+    have a length equal or less than {2}.
+
+'''.format(saval, error_name, salen))
+
+            saval = '{0: <{1}}'.format(saval, salen)
+
+            retcode = self.wdbsac(
+                wdmfp,
+                dsn,
+                messfp,
+                saind,
+                salen,
+                saval)
+            self._retcode_check(retcode, additional_info='wdbsac')
         self._close(wdmpath)
 
     def _tcode_date(self, tcode, date):
@@ -470,101 +399,95 @@ class WDM():
 
     def write_dsn(self, wdmpath, dsn, data, start_date):
         ''' Write to self.wdmfp/dsn the time-series data. '''
-        wdmfp = self._open(wdmpath)
         dsn_desc = self.describe_dsn(wdmpath, dsn)
-        TCODE.value = dsn_desc['tcode']
-        TSTEP.value = dsn_desc['tstep']
+        tcode = dsn_desc['tcode']
+        tstep = dsn_desc['tstep']
 
         dstart_date = start_date.timetuple()[:6]
-        LLSDAT[:] = self._tcode_date(TCODE.value, dstart_date)
+        llsdat = self._tcode_date(tcode, dstart_date)
 
-        nvals = c_int(len(data))
-        # Create array to hold the time series data
-        arrsize = c_float * len(data)
-        # Might be a better way, but this works....
-        dataout = arrsize()
-        dataout[:] = data
-        self.wdtput(byref(wdmfp),
-                    byref(c_int(dsn)),
-                    byref(TSTEP),
-                    byref(LLSDAT),
-                    byref(nvals),
-                    byref(c_int(1)),
-                    byref(c_int(0)),
-                    byref(TCODE),
-                    byref(dataout),
-                    byref(RETCODE))
-        self._retcode_check(RETCODE, additional_info='wdtput')
+        nval = len(data)
+
+        wdmfp = self._open(wdmpath, 101)
+        retcode = self.wdtput(
+            wdmfp,
+            dsn,
+            tstep,
+            llsdat,
+            nval,
+            1,
+            0,
+            tcode,
+            data)
         self._close(wdmpath)
+        self._retcode_check(retcode, additional_info='wdtput')
 
     def read_dsn(self, wdmpath, dsn, start_date=None, end_date=None):
         ''' Read from a DSN.
         '''
 
-        wdmfp = self._open(wdmpath)
         # Call wdatim_ to get LLSDAT, LLEDAT, TSTEP, TCODE
         desc_dsn = self.describe_dsn(wdmpath, dsn)
 
-        LLSDAT[:] = desc_dsn['LLSDAT']
-        LLEDAT[:] = desc_dsn['LLEDAT']
-        TCODE.value = desc_dsn['tcode']
-        TSTEP.value = desc_dsn['tstep']
-
-        dsn = c_int(int(dsn))
-        self._retcode_check(RETCODE, additional_info='wdatim')
+        llsdat = desc_dsn['llsdat']
+        lledat = desc_dsn['lledat']
+        tcode = desc_dsn['tcode']
+        tstep = desc_dsn['tstep']
 
         # These calls convert 24 to midnight of the next day
-        self.timcvt(byref(LLSDAT))
-        self.timcvt(byref(LLEDAT))
+        self.timcvt(llsdat)
+        self.timcvt(lledat)
 
         if start_date is not None:
             start_date = self.dateconverter(start_date)
-            LLSDAT[:] = start_date
+            llsdat = start_date
         if end_date is not None:
             end_date = self.dateconverter(end_date)
-            LLEDAT[:] = end_date
+            lledat = end_date
 
         # Determine the number of values (ITERM) from LLSDAT to LLEDAT
-        self.timdif(byref(LLSDAT),
-                    byref(LLEDAT),
-                    byref(TCODE),
-                    byref(TSTEP),
-                    byref(ITERM))
+        iterm = self.timdif(
+            llsdat,
+            lledat,
+            tcode,
+            tstep)
 
-        # Create array to hold the time series data
-        arrsize = c_float * ITERM.value
-        dataout = arrsize()
-
+        dtran = 0
+        qualfg = 30
         # Get the data and put it into dictionary
-        self.wdtget(byref(wdmfp),
-                    byref(dsn),
-                    byref(TSTEP),
-                    byref(LLSDAT),
-                    byref(ITERM),
-                    byref(DTRAN),
-                    byref(QUALFG),
-                    byref(TCODE),
-                    byref(dataout),
-                    byref(RETCODE))
-        self._retcode_check(RETCODE, additional_info='wdtget')
+        wdmfp = self._open(wdmpath, 101)
+        dataout, retcode = self.wdtget(
+            wdmfp,
+            dsn,
+            tstep,
+            llsdat,
+            iterm,
+            dtran,
+            qualfg,
+            tcode)
+        self._close(wdmpath)
+        self._retcode_check(retcode, additional_info='wdtget')
 
         # Find the begining in datetime.datetime format
-        tstart = datetime.datetime(LLSDAT[0],
-                                   LLSDAT[1],
-                                   LLSDAT[2],
-                                   LLSDAT[3],
-                                   LLSDAT[4],
-                                   LLSDAT[5])
-
-        self._close(wdmpath)
+        tstart = datetime.datetime(llsdat[0],
+                                   llsdat[1],
+                                   llsdat[2],
+                                   llsdat[3],
+                                   llsdat[4],
+                                   llsdat[5])
 
         # Convert time series to pandas DataFrame
-        index = pd.date_range(tstart, periods=len(dataout),
-                              freq=MAPTCODE[TCODE.value])
+        index = pd.date_range(
+            tstart,
+            periods=len(dataout),
+            freq=MAPTCODE[tcode])
 
-        tmpval = pd.DataFrame(pd.Series(dataout, index=index,
-                     name='{0}_DSN_{1}'.format(os.path.basename(wdmpath),
-                     dsn.value)))
+        tmpval = pd.DataFrame(
+            pd.Series(
+                dataout,
+                index=index,
+                name='{0}_DSN_{1}'.format(
+                    os.path.basename(wdmpath), dsn)))
         return tmpval
 
     def read_dsn_por(self, wdmpath, dsn):
@@ -576,8 +499,8 @@ class WDM():
         ''' Close the WDM file.
         '''
         if wdmpath in self.openfiles:
-            RETCODE.value = self.wdflcl(byref(self.openfiles[wdmpath]))
-            self._retcode_check(RETCODE, additional_info='wdflcl')
+            retcode = self.wdflcl(self.openfiles[wdmpath])
+            self._retcode_check(retcode, additional_info='wdflcl')
             toss = self.openfiles.pop(wdmpath)
 
 

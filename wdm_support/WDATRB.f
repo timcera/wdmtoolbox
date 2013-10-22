@@ -73,6 +73,7 @@ C       attribute index not found, set output arguments to undefined
         SAUPFG= 0
       END IF
 C
+C     write(*,*) SANAM,DPTR,SATYP,SALEN,SARQWD,SAUPFG
       RETURN
       END
 C
