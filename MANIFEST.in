@@ -4,3 +4,10 @@ include AUTHORS.rst
 include CONTRIBUTING.rst
 include LICENSE.txt
 include README.rst
+include setup.py
+include setup.cfg
+include data/message.wdm
+include wdm_support/*.f
+include wdm_support/*.INC
+include wdm_support/wdm.pyf
+include wdmtoolbox/*.py
