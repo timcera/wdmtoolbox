@@ -63,6 +63,7 @@ def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
 @baker.command
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
     ''' Make a copy of a DSN.
+
     :param inwdmpath: Path to input WDM file (<64 characters).
     :param indsn: Source DSN.
     :param outwdmpath: Path to clean copy WDM file (<64 characters).
@@ -85,6 +86,7 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
 @baker.command
 def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
     ''' Make a clean copy of a WDM file.
+
     :param inwdmpath: Path to input WDM file (<64 characters).
     :param outwdmpath: Path to clean copy WDM file (<64 characters).
     :param overwrite: Whether to overwrite an existing outwdmpath.
@@ -106,6 +108,7 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
 @baker.command
 def renumberdsn(wdmpath, olddsn, newdsn):
     ''' Renumber olddsn to newdsn
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param olddsn: Old DSN to renumber.
     :param newdsn: New DSN to change old DSN to.
@@ -116,6 +119,7 @@ def renumberdsn(wdmpath, olddsn, newdsn):
 @baker.command
 def deletedsn(wdmpath, dsn):
     ''' Delete DSN
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: DSN to delete.
     '''
@@ -125,6 +129,7 @@ def deletedsn(wdmpath, dsn):
 @baker.command
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     ''' Prints out DSN data to the screen in SWMM5 RDII format.
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsns:     The Data Set Numbers in the WDM file.
     :param start_date: If not given defaults to start of data set.
@@ -189,6 +194,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
 @baker.command
 def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsns:     The Data Set Numbers in the WDM file.
     :param start_date: If not given defaults to start of data set.
@@ -216,12 +222,13 @@ def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
             result = nts
         else:
             result = result.join(nts, how='outer')
-    tsutils.printiso(result)
+    return tsutils.printiso(result)
 
 
 @baker.command
 def describedsn(wdmpath, dsn):
     ''' Prints out a description of a single DSN.
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn:     The Data Set Number in the WDM file.
     '''
@@ -231,6 +238,7 @@ def describedsn(wdmpath, dsn):
 @baker.command
 def listdsns(wdmpath):
     ''' Prints out a table describing all DSNs in the WDM.
+
     :param wdmpath: Path and WDM filename (<64 characters).
     '''
     print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format('DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE', 'END DATE', 'TCODE', 'TSTEP'))
@@ -243,6 +251,7 @@ def listdsns(wdmpath):
 @baker.command
 def createnewwdm(wdmpath, overwrite=False):
     ''' Create a new WDM file, optional to overwrite.
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param overwrite: Defaults to not overwrite existing file.
     '''
@@ -254,9 +263,11 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
                  statid='', scenario='', location='', description='',
                  constituent='', tsfill=-999.0):
     ''' Create a new DSN.
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: The Data Set Number in the WDM file.
-    :param tstype: Time series type, defaults to ''.
+    :param tstype: Time series type, defaults to first 4 characters of
+                   'constituent'.
     :param base_year: Base year of time series, defaults to 1900.
     :param tcode: Time series code, (1=second, 2=minute, 3=hour, 4=day,
                   5=month, 6= year) defaults to 4 = daily.
@@ -269,6 +280,8 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
                         defaults to ''.
     :param tsfill: The value used as placeholder for missing values.
     '''
+    if tstype == '' and len(constituent) > 0:
+        tstype = constituent[:4]
     wdm.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year,
                        tcode=tcode, tsstep=tsstep, statid=statid,
                        scenario=scenario, location=location,
@@ -279,6 +292,7 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
 @baker.command
 def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
     ''' Writes HYDHR sequential file to a DSN.
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: The Data Set Number in the WDM file.
     :param input: Input filename, defaults to standard input.
@@ -318,6 +332,7 @@ def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
 @baker.command
 def stdtowdm(wdmpath, dsn, infile='-'):
     ''' Writes data from a CSV file to a DSN.
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: The Data Set Number in the WDM file.
     :param infile: Input filename, defaults to standard input.
@@ -328,11 +343,12 @@ def stdtowdm(wdmpath, dsn, infile='-'):
 
 @baker.command
 def csvtowdm(wdmpath, dsn, input=sys.stdin):
-    ''' Writes data from a CSV file to a DSN.\n
-    File can have comma separated\n
-    'year', 'month', 'day', 'hour', 'minute', 'second', 'value'\n
-    OR\n
+    ''' Writes data from a CSV file to a DSN.
+    File can have comma separated
+    'year', 'month', 'day', 'hour', 'minute', 'second', 'value'
+    OR
     'date/time string', 'value'
+
     :param wdmpath: Path and WDM filename (<64 characters).
     :param dsn: The Data Set Number in the WDM file.
     :param input: Input filename, defaults to standard input.

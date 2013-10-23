@@ -5,17 +5,18 @@ import os
 import time
 
 def _createwdm(fname):
-    return subprocess.call(['wdmtoolbox', 'createnewwdm', fname])
+    return subprocess.call(['wdmtoolbox', 'createnewwdm',
+    '--overwrite=True', fname])
 
-def test_createwdm(tmpdir):
-    fname = str(tmpdir.join('a.wdm'))
+def test_createwdm():
+    fname = os.path.join('tests', 'a.wdm')
     assert _createwdm(fname) == 0
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
+    os.remove(fname)
 
-def test_createnewdsn_checkdefaults(tmpdir):
-    import StringIO
-    fname = str(tmpdir.join('b.wdm'))
+def test_createnewdsn_checkdefaults():
+    fname = os.path.join('tests', 'b.wdm')
     assert _createwdm(fname) == 0
     retcode = subprocess.call(['wdmtoolbox', 'createnewdsn', fname, '101'])
     assert retcode == 0
@@ -32,5 +33,4 @@ def test_createnewdsn_checkdefaults(tmpdir):
     assert p.returncode == 0
 
     assert p.stdout.readlines() == tstr
-
-
+    os.remove(fname)

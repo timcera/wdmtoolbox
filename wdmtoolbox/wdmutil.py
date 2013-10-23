@@ -71,7 +71,7 @@ class DSNExistsError(Exception):
 class WDM():
     ''' Class to open and read from WDM files.
     '''
-    def __init__(self, libhass_entpath=None):
+    def __init__(self):
 
         # timcvt: Convert times to account for 24 hour
         # timdif: Time difference
@@ -116,6 +116,7 @@ class WDM():
                                  'share',
                                  'wdmtoolbox',
                                  'message.wdm')
+        afilename = os.path.relpath(afilename)
         return self._open(afilename, 100, ronwfg=1)
 
     def dateconverter(self, datestr):
