@@ -111,12 +111,10 @@ class WDM():
 
     def wmsgop(self):
         # WMSGOP is a simple open of the message file
-
         afilename = os.path.join(sys.prefix,
                                  'share',
                                  'wdmtoolbox',
                                  'message.wdm')
-        afilename = os.path.relpath(afilename)
         return self._open(afilename, 100, ronwfg=1)
 
     def dateconverter(self, datestr):
@@ -131,7 +129,6 @@ class WDM():
         '''
         if wdname not in self.openfiles:
             wdname = wdname.strip()
-            assert len(wdname) <= 64
             if ronwfg == 1:
                 if not os.path.exists(wdname):
                     raise ValueError('''
