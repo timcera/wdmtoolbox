@@ -272,9 +272,15 @@ class WDM():
 
         tstep = tstep[0]
         tcode = tcode[0]
-        ostr = ''.join(ostr.tolist())
-        scen_ostr = ''.join(scen_ostr.tolist())
-        con_ostr = ''.join(con_ostr.tolist())
+
+        try:
+            ostr = str(ostr, "utf-8")
+            scen_ostr = str(scen_ostr, "utf-8")
+            con_ostr = str(con_ostr, "utf-8")
+        except TypeError:
+            ostr = ''.join(ostr)
+            scen_ostr = ''.join(scen_ostr)
+            con_ostr = ''.join(con_ostr)
 
         return {'dsn':         dsn,
                 'start_date':  sdate,
