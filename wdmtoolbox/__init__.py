@@ -92,7 +92,11 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
     :param overwrite: Whether to overwrite an existing outwdmpath.
     '''
     if inwdmpath == outwdmpath:
-        raise ValueError('The "inwdmpath" cannot be the same as "outwdmpath"')
+        raise ValueError('''
+*
+*   The "inwdmpath" cannot be the same as "outwdmpath".
+*
+''')
     createnewwdm(outwdmpath, overwrite=overwrite)
     activedsn = []
     for i in range(1, 32001):
@@ -207,10 +211,10 @@ def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
         kwds_list.remove('start_date')
         kwds_list.remove('end_date')
         raise ValueError('''
-
-    The only allowed keywords are "--start_date=..." and "--end_date=...". You
-    passed in {0}
-
+*
+*   The only allowed keywords are "--start_date=..." and "--end_date=...". You
+*   passed in {0}
+*
 '''.format(kwds_list))
 
     for index, dsn in enumerate(dsns):
@@ -221,7 +225,14 @@ def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
         if index == 0:
             result = nts
         else:
-            result = result.join(nts, how='outer')
+            try:
+                result = result.join(nts, how='outer')
+            except:
+                raise ValueError('''
+*
+*   The column {0} is duplicated.  Dataset names must be unique.
+*
+'''.format(nts.columns[0]))
     return tsutils.printiso(result)
 
 
@@ -459,4 +470,5 @@ def _writetodsn(wdmpath, dsn, data):
 
 
 def main():
+    sys.tracebacklimit = 0
     baker.run()

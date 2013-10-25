@@ -45,7 +45,23 @@ class WDMError(Exception):
 
 
 class DSNDoesNotExist(Exception):
-    pass
+    def __init__(self, dsn):
+        self.dsn = dsn
+
+    def __str__(self):
+        if self.dsn < 1 or self.dsn > 32000:
+            return '''
+*
+*   The DSN number must be >= 1 and <= 32000.
+*   You supplied {0}.
+*
+'''.format(self.dsn)
+
+        return '''
+*
+*   The DSN {0} does not exist in the dataset.
+*
+'''.format(self.dsn)
 
 
 class LibraryNotFoundError(Exception):
@@ -57,7 +73,11 @@ class WDMFileExists(Exception):
         self.filename = filename
 
     def __str__(self):
-        return 'File {0} exists.'.format(self.filename)
+        return '''
+*
+*   File {0} exists.
+*
+'''.format(self.filename)
 
 
 class DSNExistsError(Exception):
@@ -65,7 +85,11 @@ class DSNExistsError(Exception):
         self.dsn = dsn
 
     def __str__(self):
-        return 'DSN {0} exists.'.format(self.dsn)
+        return '''
+*
+*   DSN {0} exists.
+*
+'''.format(self.dsn)
 
 
 class WDM():
@@ -132,11 +156,11 @@ class WDM():
             if ronwfg == 1:
                 if not os.path.exists(wdname):
                     raise ValueError('''
-
-    Trying to open
-    {0}
-    in read-only mode and it cannot be found.
-
+*
+*   Trying to open
+*   {0}
+*   in read-only mode and it cannot be found.
+*
     '''.format(wdname))
             retcode = self.wdbopn(wdmsfl,
                                   wdname,
@@ -146,11 +170,87 @@ class WDM():
         return wdmsfl
 
     def _retcode_check(self, retcode, additional_info=' '):
-        if retcode < 0:
+        retcode_dict = {
+                -1: 'non specific error on WDM file open',
+                -4: 'copy/update failed due to data overlap problem - part of source needed',
+                -5: 'copy/update failed due to data overlap problem',
+                -6: 'no data present',
+                -8: 'bad dates',
+                -9: 'data present in current group',
+                -10: 'no date in this group',
+                -11: 'no non-missing data, data has not started yet',
+                -14: 'data specified not within valid range for data set',
+                -15: 'time units and time step mush match label exactly with VBTIME = 1',
+                -20: 'problem with on or more of GPGLG, DXX, NVAL, QUALVL, LTSTEP, LTUNIT',
+                -21: 'data from WDM does not match expected date',
+                -23: 'not a valid table',
+                -24: 'not a valid associated table',
+                -25: 'template already exists',
+                -26: 'can not add another table',
+                -27: 'no tables to return info about',
+                -28: 'table does not exist yet',
+                -30: 'more than whole table',
+                -31: 'more than whole extension',
+                -32: 'data header does not match',
+                -33: 'problems with row/space specs',
+                -36: 'missing needed following data for a get',
+                -37: 'no data present',
+                -38: 'missing part of time required',
+                -39: 'missing data group',
+                -40: 'no data available',
+                -41: 'no data to read',
+                -42: 'overlap in existing group',
+                -43: 'can not add another space time group',
+                -44: 'trying to get/put more data that in block',
+                -45: 'types do not match',
+                -46: 'bad space time group specification parameter',
+                -47: 'bad direction flag',
+                -48: 'conflicting spec of space time dim and number of timeseries data sets',
+                -49: 'group does not exist',
+                -50: 'requested attributes missing from this data set',
+                -51: 'no space for another DLG',
+                -61: 'old data set does not exist',
+                -62: 'new data set already exists',
+                -71: 'data set already exists',
+                -72: 'old data set does not exist',
+                -73: 'new data set already exists',
+                -81: 'data set does not exists',
+                -82: 'data set exists, but is wrong DSTYP',
+                -83: 'WDM file already open, can not create it',
+                -84: 'data set number out of valid range',
+                -85: 'trying to write to a read-only data set',
+                -87: 'can not remove message WDM file from buffer',
+                -88: 'can not open another WDM file',
+                -89: 'check digit on 1st record of WDM file is bad',
+                -101: 'incorrect character value for attribute',
+                -102: 'attribute already on label',
+                -103: 'no room on label for attribute',
+                -104: 'data present, can not update attribute',
+                -105: 'attribute not allowed for this type data set',
+                -106: 'can not delete attribute, it is required',
+                -107: 'attribute not present on this data set',
+                -108: 'incorrect integer value for attribute',
+                -109: 'incorrect real value for attribute',
+                -110: 'attributes not found on message file',
+                -111: 'attribute name not found (no match)',
+                -112: 'more attributes exists which match SAFNAM',
+                -121: 'no space for another attribute',
+                1: 'varies - generally more data/groups/table',
+                2: 'no more data available for this DLG group'
+                }
+
+        if retcode in retcode_dict:
             raise WDMError('''
-
-    WDM library function returned error code {0}. {1}
-
+*
+*   WDM library function returned error code {0}. {1}
+*   WDM error: {2}
+*
+'''.format(retcode, additional_info, retcode_dict[retcode]))
+        if retcode != 0:
+            raise WDMError('''
+*
+*   WDM library function returned error code {0}. {1}
+*
 '''.format(retcode, additional_info))
 
     def renumber_dsn(self, wdmpath, odsn, ndsn):
@@ -196,7 +296,7 @@ class WDM():
     def describe_dsn(self, wdmpath, dsn):
         wdmfp = self._open(wdmpath, 101)
         if self.wdckdt(wdmfp, dsn) == 0:
-            raise DSNDoesNotExist
+            raise DSNDoesNotExist(dsn)
 
         tdsfrc, llsdat, lledat, retcode = self.wtfndt(
             wdmfp,
@@ -366,10 +466,10 @@ class WDM():
             saval = saval.strip()
             if len(saval) > salen:
                 raise ValueError('''
-
-    String "{0}" is too long for {1}.  Must
-    have a length equal or less than {2}.
-
+*
+*   String "{0}" is too long for {1}.  Must
+*   have a length equal or less than {2}.
+*
 '''.format(saval, error_name, salen))
 
             saval = '{0: <{1}}'.format(saval, salen)
