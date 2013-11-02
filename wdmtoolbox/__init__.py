@@ -395,64 +395,13 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
 
 
 def _writetodsn(wdmpath, dsn, data):
-    mapcode = {365*86400: 6,
-               366*86400: 6,
-               31*86400:  5,
-               30*86400:  5,
-               29*86400:  5,
-               28*86400:  5,
-               86400:     4,
-               3600:      3,
-               60:        2,
-               1:         1
-               }
+    finterval = tsutils.guess_freq(data)[0]
 
     # Convert string to int
     dsn = int(dsn)
     # Find ALL unique intervals in the data set and convert to seconds
     import numpy as np
     import pandas as pa
-
-    interval = np.unique(data.index.values[1:] - data.index.values[:-1])
-    interval = [np.timedelta64(i, 's') for i in interval]
-    interval = np.array(interval)
-
-    # If there are more than one interval lets see if the are caused by
-    # missing values.  Say there is at least one 2 hour interval and at
-    # least one 1 hour interval, this should correctly say the interval
-    # is one hour.
-    ninterval = {}
-    if len(interval) > 1 and np.all(interval < np.timedelta64(28, 'D')):
-        for i, aval in enumerate(interval):
-            for j, bval in enumerate(interval[i+1:]):
-                ninterval[_find_gcf(aval, bval)] = 1
-        ninterval = ninterval.keys()
-        ninterval.sort()
-        interval = ninterval
-
-    # If len of intervai is STILL > than 1, must be large time spans between
-    # data.  Lets try to figure out the largest common interval that will
-    # evenly fit in the observation intervals.
-    if len(interval) > 1:
-        accumulate_freq = []
-        for inter in interval:
-            # Have the interval in seconds, need to convert to
-            # interval identifier
-            intertmp = np.timedelta64(inter, 's').tolist()
-            intertmp = intertmp.days*86400 + intertmp.seconds
-
-            for seconds in sorted(mapcode, reverse=True):
-                freq = mapcode[seconds]
-                if intertmp % seconds == 0:
-                    accumulate_freq.append(freq)
-                    break
-
-        accumulate_freq.sort()
-        finterval = accumulate_freq[0]
-    else:
-        intertmp = np.timedelta64(interval[0], 's').tolist()
-        intertmp = intertmp.days*86400 + intertmp.seconds
-        finterval = mapcode[intertmp]
 
     # Make sure that input data interval match target DSN
     desc_dsn = _describedsn(wdmpath, dsn)
