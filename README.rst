@@ -24,16 +24,17 @@ installed and configured for your environment.
 
 Installation
 ============
-Should be as easy as running ``easy_install wdmtoolbox`` or ``pip install
-wdmtoolbox``` at any command line.  Not sure on Windows whether this will
-bring in pandas but as mentioned above, if you start with Python(x,y) then
-you won't have a problem.
+On Windows should be as easy as running ``easy_install wdmtoolbox`` in a
+command shell window.  On Linux (and maybe even Mac OSX?) you could use either
+``pip install wdmtoolbox`` or ``easy_install wdmtoolbox`` at any terminal that
+has access to gfortran and of course your Python interpreter.  Not sure on
+Windows whether this will bring in pandas but as mentioned above, if you start
+with Python(x,y) then you won't have a problem.
 
 The wdmtoolbox script is actually made up of two parts, 'wdmtoolbox' module
 which handles all command line interaction and 'wdmutil.py' which is a library
-of functions that 'wdmtoolbox' uses.  This means that you can write your
-own scripts to access WDM files by importing the functionality from
-'wdmutil.py'.
+of functions that 'wdmtoolbox' uses.  This means that you can write your own
+scripts to access WDM files by importing the functionality from 'wdmutil.py'.
 
 Usage - Command Line
 ====================
