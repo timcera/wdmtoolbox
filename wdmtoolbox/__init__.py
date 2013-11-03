@@ -32,20 +32,6 @@ class MissingValuesInInputError(Exception):
     pass
 
 
-def _find_gcf(dividend, divisor):
-    remainder = -1
-    dividend = dividend.astype('i')
-    divisor = divisor.astype('i')
-    while remainder != 0:
-        qoutient = dividend/divisor
-        remainder = dividend%divisor
-        if remainder != 0:
-            dividend = divisor
-            divisor = remainder
-    gcf = divisor
-    return divisor
-
-
 # Foundation functions that allow other functions to print or use the returned
 def _describedsn(wdmpath, dsn):
     try:
