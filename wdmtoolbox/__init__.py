@@ -4,6 +4,7 @@
 from __future__ import print_function
 
 # Python batteries included imports
+import os
 import sys
 import datetime
 
@@ -381,7 +382,7 @@ def csvtowdm(wdmpath, dsn, input=sys.stdin):
 
 
 def _writetodsn(wdmpath, dsn, data):
-    finterval = tsutils.guess_freq(data)[0]
+    finterval,toss,tstep = tsutils.guess_freq(data)
 
     # Convert string to int
     dsn = int(dsn)
@@ -399,11 +400,12 @@ def _writetodsn(wdmpath, dsn, data):
     #data = pa.Series(data.values, data.index.values)
     # Eventually have to figure out why the following doesn't work...
     nindex = pa.date_range(data.index[0], data.index[-1],
-                           freq=wdmutil.MAPTCODE[finterval])
+            freq='{0:d}{1}'.format(tstep, wdmutil.MAPTCODE[finterval]))
     data = data.reindex(nindex.values, fill_value=-999)
     wdm.write_dsn(wdmpath, dsn, data.values, data.index[0])
 
 
 def main():
-    sys.tracebacklimit = 0
+    if not os.path.exists('debug_wdmtoolbox'):
+        sys.tracebacklimit = 0
     baker.run()

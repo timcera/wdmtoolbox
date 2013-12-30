@@ -584,7 +584,7 @@ class WDM():
         index = pd.date_range(
             tstart,
             periods=len(dataout),
-            freq=MAPTCODE[tcode])
+            freq='{0:d}{1}'.format(tstep, MAPTCODE[tcode]))
 
         tmpval = pd.DataFrame(
             pd.Series(
