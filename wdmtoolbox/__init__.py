@@ -271,7 +271,7 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
                   5=month, 6= year) defaults to 4 = daily.
     :param tsstep: Time series steps, defaults (and almost always is) 1.
     :param statid: The station name, defaults to ''.
-    :param scenario: The name of the the scenario, defaults to ''.
+    :param scenario: The name of the scenario, defaults to ''.
     :param location: The location, defaults to ''.
     :param description: Descriptive text, defaults to ''.
     :param constituent: The constituent that the time series represents,

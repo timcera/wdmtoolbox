@@ -44,7 +44,7 @@ Just run 'wdmtoolbox' to get a list of subcommands
 
 The default for all of the subcommands that accept time-series data is to pull
 from stdin (typically a pipe).  If a subcommand accepts an input file for an
-argument, you can use "--input_ts=input_file_name.csv", or to expliticly
+argument, you can use "--input_ts=input_file_name.csv", or to explicitly
 specify from stdin (the default) "--input_ts='-'".  
 
 Sub-command Detail
