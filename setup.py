@@ -20,7 +20,7 @@ install_requires = [
     'baker >= 1.3',
     'python-dateutil >= 2.1',
     'pandas >= 0.9.0',
-    'tstoolbox >= 0.7.1',
+    'tstoolbox >= 0.8',
 ]
 
 
@@ -80,6 +80,6 @@ setup(name='wdmtoolbox',
           ['data/message.wdm'])],
       entry_points={
           'console_scripts':
-          ['wdmtoolbox=wdmtoolbox:main']
+          ['wdmtoolbox=wdmtoolbox.wdmtoolbox:main']
           }
       )

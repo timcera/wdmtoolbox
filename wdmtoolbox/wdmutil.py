@@ -357,6 +357,13 @@ class WDM():
             8)      # salen
         self._retcode_check(retcode, additional_info='wdbsgr')
 
+        base_year, retcode = self.wdbsgi(
+            wdmfp,
+            dsn,
+            27,  # saind = 27 for base_year
+            1)   # salen
+        self._retcode_check(retcode, additional_info='wdbsgi')
+
         self._close(wdmpath)
 
         self.timcvt(llsdat)
@@ -372,6 +379,7 @@ class WDM():
 
         tstep = tstep[0]
         tcode = tcode[0]
+        base_year = base_year[0]
 
         try:
             ostr = str(ostr, "utf-8")
@@ -393,7 +401,8 @@ class WDM():
                 'location':    ostr.strip(),
                 'scenario':    scen_ostr.strip(),
                 'constituent': con_ostr.strip(),
-                'tsfill':      tsfill}
+                'tsfill':      tsfill,
+                'base_year':   base_year}
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         ''' Create a new WDM fileronwfg
@@ -509,6 +518,13 @@ class WDM():
 
         dstart_date = start_date.timetuple()[:6]
         llsdat = self._tcode_date(tcode, dstart_date)
+        if dsn_desc['base_year'] > llsdat[0]:
+            raise ValueError('''
+*
+*   The base year for this DSN is {0}.  All data to insert must be after the
+*   base year.  Instead the first year of the series is {1}.
+*
+'''.format(dsn_desc['base_year'], llsdat[0]))
 
         nval = len(data)
 
