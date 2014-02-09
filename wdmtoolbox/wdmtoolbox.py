@@ -59,7 +59,6 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
     '''
     if inwdmpath == outwdmpath:
         import tempfile
-        import os
         tempdir = tempfile.mkdtemp()
         tmpwdmpath = os.path.join(tempdir, 'temp.wdm')
         createnewwdm(tmpwdmpath)
@@ -157,8 +156,6 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
                                                      end_date=end_date)
         collected_start_dates.append(collected_ts[(dsn, location)].dates[0])
         collected_end_dates.append(collected_ts[(dsn, location)].dates[-1])
-    stdate = max(collected_start_dates)
-    endate = min(collected_end_dates)
 
     MAPTCODE = {
         1: 1,
@@ -180,11 +177,15 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     # and start and end dates.
     for date in collected_ts[collect_keys[0]].dates:
         for dsn, location in collect_keys:
-            print('{0}_{1}  {2}  {3:02}  {4:02}  {5:02}  {6:02}  {7:02}  {8:f}'.format(dsn, location, date.year, date.month, date.day, date.hour, date.minute, date.second, collected_ts[(dsn, location)][date]))
+            print(
+                '{0}_{1} {2} {3:02} {4:02} {5:02} {6:02} {7:02} {8:f}'.format(
+                    dsn, location, date.year, date.month, date.day, date.hour,
+                    date.minute, date.second,
+                    collected_ts[(dsn, location)][date]))
 
 
 @baker.command
-def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
+def extract(wdmpath, *dsns, **kwds):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
 
     :param wdmpath: Path and WDM filename.
@@ -225,6 +226,13 @@ def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
 
 
 @baker.command
+def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
+    ''' DEPRECATED: New scripts use 'extract'. Will be removed in the future.
+    '''
+    return extract(wdmpath, *dsns, **kwds)
+
+
+@baker.command
 def describedsn(wdmpath, dsn):
     ''' Prints out a description of a single DSN.
 
@@ -240,7 +248,9 @@ def listdsns(wdmpath):
 
     :param wdmpath: Path and WDM filename.
     '''
-    print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format('DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE', 'END DATE', 'TCODE', 'TSTEP'))
+    print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format(
+        'DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE',
+        'END DATE', 'TCODE', 'TSTEP'))
     for i in range(1, 32001):
         testv = _describedsn(wdmpath, i)
         if testv:
@@ -367,8 +377,8 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
 *
 ''')
     tsd = tsutils.date_slice(tsutils.read_iso_ts(input_ts),
-                               start_date=start_date,
-                               end_date=end_date)
+                             start_date=start_date,
+                             end_date=end_date)
 
     if len(tsd.columns) > 1:
         raise ValueError('''
@@ -382,12 +392,11 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
 
 
 def _writetodsn(wdmpath, dsn, data):
-    finterval,toss,tstep = tsutils.guess_freq(data)
+    finterval, toss, tstep = tsutils.guess_freq(data)
 
     # Convert string to int
     dsn = int(dsn)
     # Find ALL unique intervals in the data set and convert to seconds
-    import numpy as np
     import pandas as pa
 
     # Make sure that input data interval match target DSN
@@ -400,7 +409,8 @@ def _writetodsn(wdmpath, dsn, data):
     #data = pa.Series(data.values, data.index.values)
     # Eventually have to figure out why the following doesn't work...
     nindex = pa.date_range(data.index[0], data.index[-1],
-            freq='{0:d}{1}'.format(tstep, wdmutil.MAPTCODE[finterval]))
+                           freq='{0:d}{1}'.format(tstep,
+                                                  wdmutil.MAPTCODE[finterval]))
     data = data.reindex(nindex.values, fill_value=-999)
     wdm.write_dsn(wdmpath, dsn, data.values, data.index[0])
 
