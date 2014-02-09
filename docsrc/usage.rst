@@ -52,9 +52,9 @@ renumberdsn
 ~~~~~~~~~~~
 .. program-output:: wdmtoolbox renumberdsn --help
 
-stdtowdm
-~~~~~~~~
-.. program-output:: wdmtoolbox stdtowdm --help
+extract
+~~~~~~~
+.. program-output:: wdmtoolbox extract --help
 
 wdmtostd
 ~~~~~~~~
