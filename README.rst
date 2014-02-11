@@ -6,6 +6,7 @@ simulation.  WDM files are used in the Hydrological Simulation Program -
 FORTRAN (HSPF) and the Better Assessment of Science Integrating point and Non-point Sources (BASINS).  HSPF is a part of the BASINS system.
 
 EPA BASINS - (http://water.epa.gov/scitech/datait/models/basins/)
+
 Aqua Terra, BASINS download - (http://ftp.hspf.com/)
 
 Requirements
@@ -34,8 +35,3 @@ command shell window.  On Linux (and maybe even Mac OSX?) you could use either
 has access to gfortran and of course your Python interpreter.  Not sure on
 Windows whether this will bring in pandas but as mentioned above, if you start
 with Python(x,y) then you won't have a problem.
-
-The wdmtoolbox script is actually made up of two parts, 'wdmtoolbox' module
-which handles all command line interaction and 'wdmutil.py' which is a library
-of functions that 'wdmtoolbox' uses.  This means that you can write your own
-scripts to access WDM files by importing the functionality from 'wdmutil.py'.

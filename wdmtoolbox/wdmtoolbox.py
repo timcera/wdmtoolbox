@@ -274,15 +274,22 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
     ''' Create a new DSN.
 
     :param wdmpath: Path and WDM filename.
-    :param dsn: The Data Set Number in the WDM file.
-    :param tstype: Time series type, defaults to first 4 characters of
-                   'constituent'.
-    :param base_year: Base year of time series, defaults to 1900.
+    :param dsn: The Data Set Number in the WDM file.  This number must be
+                greater or equal to 1 and less than or equal to 32000.  HSPF
+                can only use for input or output DSNs of 999 or less.
+    :param tstype: Time series type.  Can be any 4 character string, but
+                   if not specified defaults to first 4 characters of
+                   'constituent'.  Must match what is used in HSPF UCI
+                   file.
+    :param base_year: Base year of time series, defaults to 1900.  The DSN will
+                      not accept any time-stamps before this date.
     :param tcode: Time series code, (1=second, 2=minute, 3=hour, 4=day,
                   5=month, 6= year) defaults to 4 = daily.
     :param tsstep: Time series steps, defaults (and almost always is) 1.
     :param statid: The station name, defaults to ''.
-    :param scenario: The name of the scenario, defaults to ''.
+    :param scenario: The name of the scenario, defaults to ''.  Can be
+                     anything, but typically, 'OBSERVED' for calibration and
+                     input time-series and 'SIMULATED' for HSPF results.
     :param location: The location, defaults to ''.
     :param description: Descriptive text, defaults to ''.
     :param constituent: The constituent that the time series represents,
@@ -340,14 +347,10 @@ def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
 
 @baker.command
 def stdtowdm(wdmpath, dsn, infile='-'):
-    ''' Writes data from a CSV file to a DSN.
+    ''' DEPRECATED: Use 'csvtowdm'.
 
-    :param wdmpath: Path and WDM filename.
-    :param dsn: The Data Set Number in the WDM file.
-    :param infile: Input filename, defaults to standard input.
     '''
-    tsd = tsutils.read_iso_ts(infile)
-    _writetodsn(wdmpath, dsn, tsd)
+    csvtowdm(wdmpath, dsn, input_ts=infile)
 
 
 @baker.command

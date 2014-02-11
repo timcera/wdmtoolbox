@@ -5,9 +5,28 @@ Just run 'wdmtoolbox' to get a list of subcommands
 .. program-output:: wdmtoolbox
 
 The default for all of the subcommands that accept time-series data is to pull
-from stdin (typically a pipe).  If a subcommand accepts an input file for an
-argument, you can use "--input_ts=input_file_name.csv", or to explicitly
-specify from stdin (the default) "--input_ts='-'".  
+from stdin (typically a pipe or redirection).  If a subcommand accepts an input file for an
+argument, you can use "... --input_ts=input_file_name.csv ...", or redirection
+"... < input_file_name.csv".  
+
+A WDM file stores time-series asociated with a Data Set Number (DSN).  A DSN is
+a number between 1 and 32000, though HSPF can only use for input and output
+DSNs below 1000.  DSN numbers of 1000 and above should be used for
+calculation and observed time-series.  The DSN must exist before before being
+used.
+
+Typical usage::
+
+    wdmtoolbox createnewwdm met.wdm
+
+    wdmtoolbox createnewdsn met.wdm 101 --tcode=3 --constituent=HPCP --tstype=HPCP --location='NWS STATION 1' --scenario=INPUT
+
+    wdmtoolbox csvtowdm met.wdm 1011 < nws_station_1.csv
+
+To look at the DSN table::
+
+    wdmtoolbox listdsns met.wdm
+
 
 Sub-command Detail
 ''''''''''''''''''

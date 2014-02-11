@@ -81,7 +81,8 @@ Ready to contribute? Here's how to set up `wdmtoolbox` for local development.
    Now you can make your changes locally.
 
 6. When you're done making changes, check that your changes pass flake8 and the
-tests, including testing other Python versions with tox::
+tests, including testing other Python versions with tox. The 'tox'
+configuration currently tests the Python 2.7 and Python 3.3 environments.::
 
     $ tox
 
