@@ -553,6 +553,7 @@ class WDM():
         lledat = desc_dsn['lledat']
         tcode = desc_dsn['tcode']
         tstep = desc_dsn['tstep']
+        tsfill = desc_dsn['tsfill']
 
         # These calls convert 24 to midnight of the next day
         self.timcvt(llsdat)
@@ -608,6 +609,7 @@ class WDM():
                 index=index,
                 name='{0}_DSN_{1}'.format(
                     os.path.basename(wdmpath), dsn)))
+        tmpval.replace(tsfill, pd.np.nan)
         return tmpval
 
     def read_dsn_por(self, wdmpath, dsn):
