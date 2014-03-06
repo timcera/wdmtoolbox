@@ -26,10 +26,6 @@ class DSNDoesNotExist(Exception):
     pass
 
 
-class FrequencyDoesNotMatchError(Exception):
-    pass
-
-
 class MissingValuesInInputError(Exception):
     pass
 
@@ -45,7 +41,7 @@ def _describedsn(wdmpath, dsn):
 def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
     wdm.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
     nts = wdm.read_dsn(inwdmpath, indsn)
-    wdm.write_dsn(outwdmpath, int(outdsn), nts.values, nts.index[0])
+    wdm.write_dsn(outwdmpath, int(outdsn), nts)
 
 
 @baker.command
@@ -129,8 +125,8 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     start_date = kwds.setdefault('start_date', None)
     end_date = kwds.setdefault('end_date', None)
 
-    # Need to make sure that all DSNs are the same interval and all are within
-    # start and end dates.
+    # Need to make sure that all DSNs are the same interval and all are
+    # within start and end dates.
     collect_tcodes = {}
     collect_tsteps = {}
     collect_keys = []
@@ -185,11 +181,14 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
 
 
 @baker.command
-def extract(wdmpath, *dsns, **kwds):
+def extract(*wdmpath, **kwds):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
 
-    :param wdmpath: Path and WDM filename.
-    :param dsns:     The Data Set Numbers in the WDM file.
+    :param wdmpath: Path and WDM filename followed by space separated list of
+                    DSNs. For example, 'file.wdm 234 345 456'.
+                    OR
+                    `wdmpath` can be space separated sets of 'wdmpath,dsn'.
+                    For example, 'file.wdm,101 file2.wdm,104 file.wdm,227'
     :param start_date: If not given defaults to start of data set.
     :param end_date:   If not given defaults to end of data set.
     '''
@@ -201,12 +200,26 @@ def extract(wdmpath, *dsns, **kwds):
         kwds_list.remove('end_date')
         raise ValueError('''
 *
-*   The only allowed keywords are "--start_date=..." and "--end_date=...". You
-*   passed in {0}
+*   The only allowed keywords are "--start_date=..." and "--end_date=...".
+*   You passed in {0}
 *
 '''.format(kwds_list))
 
-    for index, dsn in enumerate(dsns):
+    # Adapt to both forms of presenting wdm files and DSNs
+    # Old form '... file.wdm 101 102 103 ...'
+    # New form '... file.wdm,101 adifferentfile.wdm,101 ...
+    labels = []
+    for lab in wdmpath:
+        if ',' in str(lab):
+            labels.append(lab.split(','))
+        else:
+            if lab == wdmpath[0]:
+                continue
+            labels.append([wdmpath[0], lab])
+
+    for index, lab in enumerate(labels):
+        wdmpath = lab[0]
+        dsn = lab[1]
         nts = wdm.read_dsn(wdmpath,
                            int(dsn),
                            start_date=start_date,
@@ -395,27 +408,59 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
 
 
 def _writetodsn(wdmpath, dsn, data):
-    finterval, toss, tstep = tsutils.guess_freq(data)
+    infer = tsutils.asbestfreq(data)[1]
+    pandacode = infer.lstrip('0123456789')
+    tstep = infer[:infer.find(pandacode)]
+    try:
+        tstep = int(tstep)
+    except ValueError:
+        tstep = 1
+
+    mapcode = {'A':  6,  # annual
+               'AS': 6,  # annual start
+               'M':  5,  # month
+               'MS': 5,  # month start
+               'D':  4,  # day
+               'H':  3,  # hour
+               'T':  2,  # minute
+               'S':  1   # second
+               }
+    try:
+        finterval = mapcode[pandacode]
+    except:
+        raise KeyError('''
+*
+*   wdmtoolbox only understands PANDAS time intervals of :
+*   'A', 'AS' for annual,
+*   'M', 'MS' for monthly,
+*   'D', 'H', 'T', 'S' for day, hour, minute, and second.
+*   wdmtoolbox thinks this series is {0}.
+*
+'''.format(pandacode))
 
     # Convert string to int
     dsn = int(dsn)
-    # Find ALL unique intervals in the data set and convert to seconds
-    import pandas as pa
 
-    # Make sure that input data interval match target DSN
+    # Make sure that input data metadata matches target DSN
     desc_dsn = _describedsn(wdmpath, dsn)
+
     dsntcode = desc_dsn['tcode']
     if finterval != dsntcode:
-        raise FrequencyDoesNotMatchError
+        raise ValueError('''
+*
+*   The DSN has a frequency of {0}, but the data has a frequencey of {1}.
+*
+'''.format(finterval, dsntcode))
 
-    # Write the data...
-    #data = pa.Series(data.values, data.index.values)
-    # Eventually have to figure out why the following doesn't work...
-    nindex = pa.date_range(data.index[0], data.index[-1],
-                           freq='{0:d}{1}'.format(tstep,
-                                                  wdmutil.MAPTCODE[finterval]))
-    data = data.reindex(nindex.values, fill_value=-999)
-    wdm.write_dsn(wdmpath, dsn, data.values, data.index[0])
+    dsntstep = desc_dsn['tstep']
+    if dsntstep != tstep:
+        raise ValueError('''
+*
+*   The DSN has a tstep of {0}, but the data has a tstep of {1}.
+*
+'''.format(dsntstep, tstep))
+
+    wdm.write_dsn(wdmpath, dsn, data)
 
 
 def main():

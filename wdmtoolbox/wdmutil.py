@@ -26,8 +26,8 @@ MAPTCODE = {
     2: 'T',
     3: 'H',
     4: 'D',
-    5: 'M',
-    6: 'A',
+    5: 'MS',
+    6: 'AS',
     }
 
 MAPFREQ = {
@@ -510,11 +510,15 @@ class WDM():
             rdate[5] = date[5]
         return rdate
 
-    def write_dsn(self, wdmpath, dsn, data, start_date):
+    def write_dsn(self, wdmpath, dsn, data):
         ''' Write to self.wdmfp/dsn the time-series data. '''
         dsn_desc = self.describe_dsn(wdmpath, dsn)
         tcode = dsn_desc['tcode']
         tstep = dsn_desc['tstep']
+        tsfill = dsn_desc['tsfill']
+
+        data.fillna(tsfill, inplace=True)
+        start_date = data.index[0]
 
         dstart_date = start_date.timetuple()[:6]
         llsdat = self._tcode_date(tcode, dstart_date)
@@ -608,8 +612,9 @@ class WDM():
                 dataout,
                 index=index,
                 name='{0}_DSN_{1}'.format(
-                    os.path.basename(wdmpath), dsn)))
-        tmpval.replace(tsfill, pd.np.nan)
+                    os.path.basename(wdmpath), dsn)), dtype=pd.np.float64)
+        tmpval.replace(tsfill, pd.np.nan, inplace=True)
+        tmpval.index.name = 'Datetime'
         return tmpval
 
     def read_dsn_por(self, wdmpath, dsn):
@@ -623,7 +628,7 @@ class WDM():
         if wdmpath in self.openfiles:
             retcode = self.wdflcl(self.openfiles[wdmpath])
             self._retcode_check(retcode, additional_info='wdflcl')
-            toss = self.openfiles.pop(wdmpath)
+            self.openfiles.pop(wdmpath)
 
 
 if __name__ == '__main__':
