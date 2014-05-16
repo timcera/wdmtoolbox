@@ -133,7 +133,8 @@ class WDM():
         self.openfiles = {}
 
     def wmsgop(self):
-        # WMSGOP is a simple open of the message file
+        ''' WMSGOP is a simple open of the message file.
+        '''
         afilename = os.path.join(sys.prefix,
                                  'share',
                                  'wdmtoolbox',
@@ -141,6 +142,9 @@ class WDM():
         return self._open(afilename, 100, ronwfg=1)
 
     def dateconverter(self, datestr):
+        ''' Extracts all of the grouped numbers out of a string
+        to create an array suitable for dates and times.
+        '''
         words = re.findall(r'\d+', str(datestr))
         words = [int(i) for i in words]
         dtime = [1900, 1, 1, 0, 0, 0]
@@ -169,9 +173,14 @@ class WDM():
         return wdmsfl
 
     def _retcode_check(self, retcode, additional_info=' '):
+        ''' Central place to run through the return code.
+        '''
+        if retcode == 0:
+            return
         retcode_dict = {
             -1: 'non specific error on WDM file open',
-            -4: 'copy/update failed due to data overlap problem - part of source needed',
+            -4: '''copy/update failed due to data overlap problem - part of
+    source needed''',
             -5: 'copy/update failed due to data overlap problem',
             -6: 'no data present',
             -8: 'bad dates',
@@ -179,8 +188,10 @@ class WDM():
             -10: 'no date in this group',
             -11: 'no non-missing data, data has not started yet',
             -14: 'data specified not within valid range for data set',
-            -15: 'time units and time step must match label exactly with VBTIME = 1',
-            -20: 'problem with on or more of GPGLG, DXX, NVAL, QUALVL, LTSTEP, LTUNIT',
+            -15: '''time units and time step must match label exactly with
+    VBTIME = 1''',
+            -20: '''problem with one or more of
+    GPGLG, DXX, NVAL, QUALVL, LTSTEP, LTUNIT''',
             -21: 'data from WDM does not match expected date',
             -23: 'not a valid table',
             -24: 'not a valid associated table',
@@ -204,7 +215,7 @@ class WDM():
             -45: 'types do not match',
             -46: 'bad space time group specification parameter',
             -47: 'bad direction flag',
-            -48: 'conflicting spec of space time dim and number of timeseries data sets',
+            -48: 'conflicting spec of space time dim and # of ts data sets',
             -49: 'group does not exist',
             -50: 'requested attributes missing from this data set',
             -51: 'no space for another DLG',
@@ -253,6 +264,8 @@ class WDM():
 '''.format(retcode, additional_info))
 
     def renumber_dsn(self, wdmpath, odsn, ndsn):
+        ''' Will renumber the odsn to the ndsn.
+        '''
         odsn = int(odsn)
         ndsn = int(ndsn)
 
@@ -265,6 +278,8 @@ class WDM():
         self._retcode_check(retcode, additional_info='wddsrn')
 
     def delete_dsn(self, wdmpath, dsn):
+        ''' Function to delete a DSN.
+        '''
         dsn = int(dsn)
 
         wdmfp = self._open(wdmpath, 101)
@@ -276,6 +291,8 @@ class WDM():
         self._close(wdmpath)
 
     def copydsnlabel(self, inwdmpath, indsn, outwdmpath, outdsn):
+        ''' Will copy a complete DSN label from one DSN to another.
+        '''
         assert inwdmpath != outwdmpath
         indsn = int(indsn)
         outdsn = int(outdsn)
@@ -293,6 +310,8 @@ class WDM():
         self._retcode_check(retcode, additional_info='wddscl')
 
     def describe_dsn(self, wdmpath, dsn):
+        ''' Will collect some metadata about the DSN.
+        '''
         wdmfp = self._open(wdmpath, 101, ronwfg=1)
         if self.wdckdt(wdmfp, dsn) == 0:
             raise DSNDoesNotExist(dsn)
@@ -420,7 +439,7 @@ class WDM():
         elif os.path.exists(wdmpath):
             raise WDMFileExists(wdmpath)
         ronwfg = 2
-        wdmfp = self._open(wdmpath, 101, ronwfg=ronwfg)
+        self._open(wdmpath, 101, ronwfg=ronwfg)
         self._close(wdmpath)
 
     def create_new_dsn(self, wdmpath, dsn, tstype='', base_year=1900, tcode=4,
@@ -434,7 +453,7 @@ class WDM():
             raise DSNExistsError(dsn)
 
         # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
-        psa = self.wdlbax(
+        self.wdlbax(
             wdmfp,
             dsn,
             1,    # DSTYPE - always 1 for time series
@@ -646,6 +665,11 @@ if __name__ == '__main__':
         fname = r'c:\test.wdm'
     wdm_obj.create_new_wdm(fname, overwrite=True)
     listonumbers = [34.2, 35.0, 36.9, 38.2, 40.2, 20.1, 18.4, 23.6]
-    wdm_obj.create_new_dsn(fname, 1003, tstype='EXAM', scenario='OBSERVED', tcode=4, location='EXAMPLE')
+    wdm_obj.create_new_dsn(fname,
+                           1003,
+                           tstype='EXAM',
+                           scenario='OBSERVED',
+                           tcode=4,
+                           location='EXAMPLE')
     wdm_obj.write_dsn(fname, 1003, listonumbers, datetime.datetime(2000, 1, 1))
     print(wdm_obj.read_dsn_por(fname, 1003))
