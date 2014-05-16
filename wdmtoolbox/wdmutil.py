@@ -340,6 +340,9 @@ class WDM():
             dsn,
             290,    # saind = 290 for location
             8)      # salen
+        if retcode == -107:
+            ostr = ''
+            retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
         scen_ostr, retcode = self.wdbsgc(
@@ -347,6 +350,9 @@ class WDM():
             dsn,
             288,    # saind = 288 for scenario
             8)      # salen
+        if retcode == -107:
+            scen_ostr = ''
+            retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
         con_ostr, retcode = self.wdbsgc(
@@ -354,6 +360,9 @@ class WDM():
             dsn,
             289,    # saind = 289 for constitiuent
             8)      # salen
+        if retcode == -107:
+            con_ostr = ''
+            retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
         base_year, retcode = self.wdbsgi(
