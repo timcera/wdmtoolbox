@@ -1,6 +1,7 @@
-#!/sjr/beodata/local/python_linux/bin/python
-
+#!/usr/bin/env python
 '''
+The component functions of the wdmtoolbox.
+Used to manipulate Watershed Data Management files for time-series.
 '''
 from __future__ import print_function
 
@@ -18,30 +19,25 @@ from dateutil.parser import parse as dateparser
 from . import wdmutil
 from tstoolbox import tsutils
 
-wdm = wdmutil.WDM()
+WDM = wdmutil.WDM()
 
 
-# Errors
-class DSNDoesNotExist(Exception):
-    pass
-
-
-class MissingValuesInInputError(Exception):
-    pass
-
-
-# Foundation functions that allow other functions to print or use the returned
 def _describedsn(wdmpath, dsn):
+    ''' The local underlying function used by all routines that need a
+        description of DSN.
+    '''
     try:
-        return wdm.describe_dsn(wdmpath, int(dsn))
-    except:
+        return WDM.describe_dsn(wdmpath, int(dsn))
+    except wdmutil.WDMError:
         return None
 
 
 def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
-    wdm.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
-    nts = wdm.read_dsn(inwdmpath, indsn)
-    wdm.write_dsn(outwdmpath, int(outdsn), nts)
+    ''' The local underlying function to copy a DSN.
+    '''
+    WDM.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
+    nts = WDM.read_dsn(inwdmpath, indsn)
+    WDM.write_dsn(outwdmpath, int(outdsn), nts)
 
 
 @baker.command
@@ -100,7 +96,7 @@ def renumberdsn(wdmpath, olddsn, newdsn):
     :param olddsn: Old DSN to renumber.
     :param newdsn: New DSN to change old DSN to.
     '''
-    wdm.renumber_dsn(wdmpath, olddsn, newdsn)
+    WDM.renumber_dsn(wdmpath, olddsn, newdsn)
 
 
 @baker.command
@@ -110,7 +106,7 @@ def deletedsn(wdmpath, dsn):
     :param wdmpath: Path and WDM filename.
     :param dsn: DSN to delete.
     '''
-    wdm.delete_dsn(wdmpath, dsn)
+    WDM.delete_dsn(wdmpath, dsn)
 
 
 @baker.command
@@ -146,14 +142,14 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     collected_end_dates = []
     collected_ts = {}
     for dsn, location in collect_keys:
-        collected_ts[(dsn, location)] = wdm.read_dsn(wdmpath,
+        collected_ts[(dsn, location)] = WDM.read_dsn(wdmpath,
                                                      int(dsn),
                                                      start_date=start_date,
                                                      end_date=end_date)
         collected_start_dates.append(collected_ts[(dsn, location)].dates[0])
         collected_end_dates.append(collected_ts[(dsn, location)].dates[-1])
 
-    MAPTCODE = {
+    maptcode = {
         1: 1,
         2: 60,
         3: 3600,
@@ -162,7 +158,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
 
     print('SWMM5')
     print('RDII dump of DSNS {0} from {1}'.format(dsns, wdmpath))
-    print(MAPTCODE[collect_tcodes.keys()[0]]*collect_tsteps.keys()[0])
+    print(maptcode[collect_tcodes.keys()[0]]*collect_tsteps.keys()[0])
     print(1)
     print('FLOW CFS')
     print(len(dsns))
@@ -220,7 +216,7 @@ def extract(*wdmpath, **kwds):
     for index, lab in enumerate(labels):
         wdmpath = lab[0]
         dsn = lab[1]
-        nts = wdm.read_dsn(wdmpath,
+        nts = WDM.read_dsn(wdmpath,
                            int(dsn),
                            start_date=start_date,
                            end_date=end_date)
@@ -261,14 +257,12 @@ def listdsns(wdmpath):
 
     :param wdmpath: Path and WDM filename.
     '''
-    import sys
     try:
         oldtracebacklimit = sys.tracebacklimit
     except AttributeError:
         oldtracebacklimit = 1000
     sys.tracebacklimit = 1000
     import traceback
-    import os.path
     baker_cli = False
     for i in traceback.extract_stack():
         if os.path.basename(i[0]) == 'baker.py':
@@ -276,14 +270,14 @@ def listdsns(wdmpath):
             break
     sys.tracebacklimit = oldtracebacklimit
     dsn_info = {}
-    if baker_cli:
+    if baker_cli is True:
         print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format(
             'DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE',
             'END DATE', 'TCODE', 'TSTEP'))
     for i in range(1, 32001):
         testv = _describedsn(wdmpath, i)
         if testv:
-            if baker_cli:
+            if baker_cli is True:
                 print('{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv))
             else:
                 dsn_info[testv['dsn']] = testv
@@ -298,7 +292,7 @@ def createnewwdm(wdmpath, overwrite=False):
     :param wdmpath: Path and WDM filename.
     :param overwrite: Defaults to not overwrite existing file.
     '''
-    wdm.create_new_wdm(wdmpath, overwrite=overwrite)
+    WDM.create_new_wdm(wdmpath, overwrite=overwrite)
 
 
 @baker.command
@@ -332,7 +326,7 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
     '''
     if tstype == '' and len(constituent) > 0:
         tstype = constituent[:4]
-    wdm.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year,
+    WDM.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year,
                        tcode=tcode, tsstep=tsstep, statid=statid,
                        scenario=scenario, location=location,
                        description=description, constituent=constituent,
@@ -340,22 +334,22 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
 
 
 @baker.command
-def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
+def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     ''' Writes HYDHR sequential file to a DSN.
 
     :param wdmpath: Path and WDM filename.
     :param dsn: The Data Set Number in the WDM file.
-    :param input: Input filename, defaults to standard input.
+    :param input_ts: Input filename, defaults to standard input.
     :param start_century: Since 2 digit years are used, need century, defaults
                           to 1900.
     '''
+    import pandas as pd
     dsn = int(dsn)
-    import numpy as np
-    if isinstance(input, str):
-        input = open(input, 'r')
-    dates = np.array([])
-    data = np.array([])
-    for line in input:
+    if isinstance(input_ts, str):
+        input_ts = open(input_ts, 'r')
+    dates = pd.np.array([])
+    data = pd.np.array([])
+    for line in input_ts:
         words = line[8:]
         words = words.split()
         year = int(words[0]) + start_century
@@ -364,19 +358,20 @@ def hydhrseqtowdm(wdmpath, dsn, input=sys.stdin, start_century=1900):
         ampmflag = int(words[3])
         if int(words[0]) == 99 and month == 12 and day == 31 and ampmflag == 2:
             start_century = start_century + 100
-        data = np.append(data, [float(i) for i in words[4:16]])
+        data = pd.np.append(data, [float(i) for i in words[4:16]])
         try:
             if ampmflag == 1:
-                dates = np.append(dates,
+                dates = pd.np.append(dates,
                                   [datetime.datetime(year, month, day, i)
                                    for i in range(0, 12)])
             if ampmflag == 2:
-                dates = np.append(dates,
+                dates = pd.np.append(dates,
                                   [datetime.datetime(year, month, day, i)
                                    for i in range(12, 24)])
         except ValueError:
             print(start_century, line)
-    _writetodsn(wdmpath, dsn, dates, data)
+    data = pd.DataFrame(data, index=dates)
+    _writetodsn(wdmpath, dsn, data)
 
 
 @baker.command
@@ -429,6 +424,8 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
 
 
 def _writetodsn(wdmpath, dsn, data):
+    ''' Local function to write Pandas data frame to DSN.
+    '''
     infer = tsutils.asbestfreq(data)[1]
     pandacode = infer.lstrip('0123456789')
     tstep = infer[:infer.find(pandacode)]
@@ -481,10 +478,12 @@ def _writetodsn(wdmpath, dsn, data):
 *
 '''.format(dsntstep, tstep))
 
-    wdm.write_dsn(wdmpath, dsn, data)
+    WDM.write_dsn(wdmpath, dsn, data)
 
 
 def main():
+    ''' Main function
+    '''
     if not os.path.exists('debug_wdmtoolbox'):
         sys.tracebacklimit = 0
     baker.run()

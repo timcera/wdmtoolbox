@@ -1,12 +1,11 @@
 #!/usr/bin/env python2
-
-from __future__ import print_function
-
 '''
 The WDM class supplies a series of utilities for working with WDM files
 with Python.  The class uses f2py to wrap the minimally necessary WDM
 routines.
 '''
+
+from __future__ import print_function
 
 import datetime
 import os
@@ -41,10 +40,12 @@ MAPFREQ = {
 
 
 class WDMError(Exception):
+    ''' The default Error class.'''
     pass
 
 
 class DSNDoesNotExist(Exception):
+    ''' The Error class if DSN does no exist.'''
     def __init__(self, dsn):
         self.dsn = dsn
 
@@ -64,11 +65,8 @@ class DSNDoesNotExist(Exception):
 '''.format(self.dsn)
 
 
-class LibraryNotFoundError(Exception):
-    pass
-
-
 class WDMFileExists(Exception):
+    ''' Error class if WDM file exists. '''
     def __init__(self, filename):
         self.filename = filename
 
@@ -81,6 +79,7 @@ class WDMFileExists(Exception):
 
 
 class DSNExistsError(Exception):
+    ''' Error class if DSN exists. '''
     def __init__(self, dsn):
         self.dsn = dsn
 
