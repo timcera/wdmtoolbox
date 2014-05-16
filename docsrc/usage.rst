@@ -19,7 +19,7 @@ Typical usage::
 
     wdmtoolbox createnewwdm met.wdm
 
-    wdmtoolbox createnewdsn met.wdm 101 --tcode=3 --constituent=HPCP --tstype=HPCP --location='NWS STATION 1' --scenario=INPUT
+    wdmtoolbox createnewdsn met.wdm 101 --tcode=3 --constituent=HPCP --tstype=HPCP --location=12345678 --description='NWS STATION 1' --scenario=INPUT
 
     wdmtoolbox csvtowdm met.wdm 1011 < nws_station_1.csv
 
@@ -87,16 +87,23 @@ wdmtoswmm5rdii
 Usage - API
 ===========
 You can use all of the command line subcommands as functions.  The function
-signature is identical to the command line subcommands.  The return is always
-a PANDAS DataFrame.  Input can be a CSV or TAB separated file, or a PANDAS
-DataFrame and is supplied to the function via the 'input_ts' keyword.
+signature is identical to the command line subcommands.  
+
+Returns:
+
+* wdmtoolbox.extract returns a PANDAS DataFrame.
+* wdmtoolbox.listdsns returns a Python dictionary.
+* Almost all of the remaining functions do not return anything.
+
+Input can be a CSV or TAB separated file, or a
+PANDAS DataFrame and is supplied to the function via the 'input_ts' keyword.
 
 Simply import wdmtoolbox::
 
     import wdmtoolbox
 
     # Then you could call the functions
-    ntsd = wdmtoolbox.wdmtostd('test.wdm', 4)
+    ntsd = wdmtoolbox.extract('test.wdm', 4)
 
     # Once you have a PANDAS DataFrame you can use that as input.
     # For example, use 'tstoolbox' to aggregate...
