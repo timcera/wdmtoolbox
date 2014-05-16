@@ -28,7 +28,7 @@ def _describedsn(wdmpath, dsn):
     '''
     try:
         return WDM.describe_dsn(wdmpath, int(dsn))
-    except wdmutil.WDMError:
+    except wdmutil.DSNDoesNotExist:
         return None
 
 
