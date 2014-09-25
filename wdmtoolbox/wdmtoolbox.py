@@ -259,18 +259,18 @@ def listdsns(wdmpath):
     '''
     dsn_info = {}
     cli = tsutils.test_cli()
-    if cli:
+    if cli is True:
         print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format(
             'DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE',
             'END DATE', 'TCODE', 'TSTEP'))
     for i in range(1, 32001):
         testv = _describedsn(wdmpath, i)
         if testv:
-            if cli:
+            if cli is True:
                 print('{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv))
             else:
                 dsn_info[testv['dsn']] = testv
-    if cli:
+    if cli is False:
         return dsn_info
 
 
