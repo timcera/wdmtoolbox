@@ -257,31 +257,20 @@ def listdsns(wdmpath):
 
     :param wdmpath: Path and WDM filename.
     '''
-    try:
-        oldtracebacklimit = sys.tracebacklimit
-    except AttributeError:
-        oldtracebacklimit = 1000
-    sys.tracebacklimit = 1000
-    import traceback
-    baker_cli = False
-    for i in traceback.extract_stack():
-        if os.path.basename(i[0]) == 'baker.py':
-            baker_cli = True
-            break
-    sys.tracebacklimit = oldtracebacklimit
     dsn_info = {}
-    if baker_cli is True:
+    cli = tsutils.test_cli()
+    if cli:
         print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format(
             'DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE',
             'END DATE', 'TCODE', 'TSTEP'))
     for i in range(1, 32001):
         testv = _describedsn(wdmpath, i)
         if testv:
-            if baker_cli is True:
+            if cli:
                 print('{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv))
             else:
                 dsn_info[testv['dsn']] = testv
-    if baker_cli is False:
+    if cli:
         return dsn_info
 
 
