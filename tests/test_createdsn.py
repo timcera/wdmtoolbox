@@ -63,4 +63,6 @@ class TestDescribe(TestCase):
                             input_ts='tests/sunspot_area_with_missing.csv')
         ret5 = wdmtoolbox.extract(self.wdmname, 500)
         ret5.columns = ['Area']
+        ret4.to_csv('/tmp/ret4.csv')
+        ret5.to_csv('/tmp/ret5.csv')
         assert_frame_equal(ret5, ret4)

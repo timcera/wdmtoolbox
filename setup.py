@@ -20,7 +20,7 @@ install_requires = [
     'baker >= 1.3',
     'python-dateutil >= 2.1',
     'pandas >= 0.9.0',
-    'tstoolbox >= 0.8.5',
+    'tstoolbox >= 0.9.1',
 ]
 
 

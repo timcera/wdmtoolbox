@@ -267,7 +267,7 @@ def listdsns(wdmpath):
         testv = _describedsn(wdmpath, i)
         if testv:
             if cli is True:
-                print('{dsn:5} {scenario:8} {location:8} {constituent:8}    {start_date:19} {end_date:19} {tcode_name:>5}({tcode}) {tstep}'.format(**testv))
+                print('{dsn:5} {scenario!s:8} {location!s:8} {constituent!s:8}    {start_date!s:19} {end_date!s:19} {tcode_name!s:>5}({tcode}) {tstep}'.format(**testv))
             else:
                 dsn_info[testv['dsn']] = testv
     if cli is False:

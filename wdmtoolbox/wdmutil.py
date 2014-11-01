@@ -149,7 +149,7 @@ class WDM():
         words = [int(i) for i in words]
         dtime = [1900, 1, 1, 0, 0, 0]
         dtime[:len(words)] = words
-        return dtime
+        return pd.np.array(dtime)
 
     def _open(self, wdname, wdmsfl, ronwfg=0):
         ''' Private method to open WDM file.
@@ -592,9 +592,9 @@ class WDM():
 
         if start_date is not None:
             start_date = self.dateconverter(start_date)
-            if start_date >= llsdat:
+            if datetime.datetime(*start_date) >= datetime.datetime(*llsdat):
                 llsdat = start_date
-            if start_date > lledat:
+            if datetime.datetime(*start_date) > datetime.datetime(*lledat):
                 raise ValueError('''
 *
 *   The requested start date ({0}) is after the end date ({1})
@@ -605,9 +605,9 @@ class WDM():
             start_date = llsdat
         if end_date is not None:
             end_date = self.dateconverter(end_date)
-            if end_date <= lledat:
+            if datetime.datetime(*end_date) <= datetime.datetime(*lledat):
                 lledat = end_date
-            if end_date < llsdat:
+            if datetime.datetime(*end_date) < datetime.datetime(*llsdat):
                 raise ValueError('''
 *
 *   The requested end date ({0}) is before the start date ({1})
@@ -616,7 +616,7 @@ class WDM():
 '''.format(datetime.datetime(*end_date), datetime.datetime(*llsdat)))
         else:
             end_date = lledat
-        if end_date < start_date:
+        if datetime.datetime(*end_date) < datetime.datetime(*start_date):
             raise ValueError('''
 *
 *   The end date ({0}) is less than the start date ({1}).
@@ -661,7 +661,8 @@ class WDM():
                 index=index,
                 name='{0}_DSN_{1}'.format(
                     os.path.basename(wdmpath), dsn)), dtype=pd.np.float64)
-        if start_date != llsdat or end_date != lledat:
+        if (datetime.datetime(*start_date) != datetime.datetime(*llsdat) or
+            datetime.datetime(*end_date) != datetime.datetime(*lledat)):
             rindex = pd.date_range(datetime.datetime(*start_date),
                                    datetime.datetime(*end_date),
                                    freq='{0:d}{1}'.format(tstep,
