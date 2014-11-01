@@ -592,10 +592,36 @@ class WDM():
 
         if start_date is not None:
             start_date = self.dateconverter(start_date)
-            llsdat = start_date
+            if start_date >= llsdat:
+                llsdat = start_date
+            if start_date > lledat:
+                raise ValueError('''
+*
+*   The requested start date ({0}) is after the end date ({1})
+*   of the time series in the WDM file.
+*
+'''.format(datetime.datetime(*start_date), datetime.datetime(*lledat)))
+        else:
+            start_date = llsdat
         if end_date is not None:
             end_date = self.dateconverter(end_date)
-            lledat = end_date
+            if end_date <= lledat:
+                lledat = end_date
+            if end_date < llsdat:
+                raise ValueError('''
+*
+*   The requested end date ({0}) is before the start date ({1})
+*   of the time series in the WDM file.
+*
+'''.format(datetime.datetime(*end_date), datetime.datetime(*llsdat)))
+        else:
+            end_date = lledat
+        if end_date < start_date:
+            raise ValueError('''
+*
+*   The end date ({0}) is less than the start date ({1}).
+*
+'''.format(datetime.datetime(*end_date), datetime.datetime(*start_date)))
 
         # Determine the number of values (ITERM) from LLSDAT to LLEDAT
         iterm = self.timdif(
@@ -621,12 +647,7 @@ class WDM():
         self._retcode_check(retcode, additional_info='wdtget')
 
         # Find the begining in datetime.datetime format
-        tstart = datetime.datetime(llsdat[0],
-                                   llsdat[1],
-                                   llsdat[2],
-                                   llsdat[3],
-                                   llsdat[4],
-                                   llsdat[5])
+        tstart = datetime.datetime(*llsdat)
 
         # Convert time series to pandas DataFrame
         index = pd.date_range(
@@ -640,6 +661,13 @@ class WDM():
                 index=index,
                 name='{0}_DSN_{1}'.format(
                     os.path.basename(wdmpath), dsn)), dtype=pd.np.float64)
+        if start_date != llsdat or end_date != lledat:
+            rindex = pd.date_range(datetime.datetime(*start_date),
+                                   datetime.datetime(*end_date),
+                                   freq='{0:d}{1}'.format(tstep,
+                                                          MAPTCODE[tcode]))
+            tmpval = tmpval.reindex(rindex)
+
         tmpval.replace(tsfill, pd.np.nan, inplace=True)
         tmpval.index.name = 'Datetime'
         return tmpval
