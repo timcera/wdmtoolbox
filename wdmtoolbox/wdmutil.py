@@ -154,8 +154,8 @@ class WDM():
     def _open(self, wdname, wdmsfl, ronwfg=0):
         ''' Private method to open WDM file.
         '''
+        wdname = wdname.strip()
         if wdname not in self.openfiles:
-            wdname = wdname.strip()
             if ronwfg == 1:
                 if not os.path.exists(wdname):
                     raise ValueError('''
@@ -652,6 +652,7 @@ class WDM():
     def _close(self, wdmpath):
         ''' Close the WDM file.
         '''
+        wdmpath = wdmpath.strip()
         if wdmpath in self.openfiles:
             retcode = self.wdflcl(self.openfiles[wdmpath])
             self._retcode_check(retcode, additional_info='wdflcl')
