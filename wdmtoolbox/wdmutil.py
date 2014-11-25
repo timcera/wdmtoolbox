@@ -471,7 +471,7 @@ class WDM():
                                     (17, 1, int(tcode)),  # tcode
                                     (33, 1, int(tsstep)),  # tsstep
                                     (27, 1, int(base_year)),  # tsbyr
-                                    ]:
+                                   ]:
             retcode = self.wdbsai(
                 wdmfp,
                 dsn,
@@ -492,13 +492,13 @@ class WDM():
             self._retcode_check(retcode, additional_info='wdbsar')
 
         for saind, salen, saval, error_name in [
-            (2, 16, statid, 'Station ID'),
-            (1, 4, tstype.upper(), 'Time series type - tstype'),
-            (45, 48, description.upper(), 'Description'),
-            (288, 8, scenario.upper(), 'Scenario'),
-            (289, 8, constituent.upper(), 'Constituent'),
-            (290, 8, location.upper(), 'Location'),
-                ]:
+                (2, 16, statid, 'Station ID'),
+                (1, 4, tstype.upper(), 'Time series type - tstype'),
+                (45, 48, description.upper(), 'Description'),
+                (288, 8, scenario.upper(), 'Scenario'),
+                (289, 8, constituent.upper(), 'Constituent'),
+                (290, 8, location.upper(), 'Location'),
+            ]:
             saval = saval.strip()
             if len(saval) > salen:
                 raise ValueError('''
@@ -662,7 +662,7 @@ class WDM():
                 name='{0}_DSN_{1}'.format(
                     os.path.basename(wdmpath), dsn)), dtype=pd.np.float64)
         if (datetime.datetime(*start_date) != datetime.datetime(*llsdat) or
-            datetime.datetime(*end_date) != datetime.datetime(*lledat)):
+                datetime.datetime(*end_date) != datetime.datetime(*lledat)):
             rindex = pd.date_range(datetime.datetime(*start_date),
                                    datetime.datetime(*end_date),
                                    freq='{0:d}{1}'.format(tstep,

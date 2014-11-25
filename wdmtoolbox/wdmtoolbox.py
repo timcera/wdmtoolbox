@@ -11,7 +11,7 @@ import sys
 import datetime
 
 # Third party imports
-import baker
+import mando
 from dateutil.parser import parse as dateparser
 
 # Local imports
@@ -40,7 +40,7 @@ def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
     WDM.write_dsn(outwdmpath, int(outdsn), nts)
 
 
-@baker.command
+@mando.command
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
     ''' Make a copy of a DSN.
 
@@ -62,7 +62,7 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
         _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn)
 
 
-@baker.command
+@mando.command
 def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
     ''' Make a clean copy of a WDM file.
 
@@ -88,7 +88,7 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
         _copy_dsn(inwdmpath, i, outwdmpath, i)
 
 
-@baker.command
+@mando.command
 def renumberdsn(wdmpath, olddsn, newdsn):
     ''' Renumber olddsn to newdsn
 
@@ -99,7 +99,7 @@ def renumberdsn(wdmpath, olddsn, newdsn):
     WDM.renumber_dsn(wdmpath, olddsn, newdsn)
 
 
-@baker.command
+@mando.command
 def deletedsn(wdmpath, dsn):
     ''' Delete DSN
 
@@ -109,7 +109,7 @@ def deletedsn(wdmpath, dsn):
     WDM.delete_dsn(wdmpath, dsn)
 
 
-@baker.command
+@mando.command
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     ''' Prints out DSN data to the screen in SWMM5 RDII format.
 
@@ -176,15 +176,20 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
                     collected_ts[(dsn, location)][date]))
 
 
-@baker.command
+@mando.command
 def extract(*wdmpath, **kwds):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
 
     :param wdmpath: Path and WDM filename followed by space separated list of
-                    DSNs. For example, 'file.wdm 234 345 456'.
+                    DSNs. For example,
+
+                        'file.wdm 234 345 456'.
                     OR
+
                     `wdmpath` can be space separated sets of 'wdmpath,dsn'.
-                    For example, 'file.wdm,101 file2.wdm,104 file.wdm,227'
+                    For example,
+
+                        'file.wdm,101 file2.wdm,104 file.wdm,227'
     :param start_date: If not given defaults to start of data set.
     :param end_date:   If not given defaults to end of data set.
     '''
@@ -234,14 +239,14 @@ def extract(*wdmpath, **kwds):
     return tsutils.printiso(result)
 
 
-@baker.command
+@mando.command
 def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
     ''' DEPRECATED: New scripts use 'extract'. Will be removed in the future.
     '''
     return extract(wdmpath, *dsns, **kwds)
 
 
-@baker.command
+@mando.command
 def describedsn(wdmpath, dsn):
     ''' Prints out a description of a single DSN.
 
@@ -251,7 +256,7 @@ def describedsn(wdmpath, dsn):
     print(_describedsn(wdmpath, dsn))
 
 
-@baker.command
+@mando.command
 def listdsns(wdmpath):
     ''' Prints out a table describing all DSNs in the WDM.
 
@@ -274,7 +279,7 @@ def listdsns(wdmpath):
         return dsn_info
 
 
-@baker.command
+@mando.command
 def createnewwdm(wdmpath, overwrite=False):
     ''' Create a new WDM file, optional to overwrite.
 
@@ -284,7 +289,7 @@ def createnewwdm(wdmpath, overwrite=False):
     WDM.create_new_wdm(wdmpath, overwrite=overwrite)
 
 
-@baker.command
+@mando.command
 def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
                  statid='', scenario='', location='', description='',
                  constituent='', tsfill=-999.0):
@@ -322,7 +327,7 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
                        tsfill=tsfill)
 
 
-@baker.command
+@mando.command
 def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     ''' Writes HYDHR sequential file to a DSN.
 
@@ -351,19 +356,19 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
         try:
             if ampmflag == 1:
                 dates = pd.np.append(dates,
-                                  [datetime.datetime(year, month, day, i)
-                                   for i in range(0, 12)])
+                                     [datetime.datetime(year, month, day, i)
+                                      for i in range(0, 12)])
             if ampmflag == 2:
                 dates = pd.np.append(dates,
-                                  [datetime.datetime(year, month, day, i)
-                                   for i in range(12, 24)])
+                                     [datetime.datetime(year, month, day, i)
+                                      for i in range(12, 24)])
         except ValueError:
             print(start_century, line)
     data = pd.DataFrame(data, index=dates)
     _writetodsn(wdmpath, dsn, data)
 
 
-@baker.command
+@mando.command
 def stdtowdm(wdmpath, dsn, infile='-'):
     ''' DEPRECATED: Use 'csvtowdm'.
 
@@ -371,7 +376,7 @@ def stdtowdm(wdmpath, dsn, infile='-'):
     csvtowdm(wdmpath, dsn, input_ts=infile)
 
 
-@baker.command
+@mando.command
 def csvtowdm(wdmpath, dsn, input=None, start_date=None,
              end_date=None, input_ts='-'):
     ''' Writes data from a CSV file to a DSN.
@@ -431,7 +436,7 @@ def _writetodsn(wdmpath, dsn, data):
                'H':  3,  # hour
                'T':  2,  # minute
                'S':  1   # second
-               }
+              }
     try:
         finterval = mapcode[pandacode]
     except:
@@ -475,4 +480,4 @@ def main():
     '''
     if not os.path.exists('debug_wdmtoolbox'):
         sys.tracebacklimit = 0
-    baker.run()
+    mando.main()
