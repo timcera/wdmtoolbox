@@ -5,8 +5,10 @@ import os
 import time
 
 def _createwdm(fname):
-    return subprocess.call(['wdmtoolbox', 'createnewwdm',
-    '--overwrite=True', fname])
+    return subprocess.call(['wdmtoolbox',
+                            'createnewwdm',
+                            '--overwrite',
+                            fname])
 
 def test_createwdm():
     fname = os.path.join('tests', 'a.wdm')
