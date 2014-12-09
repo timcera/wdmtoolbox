@@ -17,8 +17,8 @@ before_install:
   - source $HOME/bldve/bin/activate
 
 install:
-  - if [[ "${VIRTUALENV_PYTHON}" == "2.6" ]]; then pip install --use-mirrors argparse; fi
-  - pip install --use-mirrors numpy scipy matplotlib pandas nose mando
+  - if [[ "${VIRTUALENV_PYTHON}" == "2.6" ]]; then pip install argparse; fi
+  - pip install numpy pandas nose baker
   - python setup.py install
 
 before_script:
