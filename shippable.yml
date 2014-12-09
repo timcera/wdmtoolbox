@@ -1,0 +1,36 @@
+language: python
+
+python:
+  - 2.6
+  - 2.7
+  - 3.2
+  - 3.3
+  - 3.4
+
+before_install:
+  - env
+  - sudo apt-get install -y python${VIRTUALENV_PYTHON}-dev libopenblas-dev liblapack-dev gfortran
+
+  # set up a virtualenv and activate the python version that you want to use
+  - mkdir -p $HOME/bldve/
+  - virtualenv -p $SHIPPABLE_PYTHON $HOME/bldve/
+  - source $HOME/bldve/bin/activate
+
+install:
+  - if [[ "${VIRTUALENV_PYTHON}" == "2.6" ]]; then pip install --use-mirrors argparse; fi
+  - pip install --use-mirrors numpy scipy matplotlib pandas nose mando
+  - python setup.py install
+
+before_script:
+  - mkdir -p shippable/testresults
+  - mkdir -p shippable/codecoverage
+
+script:
+  - oldIFS="${IFS}"
+  - IFS='/' read -a arr <<< "${REPO_NAME}"
+  - PKG="${arr[1]}"
+  - IFS="${oldIFS}"
+  - nosetests --with-doctest --with-xunit --xunit-file=shippable/testresults/nosetests.xml --with-coverage --cover-tests --cover-package="${PKG}" --cover-branches --cover-erase #--cover-xml-file=shippable/codecoverage/coverage.xml 
+  - coverage xml -o shippable/codecoverage/coverage.xml 
+
+cache: true
