@@ -19,6 +19,7 @@ install_requires = [
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
     'baker >= 1.3',
     'python-dateutil >= 2.1',
+    'numpy',
     'pandas >= 0.9.0',
     'tstoolbox >= 0.9.1',
 ]

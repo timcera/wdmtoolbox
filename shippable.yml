@@ -19,7 +19,7 @@ before_install:
 install:
   - if [[ "${VIRTUALENV_PYTHON}" == "2.6" ]]; then pip install argparse; fi
   - pip install numpy pandas nose baker
-  - python setup.py install
+  - ${SHIPPABLE_PYTHON} setup.py install
 
 before_script:
   - mkdir -p shippable/testresults
