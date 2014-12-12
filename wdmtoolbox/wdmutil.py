@@ -139,7 +139,7 @@ class WDM():
                                  'share',
                                  'wdmtoolbox',
                                  'message.wdm')
-        return self._open(afilename, 100, ronwfg=1)
+        return self._open(afilename, 50, ronwfg=1)
 
     def dateconverter(self, datestr):
         ''' Extracts all of the grouped numbers out of a string
@@ -269,7 +269,7 @@ class WDM():
         odsn = int(odsn)
         ndsn = int(ndsn)
 
-        wdmfp = self._open(wdmpath, 101)
+        wdmfp = self._open(wdmpath, 51)
         retcode = self.wddsrn(
             wdmfp,
             odsn,
@@ -282,7 +282,7 @@ class WDM():
         '''
         dsn = int(dsn)
 
-        wdmfp = self._open(wdmpath, 101)
+        wdmfp = self._open(wdmpath, 52)
         if self.wdckdt(wdmfp, dsn) != 0:
             retcode = self.wddsdl(
                 wdmfp,
@@ -297,8 +297,8 @@ class WDM():
         indsn = int(indsn)
         outdsn = int(outdsn)
         dsntype = 0
-        inwdmfp = self._open(inwdmpath, 101)
-        outwdmfp = self._open(outwdmpath, 102)
+        inwdmfp = self._open(inwdmpath, 53)
+        outwdmfp = self._open(outwdmpath, 54)
         retcode = self.wddscl(
             inwdmfp,
             indsn,
@@ -312,8 +312,9 @@ class WDM():
     def describe_dsn(self, wdmpath, dsn):
         ''' Will collect some metadata about the DSN.
         '''
-        wdmfp = self._open(wdmpath, 101, ronwfg=1)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         if self.wdckdt(wdmfp, dsn) == 0:
+            self._close(wdmpath)
             raise DSNDoesNotExist(dsn)
 
         tdsfrc, llsdat, lledat, retcode = self.wtfndt(
@@ -439,14 +440,14 @@ class WDM():
         elif os.path.exists(wdmpath):
             raise WDMFileExists(wdmpath)
         ronwfg = 2
-        self._open(wdmpath, 101, ronwfg=ronwfg)
+        self._open(wdmpath, 56, ronwfg=ronwfg)
         self._close(wdmpath)
 
     def create_new_dsn(self, wdmpath, dsn, tstype='', base_year=1900, tcode=4,
                        tsstep=1, statid=' ', scenario='', location='',
                        description='', constituent='', tsfill=-999.0):
         ''' Create self.wdmfp/dsn. '''
-        wdmfp = self._open(wdmpath, 101)
+        wdmfp = self._open(wdmpath, 57)
         messfp = self.wmsgop()
 
         if self.wdckdt(wdmfp, dsn) == 1:
@@ -559,7 +560,7 @@ class WDM():
 
         nval = len(data)
 
-        wdmfp = self._open(wdmpath, 101)
+        wdmfp = self._open(wdmpath, 58)
         retcode = self.wdtput(
             wdmfp,
             dsn,
@@ -633,7 +634,7 @@ class WDM():
         dtran = 0
         qualfg = 30
         # Get the data and put it into dictionary
-        wdmfp = self._open(wdmpath, 101, ronwfg=1)
+        wdmfp = self._open(wdmpath, 59, ronwfg=1)
         dataout, retcode = self.wdtget(
             wdmfp,
             dsn,
