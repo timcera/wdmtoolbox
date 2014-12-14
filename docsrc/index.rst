@@ -1,3 +1,4 @@
+.. include:: ../BADGES.rst
 'wdmtoolbox' Documentation
 ==========================
 
@@ -8,10 +9,6 @@ Simulation Program - FORTRAN (HSPF) and Better Assessment Science Integrating
 point and Non-point Sources (BASINS).
 
 'wdmtoolbox' will work with Python 2.7+ and 3.3+.
-
-Other Work
-----------
-http://timcera.bitbucket.org
 
 Table of Contents
 -----------------
@@ -26,15 +23,12 @@ Table of Contents
 
 API
 ---
-
 .. toctree::
    :maxdepth: 2
 
    wdmtoolbox
 
-Indices and tables
-==================
+Related Work
+------------
+http://timcera.bitbucket.org
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

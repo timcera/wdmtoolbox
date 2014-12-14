@@ -1,3 +1,4 @@
+.. include:: ../BADGES.rst
 Usage - Command Line
 ====================
 Just run 'wdmtoolbox' to get a list of subcommands
