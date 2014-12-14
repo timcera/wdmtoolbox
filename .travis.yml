@@ -1,0 +1,22 @@
+language: python
+
+python:
+  - 2.6
+  - 2.7
+  - 3.3
+  - 3.4
+
+before_install:
+  - env
+  - sudo apt-get install -y python${TRAVIS_PYTHON_VERSION}-dev libopenblas-dev liblapack-dev gfortran
+
+install:
+  - if [[ "${TRAVIS_PYTHON_VERSION}" == "2.6" ]]; then pip install argparse; fi
+  - pip install numpy pandas nose baker coverage
+  - python setup.py install
+
+script:
+  - nosetests --with-doctest --with-coverage --cover-tests --cover-package=wdmtoolbox --cover-branches --cover-erase
+
+after_success:
+  - coveralls
