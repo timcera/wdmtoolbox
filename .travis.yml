@@ -8,12 +8,15 @@ python:
 
 before_install:
   - env
-  - sudo apt-get install -y python${TRAVIS_PYTHON_VERSION}-dev libopenblas-dev liblapack-dev gfortran
+  # - sudo apt-cache search python
+  # In order to install matplotlib
+  - sudo apt-get install -y libpng-dev libfreetype6-dev python${VIRTUALENV_PYTHON}-dev libopenblas-dev liblapack-dev gfortran libatlas-dev
 
 install:
   - if [[ "${TRAVIS_PYTHON_VERSION}" == "2.6" ]]; then pip install argparse; fi
-  - pip install numpy pandas nose baker coverage
+  - pip install numpy scipy matplotlib pandas mando coverage
   - python setup.py install
+  - pip install coveralls
 
 script:
   - nosetests --with-doctest --with-coverage --cover-tests --cover-package=wdmtoolbox --cover-branches --cover-erase
