@@ -578,6 +578,13 @@ class WDM():
         ''' Read from a DSN.
         '''
 
+        if not os.path.exists(wdmpath):
+            raise ValueError('''
+***
+*** {0} does not exist.
+***
+'''.format(wdmpath))
+
         # Call wdatim_ to get LLSDAT, LLEDAT, TSTEP, TCODE
         desc_dsn = self.describe_dsn(wdmpath, dsn)
 

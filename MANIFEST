@@ -34,4 +34,5 @@ wdm_support/WDTMS1.f
 wdm_support/WDTMS2.f
 wdm_support/wdm.pyf
 wdmtoolbox/__init__.py
+wdmtoolbox/wdmtoolbox.py
 wdmtoolbox/wdmutil.py

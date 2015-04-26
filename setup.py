@@ -1,4 +1,3 @@
-import setuptools
 from numpy.distutils.core import Extension, setup
 import os
 import sys
@@ -24,9 +23,7 @@ install_requires = [
     'tstoolbox >= 0.9.1',
 ]
 
-
-setup(name='wdmtoolbox',
-      ext_modules=[Extension('wdm', [
+wdm_support = Extension('wdm', [
           'wdm_support/wdm.pyf',
           'wdm_support/DTTM90.f',
           'wdm_support/TSBUFR.f',
@@ -47,8 +44,9 @@ setup(name='wdmtoolbox',
           'wdm_support/WDTMS1.f',
           'wdm_support/WDTMS2.f',
           ],
-          include_dirs=['wdm_support'])],
+          include_dirs=['wdm_support'])
 
+setup(name='wdmtoolbox',
       version=version,
       description="Read and write Watershed Data Management (WDM) files",
       long_description=README,
@@ -78,6 +76,7 @@ setup(name='wdmtoolbox',
       install_requires=install_requires,
       data_files=[(os.path.join(sys.prefix, 'share', 'wdmtoolbox'),
           ['data/message.wdm'])],
+      ext_modules=[wdm_support],
       entry_points={
           'console_scripts':
           ['wdmtoolbox=wdmtoolbox.wdmtoolbox:main']
