@@ -20,9 +20,9 @@ before_install:
 # Install packages
 install:
   - sudo apt-get install -y gfortran
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas statsmodels
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas
 
-  - pip install coveralls mando
+  - pip install coverage coveralls mando
   - python setup.py install
 
 script:
