@@ -11,14 +11,14 @@ def _createwdm(fname):
                             fname])
 
 def test_createwdm():
-    fname = os.path.join('tests', 'a.wdm')
+    fname = os.path.join(os.path.dirname(__file__), 'a.wdm')
     assert _createwdm(fname) == 0
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
     os.remove(fname)
 
 def test_createnewdsn_checkdefaults():
-    fname = os.path.join('tests', 'b.wdm')
+    fname = os.path.join(os.path.dirname(__file__), 'b.wdm')
     assert _createwdm(fname) == 0
     retcode = subprocess.call(['wdmtoolbox', 'createnewdsn', fname, '101'])
     assert retcode == 0
