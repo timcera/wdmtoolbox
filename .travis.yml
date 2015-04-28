@@ -22,7 +22,7 @@ before_install:
 # Install packages
 install:
   - sudo apt-get install -y gfortran
-  - conda create -q -n test_env python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas
+  - conda create -q -n test_env python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas pip
 
   - source activate test_env
   - pip install coverage coveralls mando tstoolbox
