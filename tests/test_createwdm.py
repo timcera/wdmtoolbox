@@ -2,15 +2,16 @@
 import subprocess
 import os
 import time
+import shlex
 
 def _createwdm(fname):
-    return subprocess.call(['wdmtoolbox',
-                            'createnewwdm',
-                            '--overwrite',
-                            fname])
+    cmd = shlex.split('wdmtoolbox createnewwdm --overwrite {0}'.format(fname))
+    print(cmd)
+    return subprocess.call(cmd)
 
 def test_createwdm():
     fname = os.path.join(os.path.dirname(__file__), 'a.wdm')
+    print(fname)
     assert _createwdm(fname) == 0
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
