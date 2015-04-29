@@ -30,6 +30,7 @@ install:
 
 script:
   - source activate test_env
+  - export PATH="$HOME/miniconda/bin:$PATH"
   - nosetests --with-doctest --with-coverage --cover-tests --cover-package=wdmtoolbox --cover-branches --cover-erase
 
 after_success:
