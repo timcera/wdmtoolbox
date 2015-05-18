@@ -22,11 +22,11 @@ before_install:
 
 # Install packages
 install:
-  - conda create -q -n $TRAVIS_PYTHON_VERSION python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas pip
+  - conda create -q -n $TRAVIS_PYTHON_VERSION python=$TRAVIS_PYTHON_VERSION setuptools atlas numpy scipy matplotlib nose dateutil pandas pip coverage
 
   - source activate $TRAVIS_PYTHON_VERSION
-  - pip install setuptools coverage coveralls mando tstoolbox
-  - pip install -e .
+  - pip install coveralls mando tstoolbox baker
+  - python setup.py develop
 
 script:
   - source activate $TRAVIS_PYTHON_VERSION
