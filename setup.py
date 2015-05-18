@@ -1,3 +1,5 @@
+
+import setuptools
 from numpy.distutils.core import Extension, setup
 import os
 import sys

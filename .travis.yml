@@ -26,7 +26,7 @@ install:
 
   - source activate $TRAVIS_PYTHON_VERSION
   - pip install coveralls mando tstoolbox baker
-  - python setup.py develop
+  - pip install -e .
 
 script:
   - source activate $TRAVIS_PYTHON_VERSION
