@@ -18,18 +18,18 @@ before_install:
   # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
   - sudo rm -rf /dev/shm
   - sudo ln -s /run/shm /dev/shm
+  - sudo apt-get install -y gfortran
 
 # Install packages
 install:
-  - sudo apt-get install -y gfortran
-  - conda create -q -n test_env python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas pip
+  - conda create -q -n $TRAVIS_PYTHON_VERSION python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas pip
 
-  - source activate test_env
+  - source activate $TRAVIS_PYTHON_VERSION
   - pip install setuptools coverage coveralls mando tstoolbox
   - pip install -e .
 
 script:
-  - source activate test_env
+  - source activate $TRAVIS_PYTHON_VERSION
   - nosetests --with-doctest --with-coverage --cover-tests --cover-package=wdmtoolbox --cover-branches --cover-erase
 
 after_success:
