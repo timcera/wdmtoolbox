@@ -177,7 +177,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
 
 
 @mando.command
-def extract(*wdmpath, **kwds):
+def extract(start_date=None, end_date=None, *wdmpath):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
 
     :param wdmpath: Path and WDM filename followed by space separated list of
@@ -193,19 +193,6 @@ def extract(*wdmpath, **kwds):
     :param start_date: If not given defaults to start of data set.
     :param end_date:   If not given defaults to end of data set.
     '''
-    start_date = kwds.setdefault('start_date', None)
-    end_date = kwds.setdefault('end_date', None)
-    if len(kwds) > 2:
-        kwds_list = kwds.keys()
-        kwds_list.remove('start_date')
-        kwds_list.remove('end_date')
-        raise ValueError('''
-*
-*   The only allowed keywords are "--start_date=..." and "--end_date=...".
-*   You passed in {0}
-*
-'''.format(kwds_list))
-
     # Adapt to both forms of presenting wdm files and DSNs
     # Old form '... file.wdm 101 102 103 ...'
     # New form '... file.wdm,101 adifferentfile.wdm,101 ...
