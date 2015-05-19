@@ -42,9 +42,9 @@ class TestDescribe(TestCase):
         self.wdmname = os.path.join('tests', 'b.wdm')
 
     def test_extract(self):
-        ret = wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        ret = wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5,
-                                      base_year=1870)
+        wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
+        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5,
+                                base_year=1870)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/sunspot_area.csv')
         ret1 = wdmtoolbox.extract(self.wdmname, 101)
@@ -57,8 +57,8 @@ class TestDescribe(TestCase):
 
         ret4 = tstoolbox.read('tests/sunspot_area_with_missing.csv', dense=True)
 
-        ret = wdmtoolbox.createnewdsn(self.wdmname, 500, tcode=5,
-                                      base_year=1870)
+        wdmtoolbox.createnewdsn(self.wdmname, 500, tcode=5,
+                                base_year=1870)
         wdmtoolbox.csvtowdm(self.wdmname, 500,
                             input_ts='tests/sunspot_area_with_missing.csv')
         ret5 = wdmtoolbox.extract(self.wdmname, 500)

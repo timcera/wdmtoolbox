@@ -42,8 +42,8 @@ class TestDescribe(TestCase):
         self.wdmname = os.path.join('tests', 'c.wdm')
 
     def test_tstep(self):
-        ret = wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        ret = wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
+        wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
+        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
                                       base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
