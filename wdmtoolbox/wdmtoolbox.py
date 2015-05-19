@@ -177,7 +177,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
 
 
 @mando.command
-def extract(*wdmpaths, **kwds):
+def extract(*wdmpath, **kwds):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
 
     :param wdmpath: Path and WDM filename followed by space separated list of
