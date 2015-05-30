@@ -54,3 +54,7 @@ class TestDescribe(TestCase):
         ret3 = tstoolbox.read('tests/nwisiv_02246000.csv').astype('float64')
         ret1.columns = ['02246000_iv_00060']
         assert_frame_equal(ret1, ret3)
+
+    def test_listdsns(self):
+        ldsns = wdmtoolbox.listdsns(self.wdmname)
+

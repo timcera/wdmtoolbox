@@ -8,6 +8,7 @@ python:
 
 # Setup anaconda
 before_install:
+  - sudo apt-get install -y gfortran
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
@@ -15,10 +16,10 @@ before_install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
-  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
+  # The next couple lines fix a crash with multiprocessing on Travis and are
+  # not specific to using Miniconda
   - sudo rm -rf /dev/shm
   - sudo ln -s /run/shm /dev/shm
-  - sudo apt-get install -y gfortran
 
 # Install packages
 install:
@@ -26,6 +27,7 @@ install:
 
   - source activate $TRAVIS_PYTHON_VERSION
   - pip install coveralls mando tstoolbox baker
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install argparse; fi
   - python setup.py install
 
 script:

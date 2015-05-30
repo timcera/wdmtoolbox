@@ -1,0 +1,35 @@
+#!/bin/sh
+
+envs=(2.6 2.7 3.3 3.4)
+
+
+for env in ${envs[@]}; do
+    echo "${env}"
+    conda create -q -n python${env} python=${env} setuptools \
+                                                  atlas \
+                                                  numpy \
+                                                  scipy \
+                                                  matplotlib \
+                                                  nose \
+                                                  dateutil \
+                                                  pandas \
+                                                  pip \
+                                                  coverage \
+                                                  flake8
+
+    source activate python${env}
+    pip install mando tstoolbox baker
+    if [[ ${env} == '2.6' ]]; then pip install argparse; fi
+    pip uninstall -y wdmtoolbox 
+    pip install ../wdmtoolbox
+
+    nosetests --with-doctest --with-coverage --cover-tests --cover-package=wdmtoolbox --cover-branches --cover-erase
+done
+
+
+coverage erase
+coverage run nosetests --with-doctest
+coverage report --include="wdmtoolbox/*" --omit="tests/*" --omit=".tox/*"
+coverage html --include="wdmtoolbox/*" --omit="tests/*" --omit=".tox/*"
+flake8 wdmtoolbox/__init__.py wdmtoolbox/wdmutil.py --exit-zero
+
