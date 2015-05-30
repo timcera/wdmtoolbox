@@ -56,5 +56,10 @@ class TestDescribe(TestCase):
         assert_frame_equal(ret1, ret3)
 
     def test_listdsns(self):
+        wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
+        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
+                                      base_year=1970, tsstep=15)
+        wdmtoolbox.csvtowdm(self.wdmname, 101,
+                            input_ts='tests/nwisiv_02246000.csv')
         ldsns = wdmtoolbox.listdsns(self.wdmname)
 
