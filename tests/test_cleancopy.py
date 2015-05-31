@@ -20,6 +20,7 @@ except:
 
 from pandas.util.testing import TestCase
 from pandas.util.testing import assert_frame_equal
+from pandas.util.testing import assertRaisesRegexp
 import pandas as pd
 
 from tstoolbox import tstoolbox
@@ -41,33 +42,29 @@ def capture(func, *args, **kwds):
 class TestDescribe(TestCase):
     def setUp(self):
         self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
+        self.tfd, self.twdmname = tempfile.mkstemp(suffix='.wdm')
 
     def tearDown(self):
         os.close(self.fd)
         os.remove(self.wdmname)
+        os.close(self.tfd)
+        os.remove(self.twdmname)
 
-    def test_extract(self):
+    def test_cleancopytoself(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5,
-                                base_year=1870)
+        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
+                                      base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
-                            input_ts='tests/sunspot_area.csv')
-        ret1 = wdmtoolbox.extract(self.wdmname, 101)
-        ret2 = wdmtoolbox.extract('{0},101'.format(self.wdmname))
-        assert_frame_equal(ret1, ret2)
+                            input_ts='tests/nwisiv_02246000.csv')
+        with assertRaisesRegexp(ValueError,
+                'The "inwdmpath" cannot be the same as "outwdmpath"'):
+            wdmtoolbox.cleancopywdm(self.wdmname, self.wdmname)
 
-        ret3 = tstoolbox.read('tests/sunspot_area.csv')
-        ret1.columns = ['Area']
-        assert_frame_equal(ret1, ret3)
+    def test_cleancopy_a_to_b(self):
+        wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
+        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
+                                      base_year=1970, tsstep=15)
+        wdmtoolbox.csvtowdm(self.wdmname, 101,
+                            input_ts='tests/nwisiv_02246000.csv')
+        wdmtoolbox.cleancopywdm(self.wdmname, self.twdmname, overwrite=True)
 
-        ret4 = tstoolbox.read('tests/sunspot_area_with_missing.csv', dense=True)
-
-        wdmtoolbox.createnewdsn(self.wdmname, 500, tcode=5,
-                                base_year=1870)
-        wdmtoolbox.csvtowdm(self.wdmname, 500,
-                            input_ts='tests/sunspot_area_with_missing.csv')
-        ret5 = wdmtoolbox.extract(self.wdmname, 500)
-        ret5.columns = ['Area']
-        ret4.to_csv('/tmp/ret4.csv')
-        ret5.to_csv('/tmp/ret5.csv')
-        assert_frame_equal(ret5, ret4)

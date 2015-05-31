@@ -3,6 +3,7 @@ import subprocess
 import os
 import time
 import shlex
+import tempfile
 
 def _createwdm(fname):
     cmd = shlex.split('wdmtoolbox createnewwdm --overwrite {0}'.format(fname))
@@ -10,15 +11,16 @@ def _createwdm(fname):
     return subprocess.call(cmd)
 
 def test_createwdm():
-    fname = os.path.join(os.path.dirname(__file__), 'a.wdm')
+    fd, fname = tempfile.mkstemp(suffix='.wdm')
     print(fname)
     assert _createwdm(fname) == 0
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
+    os.close(fd)
     os.remove(fname)
 
 def test_createnewdsn_checkdefaults():
-    fname = os.path.join(os.path.dirname(__file__), 'b.wdm')
+    fd, fname = tempfile.mkstemp(suffix='.wdm')
     assert _createwdm(fname) == 0
     retcode = subprocess.call(['wdmtoolbox', 'createnewdsn', fname, '101'])
     assert retcode == 0
@@ -35,4 +37,5 @@ def test_createnewdsn_checkdefaults():
     assert p.returncode == 0
 
     assert p.stdout.readlines() == tstr
+    os.close(fd)
     os.remove(fname)

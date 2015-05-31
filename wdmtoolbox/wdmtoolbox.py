@@ -138,16 +138,20 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     assert len(collect_tcodes) == 1
     assert len(collect_tsteps) == 1
 
+    collect_tcodes = list(collect_tcodes.keys())[0]
+    collect_tsteps = list(collect_tsteps.keys())[0]
+
     collected_start_dates = []
     collected_end_dates = []
     collected_ts = {}
     for dsn, location in collect_keys:
-        collected_ts[(dsn, location)] = WDM.read_dsn(wdmpath,
-                                                     int(dsn),
-                                                     start_date=start_date,
-                                                     end_date=end_date)
-        collected_start_dates.append(collected_ts[(dsn, location)].dates[0])
-        collected_end_dates.append(collected_ts[(dsn, location)].dates[-1])
+        tmp = WDM.read_dsn(wdmpath,
+                           int(dsn),
+                           start_date=start_date,
+                           end_date=end_date)
+        collected_start_dates.append(tmp.index[0])
+        collected_end_dates.append(tmp.index[-1])
+        collected_ts[(dsn, location)] = tmp.values
 
     maptcode = {
         1: 1,
@@ -158,7 +162,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
 
     print('SWMM5')
     print('RDII dump of DSNS {0} from {1}'.format(dsns, wdmpath))
-    print(maptcode[collect_tcodes.keys()[0]]*collect_tsteps.keys()[0])
+    print(maptcode[collect_tcodes]*collect_tsteps)
     print(1)
     print('FLOW CFS')
     print(len(dsns))
@@ -167,13 +171,13 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     print('Node Year Mon Day Hr Min Sec Flow')
     # Can pick any time series because they should all have the same interval
     # and start and end dates.
-    for date in collected_ts[collect_keys[0]].dates:
+    for dex, date in enumerate(tmp.index):
         for dsn, location in collect_keys:
             print(
-                '{0}_{1} {2} {3:02} {4:02} {5:02} {6:02} {7:02} {8:f}'.format(
+                '{0}_{1} {2} {3:02} {4:02} {5:02} {6:02} {7:02} {8}'.format(
                     dsn, location, date.year, date.month, date.day, date.hour,
                     date.minute, date.second,
-                    collected_ts[(dsn, location)][date]))
+                    collected_ts[(dsn, location)][dex]))
 
 
 @mando.command
@@ -196,7 +200,7 @@ def extract(*wdmpath, **kwds):
     start_date = kwds.setdefault('start_date', None)
     end_date = kwds.setdefault('end_date', None)
     if len(kwds) > 2:
-        kwds_list = kwds.keys()
+        kwds_list = list(kwds.keys())
         kwds_list.remove('start_date')
         kwds_list.remove('end_date')
         raise ValueError('''
