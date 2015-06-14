@@ -20,11 +20,13 @@ except:
 
 from pandas.util.testing import TestCase
 from pandas.util.testing import assert_frame_equal
+from pandas.util.testing import assertRaisesRegexp
 import pandas as pd
 
 from tstoolbox import tstoolbox
 import tstoolbox.tsutils as tsutils
 from wdmtoolbox import wdmtoolbox
+from wdmtoolbox.wdmutil import DSNExistsError
 
 
 def capture(func, *args, **kwds):
@@ -68,6 +70,13 @@ class TestDescribe(TestCase):
                             input_ts='tests/sunspot_area_with_missing.csv')
         ret5 = wdmtoolbox.extract(self.wdmname, 500)
         ret5.columns = ['Area']
-        ret4.to_csv('/tmp/ret4.csv')
-        ret5.to_csv('/tmp/ret5.csv')
         assert_frame_equal(ret5, ret4)
+
+    def test_dsn_exists(self):
+        wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
+        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5,
+                                base_year=1870)
+        with assertRaisesRegexp(DSNExistsError,
+                'exists.'):
+            wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5,
+                                    base_year=1870)

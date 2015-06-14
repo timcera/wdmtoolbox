@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import subprocess
 import os
@@ -39,3 +41,53 @@ def test_createnewdsn_checkdefaults():
     assert p.stdout.readlines() == tstr
     os.close(fd)
     os.remove(fname)
+
+
+import shlex
+import subprocess
+import sys
+import os
+import tempfile
+try:
+    from cStringIO import StringIO
+except:
+    from io import StringIO
+
+from pandas.util.testing import TestCase
+from pandas.util.testing import assert_frame_equal
+from pandas.util.testing import assertRaisesRegexp
+import pandas as pd
+
+from tstoolbox import tstoolbox
+import tstoolbox.tsutils as tsutils
+from wdmtoolbox import wdmtoolbox
+from wdmtoolbox.wdmutil import WDMError
+from wdmtoolbox.wdmutil import DSNDoesNotExist
+from wdmtoolbox.wdmutil import WDMFileExists
+
+
+def capture(func, *args, **kwds):
+    sys.stdout = StringIO()      # capture output
+    out = func(*args, **kwds)
+    out = sys.stdout.getvalue()  # release output
+    try:
+        out = bytes(out, 'utf-8')
+    except:
+        pass
+    return out
+
+
+class TestDescribe(TestCase):
+    def setUp(self):
+        self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
+
+    def tearDown(self):
+        os.close(self.fd)
+        os.remove(self.wdmname)
+
+    def test_overwrite(self):
+        wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
+        with assertRaisesRegexp(WDMFileExists,
+                'exists.'):
+            wdmtoolbox.createnewwdm(self.wdmname)
+

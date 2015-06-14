@@ -42,13 +42,10 @@ def capture(func, *args, **kwds):
 class TestDescribe(TestCase):
     def setUp(self):
         self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
-        self.tfd, self.twdmname = tempfile.mkstemp(suffix='.wdm')
+        os.close(self.fd)
 
     def tearDown(self):
-        os.close(self.fd)
         os.remove(self.wdmname)
-        os.close(self.tfd)
-        os.remove(self.twdmname)
 
     def test_cleancopytoself(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
@@ -66,5 +63,8 @@ class TestDescribe(TestCase):
                                       base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
-        wdmtoolbox.cleancopywdm(self.wdmname, self.twdmname, overwrite=True)
+        tfd, twdmname = tempfile.mkstemp(suffix='.wdm')
+        os.close(tfd)
+        wdmtoolbox.cleancopywdm(self.wdmname, twdmname, overwrite=True)
+        os.remove(twdmname)
 
