@@ -26,10 +26,7 @@ def _describedsn(wdmpath, dsn):
     ''' The local underlying function used by all routines that need a
         description of DSN.
     '''
-    try:
-        return WDM.describe_dsn(wdmpath, int(dsn))
-    except wdmutil.DSNDoesNotExist:
-        return None
+    return WDM.describe_dsn(wdmpath, int(dsn))
 
 
 def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
@@ -78,14 +75,17 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
 ''')
     createnewwdm(outwdmpath, overwrite=overwrite)
     activedsn = []
-    for i in range(1, 32001):
+    for i in range(1, 32000):
         try:
             activedsn.append(_describedsn(inwdmpath, i)['dsn'])
-        except TypeError:
+        except wdmutil.WDMError:
             continue
-    # Copy labels then data
+    # Copy labels (which copies DSN metadata and data)
     for i in activedsn:
-        _copy_dsn(inwdmpath, i, outwdmpath, i)
+        try:
+            _copy_dsn(inwdmpath, i, outwdmpath, i)
+        except wdmutil.WDMError:
+            pass
 
 
 @mando.command
@@ -273,12 +273,14 @@ def listdsns(wdmpath):
             'DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE',
             'END DATE', 'TCODE', 'TSTEP'))
     for i in range(1, 32001):
-        testv = _describedsn(wdmpath, i)
-        if testv:
-            if cli is True:
-                print('{dsn:5} {scenario!s:8} {location!s:8} {constituent!s:8}    {start_date!s:19} {end_date!s:19} {tcode_name!s:>5}({tcode}) {tstep}'.format(**testv))
-            else:
-                dsn_info[testv['dsn']] = testv
+        try:
+            testv = _describedsn(wdmpath, i)
+        except wdmutil.WDMError:
+            continue
+        if cli is True:
+            print('{dsn:5} {scenario!s:8} {location!s:8} {constituent!s:8}    {start_date!s:19} {end_date!s:19} {tcode_name!s:>5}({tcode}) {tstep}'.format(**testv))
+        else:
+            dsn_info[testv['dsn']] = testv
     if cli is False:
         return dsn_info
 

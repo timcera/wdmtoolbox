@@ -16,6 +16,7 @@ import sys
 import pandas as pd
 
 import wdm
+from tstoolbox import tsutils
 
 # Load in WDM subroutines
 
@@ -224,7 +225,7 @@ class WDM():
             -71: 'data set already exists',
             -72: 'old data set does not exist',
             -73: 'new data set already exists',
-            -81: 'data set does not exists',
+            -81: 'data set does not exist',
             -82: 'data set exists, but is wrong DSTYP',
             -83: 'WDM file already open, can not create it',
             -84: 'data set number out of valid range',
@@ -297,14 +298,13 @@ class WDM():
         indsn = int(indsn)
         outdsn = int(outdsn)
         dsntype = 0
-        inwdmfp = self._open(inwdmpath, 53)
+        inwdmfp = self._open(inwdmpath, 53, ronwfg=1)
         outwdmfp = self._open(outwdmpath, 54)
-        retcode = self.wddscl(
-            inwdmfp,
-            indsn,
-            outwdmfp,
-            outdsn,
-            dsntype)
+        retcode = self.wddscl(inwdmfp,
+                              indsn,
+                              outwdmfp,
+                              outdsn,
+                              dsntype)
         self._close(inwdmpath)
         self._close(outwdmpath)
         self._retcode_check(retcode, additional_info='wddscl')
@@ -313,9 +313,6 @@ class WDM():
         ''' Will collect some metadata about the DSN.
         '''
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        if self.wdckdt(wdmfp, dsn) == 0:
-            self._close(wdmpath)
-            raise DSNDoesNotExist(dsn)
 
         tdsfrc, llsdat, lledat, retcode = self.wtfndt(
             wdmfp,
@@ -559,7 +556,6 @@ class WDM():
 '''.format(dsn_desc['base_year'], llsdat[0]))
 
         nval = len(data)
-
         wdmfp = self._open(wdmpath, 58)
         retcode = self.wdtput(
             wdmfp,
@@ -600,43 +596,30 @@ class WDM():
 
         if start_date is not None:
             start_date = self.dateconverter(start_date)
-            if datetime.datetime(*start_date) >= datetime.datetime(*llsdat):
-                llsdat = start_date
-            if datetime.datetime(*start_date) > datetime.datetime(*lledat):
+            start_date = datetime.datetime(*start_date)
+            if start_date > datetime.datetime(*lledat):
                 raise ValueError('''
 *
 *   The requested start date ({0}) is after the end date ({1})
 *   of the time series in the WDM file.
 *
 '''.format(datetime.datetime(*start_date), datetime.datetime(*lledat)))
-        else:
-            start_date = llsdat
+
         if end_date is not None:
             end_date = self.dateconverter(end_date)
-            if datetime.datetime(*end_date) <= datetime.datetime(*lledat):
-                lledat = end_date
-            if datetime.datetime(*end_date) < datetime.datetime(*llsdat):
+            end_date = datetime.datetime(*end_date)
+            if end_date < datetime.datetime(*llsdat):
                 raise ValueError('''
 *
 *   The requested end date ({0}) is before the start date ({1})
 *   of the time series in the WDM file.
 *
 '''.format(datetime.datetime(*end_date), datetime.datetime(*llsdat)))
-        else:
-            end_date = lledat
-        if datetime.datetime(*end_date) < datetime.datetime(*start_date):
-            raise ValueError('''
-*
-*   The end date ({0}) is less than the start date ({1}).
-*
-'''.format(datetime.datetime(*end_date), datetime.datetime(*start_date)))
 
-        # Determine the number of values (ITERM) from LLSDAT to LLEDAT
-        iterm = self.timdif(
-            llsdat,
-            lledat,
-            tcode,
-            tstep)
+        iterm = self.timdif(llsdat,
+                            lledat,
+                            tcode,
+                            tstep)
 
         dtran = 0
         qualfg = 30
@@ -654,29 +637,21 @@ class WDM():
         self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdtget')
 
-        # Find the begining in datetime.datetime format
-        tstart = datetime.datetime(*llsdat)
+        index = pd.date_range(datetime.datetime(*llsdat),
+                              periods=iterm,
+                              freq='{0:d}{1}'.format(tstep, MAPTCODE[tcode]))
 
         # Convert time series to pandas DataFrame
-        index = pd.date_range(
-            tstart,
-            periods=len(dataout),
-            freq='{0:d}{1}'.format(tstep, MAPTCODE[tcode]))
-
         tmpval = pd.DataFrame(
             pd.Series(
                 dataout,
                 index=index,
                 name='{0}_DSN_{1}'.format(
                     os.path.basename(wdmpath), dsn)), dtype=pd.np.float64)
-        if (datetime.datetime(*start_date) != datetime.datetime(*llsdat) or
-                datetime.datetime(*end_date) != datetime.datetime(*lledat)):
-            rindex = pd.date_range(datetime.datetime(*start_date),
-                                   datetime.datetime(*end_date),
-                                   freq='{0:d}{1}'.format(tstep,
-                                                          MAPTCODE[tcode]))
-            tmpval = tmpval.reindex(rindex)
 
+        tmpval = tsutils.date_slice(tmpval,
+                                    start_date=start_date,
+                                    end_date=end_date)
         tmpval.replace(tsfill, pd.np.nan, inplace=True)
         tmpval.index.name = 'Datetime'
         return tmpval

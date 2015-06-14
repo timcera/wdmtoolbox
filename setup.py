@@ -18,7 +18,7 @@ install_requires = [
     # List your project dependencies here.
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
-    'baker >= 1.3',
+    'mando >= 0.3.2',
     'python-dateutil >= 2.1',
     'numpy',
     'pandas >= 0.9.0',
