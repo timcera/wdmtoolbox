@@ -22,7 +22,7 @@ install_requires = [
     'python-dateutil >= 2.1',
     'numpy',
     'pandas >= 0.9.0',
-    'tstoolbox >= 0.9.1',
+    'tstoolbox >= 0.9.7',
 ]
 
 wdm_support = Extension('wdm', [
