@@ -384,7 +384,7 @@ def stdtowdm(wdmpath, dsn, infile='-'):
 
 @mando.command
 def csvtowdm(wdmpath, dsn, input=None, start_date=None,
-             end_date=None, input_ts='-'):
+             end_date=None, columns=None, input_ts='-'):
     ''' Writes data from a CSV file to a DSN.
     File can have comma separated
     'year', 'month', 'day', 'hour', 'minute', 'second', 'value'
@@ -400,6 +400,10 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
         'None' for beginning.
     :param end_date: The end_date of the series in ISOdatetime format, or
         'None' for end.
+    :param columns: Columns to pick out of input.  Can use column names or
+        column numbers.  If using numbers, column number 1 is the first column.
+        To pick multiple columns; separate by commas with no spaces. As used in
+        'pick' command.
     '''
     if input is not None:
         raise ValueError('''
@@ -408,9 +412,10 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
 *   instead.
 *
 ''')
-    tsd = tsutils.date_slice(tsutils.read_iso_ts(input_ts),
+    tsd = tsutils.common_kwds(tsutils.read_iso_ts(input_ts),
                              start_date=start_date,
-                             end_date=end_date)
+                             end_date=end_date,
+                             pick=columns)
 
     if len(tsd.columns) > 1:
         raise ValueError('''
