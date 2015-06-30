@@ -454,13 +454,13 @@ class WDM():
         self.wdlbax(
             wdmfp,
             dsn,
-            1,    # DSTYPE - always 1 for time series
-            10,   # NDN    - number of down pointers
-            10,   # NUP    - number of up pointers
-            30,   # NSA    - number of search attributes
-            100,  # NSASP  - amount of search attribute space
-            300)  # NDP    - number of data pointers
-                  # PSA    - pointer to search attribute space
+            1,     # DSTYPE - always 1 for time series
+            10,    # NDN    - number of down pointers
+            10,    # NUP    - number of up pointers
+            30,    # NSA    - number of search attributes
+            100,   # NSASP  - amount of search attribute space
+            300,   # NDP    - number of data pointers
+            )      # PSA    - pointer to search attribute space
 
         for saind, salen, saval in [(34, 1, 6),  # tgroup
                                     (83, 1, 1),  # compfg
@@ -469,7 +469,7 @@ class WDM():
                                     (17, 1, int(tcode)),  # tcode
                                     (33, 1, int(tsstep)),  # tsstep
                                     (27, 1, int(base_year)),  # tsbyr
-                                   ]:
+                                    ]:
             retcode = self.wdbsai(
                 wdmfp,
                 dsn,
@@ -496,7 +496,7 @@ class WDM():
                 (288, 8, scenario.upper(), 'Scenario'),
                 (289, 8, constituent.upper(), 'Constituent'),
                 (290, 8, location.upper(), 'Location'),
-            ]:
+                ]:
             saval = saval.strip()
             if len(saval) > salen:
                 raise ValueError('''
