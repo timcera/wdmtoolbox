@@ -288,6 +288,7 @@ class WDM():
             retcode = self.wddsdl(
                 wdmfp,
                 dsn)
+            self._close(wdmpath)
             self._retcode_check(retcode, additional_info='wddsdl')
         self._close(wdmpath)
 
