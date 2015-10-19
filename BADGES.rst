@@ -6,14 +6,14 @@
     :target: https://coveralls.io/r/timcera/wdmtoolbox?branch=master
     :height: 20
 
-.. image:: https://pypip.in/v/wdmtoolbox/badge.png?style=flat
+.. image:: https://img.shields.io/pypi/v/wdmtoolbox.png
     :alt: Latest release
     :target: https://pypi.python.org/pypi/wdmtoolbox
 
-.. image:: https://pypip.in/d/wdmtoolbox/badge.png?style=flat
+.. image:: https://img.shields.io/pypi/dm/wdmtoolbox.png
     :alt: PyPI downloads count
     :target: https://pypi.python.org/pypi/wdmtoolbox
 
-.. image:: https://pypip.in/license/wdmtoolbox/badge.png?style=flat
+.. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
     :alt: wdmtoolbox license
     :target: https://pypi.python.org/pypi/wdmtoolbox/
