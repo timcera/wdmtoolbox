@@ -251,6 +251,8 @@ class WDM():
             }
 
         if retcode in retcode_dict:
+            for fn in self.openfiles:
+                self._close(fn)
             raise WDMError('''
 *
 *   WDM library function returned error code {0}. {1}
@@ -258,6 +260,8 @@ class WDM():
 *
 '''.format(retcode, additional_info, retcode_dict[retcode]))
         if retcode != 0:
+            for fn in self.openfiles:
+                self._close(fn)
             raise WDMError('''
 *
 *   WDM library function returned error code {0}. {1}
