@@ -418,7 +418,8 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
 def _writetodsn(wdmpath, dsn, data):
     ''' Local function to write Pandas data frame to DSN.
     '''
-    infer = tsutils.asbestfreq(data)[1]
+    data = tsutils.asbestfreq(data)
+    infer = data.index.freqstr
     pandacode = infer.lstrip('0123456789')
     tstep = infer[:infer.find(pandacode)]
     try:
