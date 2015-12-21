@@ -251,7 +251,8 @@ class WDM():
             }
 
         if retcode in retcode_dict:
-            for fn in self.openfiles:
+            lopenfiles = self.openfiles.copy()
+            for fn in lopenfiles:
                 self._close(fn)
             raise WDMError('''
 *

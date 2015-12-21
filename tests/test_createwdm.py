@@ -9,7 +9,6 @@ import tempfile
 
 def _createwdm(fname):
     cmd = shlex.split('wdmtoolbox createnewwdm --overwrite {0}'.format(fname))
-    print(cmd)
     return subprocess.call(cmd)
 
 def test_createwdm():
@@ -24,30 +23,26 @@ def test_createwdm():
 def test_createnewdsn_checkdefaults():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
     assert _createwdm(fname) == 0
-    retcode = subprocess.call(['wdmtoolbox', 'createnewdsn', fname, '101'])
+    cmd = shlex.split('wdmtoolbox createnewdsn {0} 101'.format(fname))
+    retcode = subprocess.call(cmd)
     assert retcode == 0
-    tstr = ['#DSN  SCENARIO LOCATION CONSTITUENT START DATE          END DATE            TCODE TSTEP\n',
-            '  101                               None                None                    D(4) 1\n']
-    p = subprocess.Popen(['wdmtoolbox', 'listdsns', fname],
+    tstr = ['#DSN  SCENARIO LOCATION CONSTITUENT START DATE          END DATE            TCODE TSTEP',
+            '  101                               None                None                    D(4) 1',
+            '']
+    tstr = '\n'.join(tstr)
+    cmd = shlex.split('wdmtoolbox listdsns {0}'.format(fname))
+    p = subprocess.Popen(cmd,
         stdout=subprocess.PIPE,
         universal_newlines=True)
 
-    # a fake 'p.wait' that won't deadlock?
-    # Needed to ensure that 'p.returncode' is available
-    while p.poll() == None:
-        time.sleep(0.1)
+    astr, _ = p.communicate()
     assert p.returncode == 0
 
-    assert p.stdout.readlines() == tstr
+    assert astr == tstr
+
     os.close(fd)
     os.remove(fname)
 
-
-import shlex
-import subprocess
-import sys
-import os
-import tempfile
 try:
     from cStringIO import StringIO
 except:
