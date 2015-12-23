@@ -29,6 +29,7 @@ install:
     #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
     ##  - ps: $mingwex=(Get-ChildItem -Include libmingwx.a -Recurse -path C:\MinGW)
     #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingwex.a -Destination mingwex.lib
+    # - ps: $c=(Get-ChildItem -Include libquadmath.a -Recurse -path C:\)
   - "build.cmd python.exe setup.py config --compiler=msvc --fcompiler=gfortran build --compiler=msvc --fcompiler=gfortran"
 
 build: off

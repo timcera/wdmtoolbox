@@ -46,7 +46,7 @@ wdm_support = Extension('wdm', [
           'wdm_support/WDTMS1.f',
           'wdm_support/WDTMS2.f',
           ],
-          extra_link_args=['-lquadmath'],
+          libraries=['quadmath'],
           include_dirs=['wdm_support'])
 
 setup(name='wdmtoolbox',
