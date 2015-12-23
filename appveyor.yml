@@ -19,6 +19,7 @@ install:
   - conda update -q conda
   - conda install -q setuptools numpy scipy matplotlib nose dateutil pandas wheel
   - pip install mando tstoolbox baker
+  - mingw-get install gfortran
 
 build: off
 
