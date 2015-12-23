@@ -5,10 +5,12 @@ environment:
     # For Python versions available on Appveyor, see
     # http://www.appveyor.com/docs/installed-software#python
 
-      #  - PYTHON: "C:\\Miniconda"
-    - PYTHON: "C:\\Miniconda-x64"
-      DISTUTILS_USE_SDK: "1"
-    - PYTHON: "C:\\Miniconda3"
+    - PYTHON: "C:\\Miniconda"
+      bits: "32"
+      arch: "x86"
+  #    - PYTHON: "C:\\Miniconda-x64"
+  #      DISTUTILS_USE_SDK: "1"
+  #    - PYTHON: "C:\\Miniconda3"
   #    - PYTHON: "C:\\Miniconda3-x64"
   #      DISTUTILS_USE_SDK: "1"
   #    - PYTHON: "C:\\Miniconda35"
@@ -21,13 +23,14 @@ install:
   - conda update -q conda
   - conda install -q setuptools numpy scipy matplotlib nose dateutil pandas wheel
   - pip install mando tstoolbox baker
-  - mingw-get install gfortran
-  - mingw-get install gcc-core
-  - mingw-get install binutils
-#  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
-  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
-#  - ps: $mingwex=(Get-ChildItem -Include libmingwx.a -Recurse -path C:\MinGW)
-  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingwex.a -Destination mingwex.lib
+  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
+    #  - mingw-get install gfortran
+    #  - mingw-get install gcc-core
+    #  - mingw-get install binutils
+    ##  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
+    #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
+    ##  - ps: $mingwex=(Get-ChildItem -Include libmingwx.a -Recurse -path C:\MinGW)
+    #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingwex.a -Destination mingwex.lib
   - "build.cmd python.exe setup.py build --compiler=msvc"
 
 build: off
