@@ -13,11 +13,11 @@ environment:
     - PYTHON: "C:\\Miniconda35-x64"
 
 install:
-  - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+    - set PATH=%PYTHON%;%PYTHON%\Scripts;C:\MinGW\bin%PATH%
   # We need wheel installed to build wheels
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
-  - conda install setuptools numpy scipy matplotlib nose dateutil pandas wheel
+  - conda install -q setuptools numpy scipy matplotlib nose dateutil pandas wheel
   - pip install mando tstoolbox baker
 
 build: off
