@@ -20,7 +20,6 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda install -q setuptools numpy scipy matplotlib nose dateutil pandas wheel
-  - conda install gcc
   - pip install mando tstoolbox baker
     #- pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
     #  - mingw-get install gfortran
