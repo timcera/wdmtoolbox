@@ -6,19 +6,13 @@ environment:
     # http://www.appveyor.com/docs/installed-software#python
 
     - PYTHON: "C:\\Miniconda"
-      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda-x64"
-      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
       DISTUTILS_USE_SDK: "1"
     - PYTHON: "C:\\Miniconda3"
-      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda3-x64"
-      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
       DISTUTILS_USE_SDK: "1"
     - PYTHON: "C:\\Miniconda35"
-      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda35-x64"
-      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
       DISTUTILS_USE_SDK: "1"
 
 install:
@@ -30,6 +24,10 @@ install:
   - mingw-get install gfortran
   - mingw-get install gcc-core
   - mingw-get install binutils
+  - ps: $mingw=(Get=ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
+  - ps: Copy-Item -LiteralPath $mingw -Destination mingw32.lib
+  - ps: $mingwex=(Get=ChildItem -Include libmingwx.a -Recurse -path C:\MinGW)
+  - ps: Copy-Item -LiteralPath $mingwex -Destination mingwex.lib
 
 build: off
 
