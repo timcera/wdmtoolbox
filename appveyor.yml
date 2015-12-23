@@ -9,14 +9,17 @@ environment:
       linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda-x64"
       linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
+      DISTUTILS_USE_SDK: "1"
     - PYTHON: "C:\\Miniconda3"
       linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda3-x64"
       linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
+      DISTUTILS_USE_SDK: "1"
     - PYTHON: "C:\\Miniconda35"
       linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda35-x64"
       linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
+      DISTUTILS_USE_SDK: "1"
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;C:\MinGW\bin;%PATH%
@@ -36,14 +39,14 @@ test_script:
   # Note that you must use the environment variable %PYTHON% to refer to
   # the interpreter you're using - Appveyor does not do anything special
   # to put the Python version you want to use on PATH.
-  - "build.cmd python.exe setup.py test"
+  - "build.cmd python.exe setup.py test --compiler=msvc"
 
 after_test:
   # This step builds your wheels.
   # Again, you only need build.cmd if you're building C extensions for
   # 64-bit Python 3.3/3.4. And you need to use %PYTHON% to get the correct
   # interpreter
-  - "build.cmd python.exe setup.py bdist_wheel"
+  - "build.cmd python.exe setup.py bdist_wheel --compiler=msvc"
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
