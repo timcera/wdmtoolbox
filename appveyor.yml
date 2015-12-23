@@ -7,14 +7,18 @@ environment:
 
     - PYTHON: "C:\\Miniconda"
     - PYTHON: "C:\\Miniconda-x64"
-    - PYTHON: "C:\\Miniconda"
+    - PYTHON: "C:\\Miniconda3"
     - PYTHON: "C:\\Miniconda3-x64"
-    - PYTHON: "C:\\Miniconda"
+    - PYTHON: "C:\\Miniconda35"
     - PYTHON: "C:\\Miniconda35-x64"
 
 install:
+  - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
   # We need wheel installed to build wheels
-  - "%PYTHON%\\bin\\conda install pandas matplotlib wheel"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda install setuptools atlas numpy scipy matplotlib nose dateutil pandas wheel
+  - pip install mando tstoolbox baker
 
 build: off
 
@@ -26,14 +30,14 @@ test_script:
   # Note that you must use the environment variable %PYTHON% to refer to
   # the interpreter you're using - Appveyor does not do anything special
   # to put the Python version you want to use on PATH.
-  - "build.cmd %PYTHON%\\bin\\python.exe setup.py test"
+  - "build.cmd python.exe setup.py test"
 
 after_test:
   # This step builds your wheels.
   # Again, you only need build.cmd if you're building C extensions for
   # 64-bit Python 3.3/3.4. And you need to use %PYTHON% to get the correct
   # interpreter
-  - "build.cmd %PYTHON%\\bin\\python.exe setup.py bdist_wheel"
+  - "build.cmd python.exe setup.py bdist_wheel"
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
