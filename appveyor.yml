@@ -17,7 +17,7 @@ install:
   # We need wheel installed to build wheels
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
-  - conda install setuptools atlas numpy scipy matplotlib nose dateutil pandas wheel
+  - conda install setuptools numpy scipy matplotlib nose dateutil pandas wheel
   - pip install mando tstoolbox baker
 
 build: off
