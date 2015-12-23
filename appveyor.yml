@@ -6,11 +6,17 @@ environment:
     # http://www.appveyor.com/docs/installed-software#python
 
     - PYTHON: "C:\\Miniconda"
+      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda-x64"
+      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda3"
+      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda3-x64"
+      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda35"
+      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
     - PYTHON: "C:\\Miniconda35-x64"
+      linkflags: '"/LIBPATH:C:\\MinGW\\lib"'
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;C:\MinGW\bin;%PATH%
