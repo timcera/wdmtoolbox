@@ -28,9 +28,9 @@ install:
   - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
 #  - ps: $mingwex=(Get-ChildItem -Include libmingwx.a -Recurse -path C:\MinGW)
   - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingwex.a -Destination mingwex.lib
-
-build:
   - "build.cmd python.exe setup.py build --compiler=msvc"
+
+build: off
 
 test_script:
   # Put your test command here.
