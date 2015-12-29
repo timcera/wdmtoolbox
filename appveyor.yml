@@ -34,7 +34,7 @@ install:
 #  - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
   - python.exe setup.py config_fc 
   - python.exe setup.py config --compiler=msvc --fcompiler=gfortran --libraries=quadmath
-  - python.exe build --compiler=msvc --fcompiler=gfortran
+  - python.exe setup.py build
 
 build: off
 
