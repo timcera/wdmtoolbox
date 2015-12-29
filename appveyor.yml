@@ -32,7 +32,8 @@ install:
 #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
 #  - ps: $f=(Get-ChildItem C:\MinGW\* -Include libquadmath*.* -Recurse)
 #  - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
-  - build.cmd python.exe setup.py config_fc config --compiler=msvc --fcompiler=gnu95 build --compiler=msvc --fcompiler=gnu95
+  - python.exe setup.py config_fc --compiler=msvc --fcompiler=gfortran --libraries=quadmath
+  - python.exe build --compiler=msvc --fcompiler=gfortran
 
 build: off
 
@@ -51,7 +52,7 @@ after_test:
   # Again, you only need build.cmd if you're building C extensions for
   # 64-bit Python 3.3/3.4. And you need to use %PYTHON% to get the correct
   # interpreter
-  - build.cmd python.exe setup.py bdist_wheel --fcompiler=gnu95 --compiler=msvc
+  - build.cmd python.exe setup.py bdist_wheel --fcompiler=gfortran --compiler=msvc
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
