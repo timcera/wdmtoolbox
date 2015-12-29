@@ -4,19 +4,19 @@ environment:
 
 
     - PYTHON: "C:\\Miniconda"
-      MINGWPATH: "C:\\msys64\mingw32\bin"
+      MINGWPATH: "C:\\msys64\\mingw32\\bin"
     - PYTHON: "C:\\Miniconda-x64"
-      MINGWPATH: "C:\\msys64\mingw64\bin"
+      MINGWPATH: "C:\\msys64\\mingw64\\bin"
       DISTUTILS_USE_SDK: "1"
     - PYTHON: "C:\\Miniconda3"
-      MINGWPATH: "C:\\msys64\mingw32\bin"
+      MINGWPATH: "C:\\msys64\\mingw32\\bin"
     - PYTHON: "C:\\Miniconda3-x64"
-      MINGWPATH: "C:\\msys64\mingw64\bin"
+      MINGWPATH: "C:\\msys64\\mingw64\\bin"
       DISTUTILS_USE_SDK: "1"
     - PYTHON: "C:\\Miniconda35"
-      MINGWPATH: "C:\\msys64\mingw32\bin"
+      MINGWPATH: "C:\\msys64\\mingw32\\bin"
     - PYTHON: "C:\\Miniconda35-x64"
-      MINGWPATH: "C:\\msys64\mingw64\bin"
+      MINGWPATH: "C:\\msys64\\mingw64\\bin"
       DISTUTILS_USE_SDK: "1"
 
 install:
