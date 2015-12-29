@@ -27,7 +27,7 @@ install_requires = [
 
 libraries = []
 if sys.platform.startswith('win'):
-    libraries = ['quadmath']
+    libraries = ['quadmath.lib']
 
 wdm_support = Extension('wdm', [
           'wdm_support/wdm.pyf',
