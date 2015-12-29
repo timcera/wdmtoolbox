@@ -1,9 +1,7 @@
 environment:
 
   matrix:
-    fast_finish: true
-
-    - PYTHON_VERSION: 2.7
+    - PYTHON_VERSION: "2.7"
       MINGWPATH: "C:\\msys64\\mingw32\\bin"
 #    - PYTHON: "C:\\Miniconda"
 #      MINGWPATH: "C:\\msys64\\mingw32\\bin"
