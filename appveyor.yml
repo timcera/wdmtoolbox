@@ -3,23 +3,22 @@ environment:
   matrix:
     fast_finish: true
 
-    # wheel isn't available for python 2.6
-    - PYTHON_VERSION: "2.7"
-      MINGWPATH: "C:\\msys64\\mingw32"
-    - PYTHON_VERSION: "3.3"
-      MINGWPATH: "C:\\msys64\\mingw32"
-    - PYTHON_VERSION: "3.4"
-      MINGWPATH: "C:\\msys64\\mingw32"
-    - PYTHON_VERSION: "3.5"
-      MINGWPATH: "C:\\msys64\\mingw32"
-    - PYTHON_VERSION: "2.7"
-      MINGWPATH: "C:\\msys64\\mingw64"
-    - PYTHON_VERSION: "3.3"
-      MINGWPATH: "C:\\msys64\\mingw64"
-    - PYTHON_VERSION: "3.4"
-      MINGWPATH: "C:\\msys64\\mingw64"
-    - PYTHON_VERSION: "3.5"
-      MINGWPATH: "C:\\msys64\\mingw64"
+      - PYTHON_VERSION: "2.7"
+        MINGWPATH: "C:\\msys64\\mingw32"
+      - PYTHON_VERSION: "3.3"
+        MINGWPATH: "C:\\msys64\\mingw32"
+      - PYTHON_VERSION: "3.4"
+        MINGWPATH: "C:\\msys64\\mingw32"
+      - PYTHON_VERSION: "3.5"
+        MINGWPATH: "C:\\msys64\\mingw32"
+      - PYTHON_VERSION: "2.7"
+        MINGWPATH: "C:\\msys64\\mingw64"
+      - PYTHON_VERSION: "3.3"
+        MINGWPATH: "C:\\msys64\\mingw64"
+      - PYTHON_VERSION: "3.4"
+        MINGWPATH: "C:\\msys64\\mingw64"
+      - PYTHON_VERSION: "3.5"
+        MINGWPATH: "C:\\msys64\\mingw64"
 
 install:
   - set PATH=C:\Miniconda\Scripts;%MINGWPATH%\bin
