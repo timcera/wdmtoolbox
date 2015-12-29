@@ -4,21 +4,27 @@ environment:
 
 
     - PYTHON: "C:\\Miniconda"
+      BITNESS: "32"
     - PYTHON: "C:\\Miniconda-x64"
+      BITNESS: "64"
       DISTUTILS_USE_SDK: "1"
     - PYTHON: "C:\\Miniconda3"
+      BITNESS: "32"
     - PYTHON: "C:\\Miniconda3-x64"
+      BITNESS: "64"
       DISTUTILS_USE_SDK: "1"
     - PYTHON: "C:\\Miniconda35"
+      BITNESS: "32"
     - PYTHON: "C:\\Miniconda35-x64"
+      BITNESS: "64"
       DISTUTILS_USE_SDK: "1"
 
 install:
-  - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - set PATH=C:\msys64\mingw%BITNESS%\bin;%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - dir C:\msys64
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda install -q setuptools numpy scipy matplotlib nose pandas wheel
-  - conda install gcc
   - pip install -q mando tstoolbox baker
 #  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
 #  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
