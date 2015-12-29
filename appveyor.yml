@@ -22,9 +22,8 @@ environment:
 install:
   - set PATH=C:\Miniconda\Scripts;%MINGWPATH%
   - conda config --set always_yes yes --set changeps1 no
-  - conda create --name python%PYTHON_VERSION% python=%PYTHON_VERSION%
+  - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION% conda
   - activate python%PYTHON_VERSION%
-  - conda update -q conda
   - conda install -q setuptools numpy scipy matplotlib nose pandas wheel
   - pip install -q mando tstoolbox baker
 #  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
