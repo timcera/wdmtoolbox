@@ -32,8 +32,8 @@ install:
 #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
 #  - ps: $f=(Get-ChildItem C:\MinGW\* -Include libquadmath*.* -Recurse)
 #  - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
-  - python.exe setup.py config_fc --compiler=msvc --fcompiler=gfortran --libraries=quadmath
-  - python.exe build --compiler=msvc --fcompiler=gfortran
+  - build.cmd python.exe setup.py config_fc --compiler=msvc --fcompiler=gfortran --libraries=quadmath
+  - build.cmd python.exe build --compiler=msvc --fcompiler=gfortran
 
 build: off
 
