@@ -20,7 +20,11 @@ install:
   - conda install -q setuptools numpy scipy matplotlib nose pandas wheel
   - pip install -q mando tstoolbox baker
   - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
-  - build.cmd python.exe setup.py config --compiler=msvc --fcompiler=gfortran build --compiler=msvc --fcompiler=gfortran
+#  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
+#  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
+#  - ps: $f=(Get-ChildItem C:\MinGW\* -Include libquadmath*.* -Recurse)
+#  - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
+  - build.cmd python.exe setup.py config --compiler=msvc --fcompiler=gfortran build --compiler=msvc --fcompiler=gfortran --library_dirs=C:\MinGW\lib --libraries=quadmath
 
 build: off
 
