@@ -2,8 +2,6 @@ environment:
 
   matrix:
 
-    # For Python versions available on Appveyor, see
-    # http://www.appveyor.com/docs/installed-software#python
 
     - PYTHON: "C:\\Miniconda"
     - PYTHON: "C:\\Miniconda-x64"
@@ -19,7 +17,7 @@ install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
-  - conda install -q setuptools numpy scipy matplotlib nose dateutil pandas wheel
+  - conda install -q setuptools numpy scipy matplotlib nose pandas wheel
   - pip install -q mando tstoolbox baker
   - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
   - build.cmd python.exe setup.py config --compiler=msvc --fcompiler=gfortran build --compiler=msvc --fcompiler=gfortran
