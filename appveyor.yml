@@ -18,8 +18,9 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda install -q setuptools numpy scipy matplotlib nose pandas wheel
+  - conda install mingw libpython
   - pip install -q mando tstoolbox baker
-  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
+#  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
 #  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
 #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
 #  - ps: $f=(Get-ChildItem C:\MinGW\* -Include libquadmath*.* -Recurse)
@@ -43,7 +44,7 @@ after_test:
   # Again, you only need build.cmd if you're building C extensions for
   # 64-bit Python 3.3/3.4. And you need to use %PYTHON% to get the correct
   # interpreter
-  - build.cmd python.exe setup.py bdist_wheel --fcompiler=gfortran --compiler=msvc
+  - build.cmd python.exe setup.py bdist_wheel --fcompiler=gnu95 --compiler=msvc
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
