@@ -1,8 +1,26 @@
 environment:
 
   matrix:
+    - PYTHON_VERSION: "2.6"
+      MINGWPATH: "C:\\msys64\\mingw32"
     - PYTHON_VERSION: "2.7"
       MINGWPATH: "C:\\msys64\\mingw32"
+    - PYTHON_VERSION: "3.3"
+      MINGWPATH: "C:\\msys64\\mingw32"
+    - PYTHON_VERSION: "3.4"
+      MINGWPATH: "C:\\msys64\\mingw32"
+    - PYTHON_VERSION: "3.5"
+      MINGWPATH: "C:\\msys64\\mingw32"
+    - PYTHON_VERSION: "2.6"
+      MINGWPATH: "C:\\msys64\\mingw64"
+    - PYTHON_VERSION: "2.7"
+      MINGWPATH: "C:\\msys64\\mingw64"
+    - PYTHON_VERSION: "3.3"
+      MINGWPATH: "C:\\msys64\\mingw64"
+    - PYTHON_VERSION: "3.4"
+      MINGWPATH: "C:\\msys64\\mingw64"
+    - PYTHON_VERSION: "3.5"
+      MINGWPATH: "C:\\msys64\\mingw64"
 #    - PYTHON: "C:\\Miniconda"
 #      MINGWPATH: "C:\\msys64\\mingw32\\bin"
 #    - PYTHON: "C:\\Miniconda-x64"
@@ -30,7 +48,7 @@ install:
 #  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
 #  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
 #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
-  - ps: $f=(Get-ChildItem %MINGWPATH%\* -Include libquadmath*.* -Recurse)
+  - ps: $f=(Get-ChildItem $MINGWPATH\* -Include libquadmath*.* -Recurse)
   - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
   - python.exe setup.py config_fc 
   - python.exe setup.py config --compiler=msvc --fcompiler=gfortran --libraries=quadmath
