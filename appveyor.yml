@@ -18,7 +18,6 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda install -q setuptools numpy scipy matplotlib nose pandas wheel
-  - conda install mingw libpython
   - pip install -q mando tstoolbox baker
 #  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
 #  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
