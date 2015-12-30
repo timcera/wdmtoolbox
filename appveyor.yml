@@ -30,7 +30,7 @@ install:
 #  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
 #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
 #  - ps: $f=(Get-ChildItem $MINGWPATH\* -Include libquadmath*.* -Recurse)
-  - set f=(gfortran -print-file-name=libquadmath.a)
+  - ps: $f = & gfortran -print-file-name=libquadmath.a
   - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
   - dir *.lib
   - python.exe setup.py config_fc 
