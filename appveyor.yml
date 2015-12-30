@@ -32,6 +32,8 @@ install:
 #  - ps: $f=(Get-ChildItem $MINGWPATH\* -Include libquadmath*.* -Recurse)
   - ps: $f = gfortran -print-file-name="libquadmath.a"
   - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
+  - ps: $f = gfortran -print-file-name="libgomp.a"
+  - ps: Copy-Item -LiteralPath $f -Destination gomp.lib
   - dir *.lib
   - python.exe setup.py config_fc 
   - python.exe setup.py config --compiler=msvc --fcompiler=gfortran --libraries=quadmath
