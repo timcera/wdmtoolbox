@@ -36,7 +36,7 @@ install:
   - ps: Copy-Item -LiteralPath $f -Destination gomp.lib
   - dir *.lib
   - python.exe setup.py config_fc 
-  - python.exe setup.py config --compiler=msvc --fcompiler=gfortran --libraries=quadmath
+  - python.exe setup.py config --compiler=msvc --fcompiler=gfortran --f77_compiler=gfortran
   - python.exe setup.py build
 
 build: off
