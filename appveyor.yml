@@ -19,25 +19,26 @@ environment:
       MINGWPATH: "C:\\msys64\\mingw64"
 
 install:
-  - set PATH=C:\Miniconda\Scripts;%MINGWPATH%\bin
+  - set PATH=C:\Miniconda\Scripts
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION% 
   - conda install -q --name python%PYTHON_VERSION% setuptools numpy scipy matplotlib nose pandas wheel
   - activate python%PYTHON_VERSION%
   - pip install -q mando tstoolbox baker
-#  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
+  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
 #  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
 #  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
 #  - ps: $f=(Get-ChildItem $MINGWPATH\* -Include libquadmath*.* -Recurse)
-  - ps: $f = gfortran -print-file-name="libquadmath.a"
-  - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
-  - ps: $f = gfortran -print-file-name="libgomp.a"
-  - ps: Copy-Item -LiteralPath $f -Destination gomp.lib
-  - dir *.lib
+#  - ps: $f = gfortran -print-file-name="libquadmath.a"
+#  - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
+#  - ps: $f = gfortran -print-file-name="libgomp.a"
+#  - ps: Copy-Item -LiteralPath $f -Destination gomp.lib
+#  - dir *.lib
   - python.exe setup.py config_fc 
-  - python.exe setup.py config --compiler=msvc --fcompiler=gfortran --f77_compiler=gfortran
+  - python.exe setup.py config --compiler=msvc --fcompiler=gfortran
   - python.exe setup.py build
+  - python.exe setup.py install
 
 build: off
 
