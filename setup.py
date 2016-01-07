@@ -25,10 +25,6 @@ install_requires = [
     'tstoolbox >= 0.9.7',
 ]
 
-libraries = []
-if sys.platform.startswith('win'):
-    libraries = ['quadmath']
-
 wdm_support = Extension('wdm', [
           'wdm_support/wdm.pyf',
           'wdm_support/DTTM90.f',
