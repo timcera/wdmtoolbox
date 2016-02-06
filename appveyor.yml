@@ -23,7 +23,7 @@ install:
 #  - ps: $f = gfortran -print-file-name="libgomp.a"
 #  - ps: Copy-Item -LiteralPath $f -Destination gomp.lib
 #  - dir *.lib
-  - build.cmd python.exe setup.py config_fc --compiler=mingw32
+  - build.cmd python.exe setup.py config_fc
   - build.cmd python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
   - build.cmd python.exe setup.py build --compiler=mingw32
   - build.cmd python.exe setup.py install --compiler=mingw32
