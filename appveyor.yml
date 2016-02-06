@@ -2,7 +2,6 @@ environment:
 
   matrix:
     - PYTHON_VERSION: "2.7"
-    - PYTHON_VERSION: "3.3"
     - PYTHON_VERSION: "3.4"
 
 install:
@@ -14,39 +13,19 @@ install:
   - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
   - conda install -q --name python%PYTHON_VERSION% setuptools numpy matplotlib nose pandas wheel scipy
   - pip install -q mando tstoolbox baker
-#  - ps: $mingw=(Get-ChildItem -Include libmingw32.a -Recurse -path C:\MinGW)
-#  - ps: Copy-Item -LiteralPath C:\MinGW\lib\libmingw32.a -Destination mingw32.lib
-#  - ps: $f=(Get-ChildItem C:\Miniconda\* -Include libquadmath*.* -Recurse)
-#   - ps: $f = gfortran -print-file-name="libquadmath.a"
-#   - ps: Copy-Item -LiteralPath $f -Destination quadmath.lib
-#  - ps: $f = gfortran -print-file-name="libgomp.a"
-#  - ps: Copy-Item -LiteralPath $f -Destination gomp.lib
-#  - dir *.lib
-  - build.cmd python.exe setup.py config_fc
-  - build.cmd python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - build.cmd python.exe setup.py build --compiler=mingw32
-  - build.cmd python.exe setup.py install
+  - python.exe setup.py config_fc
+  - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
+  - python.exe setup.py build --compiler=mingw32
+  - python.exe setup.py install
 
 build: off
 
 test_script:
-  # Put your test command here.
-  # If you don't need to build C extensions on 64-bit Python 3.3 or 3.4,
-  # you can remove "build.cmd" from the front of the command, as it's
-  # only needed to support those cases.
-  # Note that you must use the environment variable %PYTHON% to refer to
-  # the interpreter you're using - Appveyor does not do anything special
-  # to put the Python version you want to use on PATH.
-  #
-  # Eventually implement testing, but right now it tries to use MSVC
-  #  - build.cmd python.exe setup.py test
+  - nosetests
 
 after_test:
   # This step builds your wheels.
-  # Again, you only need build.cmd if you're building C extensions for
-  # 64-bit Python 3.3/3.4. And you need to use python.exe to get the correct
-  # interpreter
-  - build.cmd python.exe setup.py bdist_wheel
+  - python.exe setup.py bdist_wheel
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
