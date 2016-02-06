@@ -439,6 +439,7 @@ class WDM():
         ''' Create a new WDM fileronwfg
         '''
         if overwrite and os.path.exists(wdmpath):
+            self._close(wdmpath)
             os.remove(wdmpath)
         elif os.path.exists(wdmpath):
             raise WDMFileExists(wdmpath)
