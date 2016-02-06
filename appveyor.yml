@@ -23,10 +23,10 @@ install:
 #  - ps: $f = gfortran -print-file-name="libgomp.a"
 #  - ps: Copy-Item -LiteralPath $f -Destination gomp.lib
 #  - dir *.lib
-  - build.cmd %PYTHON% setup.py config_fc --compiler=mingw32
-  - build.cmd %PYTHON% setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - build.cmd %PYTHON% setup.py build --compiler=mingw32
-  - build.cmd %PYTHON% setup.py install --compiler=mingw32
+  - build.cmd python.exe setup.py config_fc --compiler=mingw32
+  - build.cmd python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
+  - build.cmd python.exe setup.py build --compiler=mingw32
+  - build.cmd python.exe setup.py install --compiler=mingw32
 
 build: off
 
@@ -35,17 +35,17 @@ test_script:
   # If you don't need to build C extensions on 64-bit Python 3.3 or 3.4,
   # you can remove "build.cmd" from the front of the command, as it's
   # only needed to support those cases.
-  # Note that you must use the environment variable %PYTHON% to refer to
+  # Note that you must use the environment variable python.exe to refer to
   # the interpreter you're using - Appveyor does not do anything special
   # to put the Python version you want to use on PATH.
-  - build.cmd %PYTHON% setup.py test
+  - build.cmd python.exe setup.py test
 
 after_test:
   # This step builds your wheels.
   # Again, you only need build.cmd if you're building C extensions for
-  # 64-bit Python 3.3/3.4. And you need to use %PYTHON% to get the correct
+  # 64-bit Python 3.3/3.4. And you need to use python.exe to get the correct
   # interpreter
-  - build.cmd %PYTHON% setup.py bdist_wheel --fcompiler=gfortran --compiler=mingw32
+  - build.cmd python.exe setup.py bdist_wheel --fcompiler=gfortran --compiler=mingw32
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
