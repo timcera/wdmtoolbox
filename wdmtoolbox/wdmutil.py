@@ -289,7 +289,10 @@ class WDM():
         dsn = int(dsn)
 
         wdmfp = self._open(wdmpath, 52)
-        if self.wdckdt(wdmfp, dsn) != 0:
+        testreturn = self.wdckdt(wdmfp, dsn)
+        self._close(wdmpath)
+        if testreturn != 0:
+            wdmfp = self._open(wdmpath, 52)
             retcode = self.wddsdl(
                 wdmfp,
                 dsn)
@@ -318,37 +321,43 @@ class WDM():
     def describe_dsn(self, wdmpath, dsn):
         ''' Will collect some metadata about the DSN.
         '''
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-
+        wdmfp = self._open(wdmpath, 55)
         tdsfrc, llsdat, lledat, retcode = self.wtfndt(
             wdmfp,
             dsn,
             1)  # GPFLG  - get(1)/put(2) flag
+        self._close(wdmpath)
         # Ignore retcode == -6 which means that the dsn doesn't have any data.
         # It it is a new dsn, of course it doesn't have any data.
         if retcode == -6:
             retcode = 0
         self._retcode_check(retcode, additional_info='wtfndt')
 
+        wdmfp = self._open(wdmpath, 55)
         tstep, retcode = self.wdbsgi(
             wdmfp,
             dsn,
             33,  # saind = 33 for time step
             1)   # salen
+        self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdbsgi')
 
+        wdmfp = self._open(wdmpath, 55)
         tcode, retcode = self.wdbsgi(
             wdmfp,
             dsn,
             17,  # saind = 17 for time code
             1)   # salen
+        self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdbsgi')
 
+        wdmfp = self._open(wdmpath, 55)
         tsfill, retcode = self.wdbsgr(
             wdmfp,
             dsn,
             32,  # saind = 32 for tsfill
             1)   # salen
+        self._close(wdmpath)
         # retcode = -107 if attribute not present
         if retcode == -107:
             # Since I use tsfill if not found will set to default.
@@ -358,44 +367,62 @@ class WDM():
             tsfill = tsfill[0]
         self._retcode_check(retcode, additional_info='wdbsgr')
 
+        wdmfp = self._open(wdmpath, 55)
         ostr, retcode = self.wdbsgc(
             wdmfp,
             dsn,
             290,    # saind = 290 for location
             8)      # salen
+        self._close(wdmpath)
         if retcode == -107:
             ostr = ''
             retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
+        wdmfp = self._open(wdmpath, 55)
         scen_ostr, retcode = self.wdbsgc(
             wdmfp,
             dsn,
             288,    # saind = 288 for scenario
             8)      # salen
+        self._close(wdmpath)
         if retcode == -107:
             scen_ostr = ''
             retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
+        wdmfp = self._open(wdmpath, 55)
         con_ostr, retcode = self.wdbsgc(
             wdmfp,
             dsn,
             289,    # saind = 289 for constitiuent
             8)      # salen
+        self._close(wdmpath)
         if retcode == -107:
             con_ostr = ''
             retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
+        wdmfp = self._open(wdmpath, 55)
         base_year, retcode = self.wdbsgi(
             wdmfp,
             dsn,
             27,  # saind = 27 for base_year
             1)   # salen
+        self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdbsgi')
 
+        wdmfp = self._open(wdmpath, 55)
+        desc_ostr, retcode = self.wdbsgc(
+            wdmfp,
+            dsn,
+            45,      # saind = 45 for description
+            48)      # salen
         self._close(wdmpath)
+        if retcode == -107:
+            scen_ostr = ''
+            retcode = 0
+        self._retcode_check(retcode, additional_info='wdbsgr')
 
         self.timcvt(llsdat)
         self.timcvt(lledat)
@@ -413,13 +440,15 @@ class WDM():
         base_year = base_year[0]
 
         try:
-            ostr = str(ostr, "utf-8")
-            scen_ostr = str(scen_ostr, "utf-8")
-            con_ostr = str(con_ostr, "utf-8")
+            ostr = str(ostr, "utf-8").strip()
+            scen_ostr = str(scen_ostr, "utf-8").strip()
+            con_ostr = str(con_ostr, "utf-8").strip()
+            desc_ostr = str(desc_ostr, "utf-8").strip()
         except TypeError:
-            ostr = ''.join(ostr)
-            scen_ostr = ''.join(scen_ostr)
-            con_ostr = ''.join(con_ostr)
+            ostr = ''.join(ostr).strip()
+            scen_ostr = ''.join(scen_ostr).strip()
+            con_ostr = ''.join(con_ostr).strip()
+            desc_ostr = ''.join(desc_ostr).strip()
 
         return {'dsn':         dsn,
                 'start_date':  sdate,
@@ -433,6 +462,7 @@ class WDM():
                 'scenario':    scen_ostr.strip(),
                 'constituent': con_ostr.strip(),
                 'tsfill':      tsfill,
+                'description': desc_ostr,
                 'base_year':   base_year}
 
     def create_new_wdm(self, wdmpath, overwrite=False):
