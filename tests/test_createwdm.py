@@ -6,6 +6,7 @@ import os
 import time
 import shlex
 import tempfile
+from wdmtoolbox import wdmtoolbox
 
 def _createwdm(fname):
     cmd = shlex.split('wdmtoolbox createnewwdm --overwrite {0}'.format(fname))
@@ -13,10 +14,9 @@ def _createwdm(fname):
 
 def test_createwdm():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
+    os.close(fd)
     assert _createwdm(fname) == 0
     # A brand spanking new wdm should be 40k
-    print(os.path.getsize(fname))
-    print(40*1024)
     assert os.path.getsize(fname) == 40*1024
     os.close(fd)
     os.remove(fname)
