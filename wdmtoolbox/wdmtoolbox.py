@@ -474,7 +474,7 @@ def _writetodsn(wdmpath, dsn, data):
 *
 *   The DSN has a frequency of {0}, but the data has a frequencey of {1}.
 *
-'''.format(finterval, dsntcode))
+'''.format(dsntcode, finterval))
 
     dsntstep = desc_dsn['tstep']
     if dsntstep != tstep:

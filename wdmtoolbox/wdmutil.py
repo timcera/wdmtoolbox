@@ -439,6 +439,7 @@ class WDM():
         ''' Create a new WDM fileronwfg
         '''
         if overwrite and os.path.exists(wdmpath):
+            self._close(wdmpath)
             os.remove(wdmpath)
         elif os.path.exists(wdmpath):
             raise WDMFileExists(wdmpath)
@@ -454,6 +455,7 @@ class WDM():
         messfp = self.wmsgop()
 
         if self.wdckdt(wdmfp, dsn) == 1:
+            self._close(wdmpath)
             raise DSNExistsError(dsn)
 
         # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
