@@ -19,7 +19,6 @@ def test_createwdm():
     wdmtoolbox.createnewwdm(fname, overwrite=True)
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
-    os.close(fd)
     os.remove(fname)
 
 def test_createnewdsn_checkdefaults():
