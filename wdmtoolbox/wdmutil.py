@@ -455,6 +455,7 @@ class WDM():
         messfp = self.wmsgop()
 
         if self.wdckdt(wdmfp, dsn) == 1:
+            self._close(wdmpath)
             raise DSNExistsError(dsn)
 
         # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls

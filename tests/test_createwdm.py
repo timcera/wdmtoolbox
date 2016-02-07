@@ -13,11 +13,10 @@ def _createwdm(fname):
 
 def test_createwdm():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
-    os.close(fd)
-    print(fname)
     assert _createwdm(fname) == 0
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
+    os.close(fd)
     os.remove(fname)
 
 def test_createnewdsn_checkdefaults():
