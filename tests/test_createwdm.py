@@ -6,48 +6,44 @@ import os
 import time
 import shlex
 import tempfile
+from wdmtoolbox import wdmtoolbox
 
 def _createwdm(fname):
     cmd = shlex.split('wdmtoolbox createnewwdm --overwrite {0}'.format(fname))
-    print(cmd)
     return subprocess.call(cmd)
 
 def test_createwdm():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
-    print(fname)
+    os.close(fd)
     assert _createwdm(fname) == 0
+    wdmtoolbox.createnewwdm(fname, overwrite=True)
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
-    os.close(fd)
     os.remove(fname)
 
 def test_createnewdsn_checkdefaults():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
+    os.close(fd)
     assert _createwdm(fname) == 0
-    retcode = subprocess.call(['wdmtoolbox', 'createnewdsn', fname, '101'])
+    cmd = shlex.split('wdmtoolbox createnewdsn {0} 101'.format(fname))
+    retcode = subprocess.call(cmd)
     assert retcode == 0
-    tstr = ['#DSN  SCENARIO LOCATION CONSTITUENT START DATE          END DATE            TCODE TSTEP\n',
-            '  101                               None                None                    D(4) 1\n']
-    p = subprocess.Popen(['wdmtoolbox', 'listdsns', fname],
+    tstr = ['#DSN  SCENARIO LOCATION CONSTITUENT START DATE          END DATE            TCODE TSTEP',
+            '  101                               None                None                    D(4) 1',
+            '']
+    tstr = '\n'.join(tstr)
+    cmd = shlex.split('wdmtoolbox listdsns {0}'.format(fname))
+    p = subprocess.Popen(cmd,
         stdout=subprocess.PIPE,
         universal_newlines=True)
 
-    # a fake 'p.wait' that won't deadlock?
-    # Needed to ensure that 'p.returncode' is available
-    while p.poll() == None:
-        time.sleep(0.1)
+    astr, _ = p.communicate()
     assert p.returncode == 0
 
-    assert p.stdout.readlines() == tstr
-    os.close(fd)
+    assert astr == tstr
+
     os.remove(fname)
 
-
-import shlex
-import subprocess
-import sys
-import os
-import tempfile
 try:
     from cStringIO import StringIO
 except:
@@ -80,9 +76,9 @@ def capture(func, *args, **kwds):
 class TestDescribe(TestCase):
     def setUp(self):
         self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
+        os.close(self.fd)
 
     def tearDown(self):
-        os.close(self.fd)
         os.remove(self.wdmname)
 
     def test_overwrite(self):

@@ -251,6 +251,9 @@ class WDM():
             }
 
         if retcode in retcode_dict:
+            lopenfiles = self.openfiles.copy()
+            for fn in lopenfiles:
+                self._close(fn)
             raise WDMError('''
 *
 *   WDM library function returned error code {0}. {1}
@@ -258,6 +261,8 @@ class WDM():
 *
 '''.format(retcode, additional_info, retcode_dict[retcode]))
         if retcode != 0:
+            for fn in self.openfiles:
+                self._close(fn)
             raise WDMError('''
 *
 *   WDM library function returned error code {0}. {1}
@@ -434,6 +439,7 @@ class WDM():
         ''' Create a new WDM fileronwfg
         '''
         if overwrite and os.path.exists(wdmpath):
+            self._close(wdmpath)
             os.remove(wdmpath)
         elif os.path.exists(wdmpath):
             raise WDMFileExists(wdmpath)
@@ -449,6 +455,7 @@ class WDM():
         messfp = self.wmsgop()
 
         if self.wdckdt(wdmfp, dsn) == 1:
+            self._close(wdmpath)
             raise DSNExistsError(dsn)
 
         # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
