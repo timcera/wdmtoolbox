@@ -16,6 +16,7 @@ def test_createwdm():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
     os.close(fd)
     assert _createwdm(fname) == 0
+    wdmtoolbox.createnewwdm(fname, overwrite=True)
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
     os.close(fd)
