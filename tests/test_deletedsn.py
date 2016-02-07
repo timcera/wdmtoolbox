@@ -41,9 +41,9 @@ def capture(func, *args, **kwds):
 class TestDescribe(TestCase):
     def setUp(self):
         self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
+        os.close(self.fd)
 
     def tearDown(self):
-        os.close(self.fd)
         os.remove(self.wdmname)
 
     def test_deletedsn(self):

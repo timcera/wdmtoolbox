@@ -13,15 +13,16 @@ def _createwdm(fname):
 
 def test_createwdm():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
+    os.close(fd)
     print(fname)
     assert _createwdm(fname) == 0
     # A brand spanking new wdm should be 40k
     assert os.path.getsize(fname) == 40*1024
-    os.close(fd)
     os.remove(fname)
 
 def test_createnewdsn_checkdefaults():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
+    os.close(fd)
     assert _createwdm(fname) == 0
     cmd = shlex.split('wdmtoolbox createnewdsn {0} 101'.format(fname))
     retcode = subprocess.call(cmd)
@@ -40,7 +41,6 @@ def test_createnewdsn_checkdefaults():
 
     assert astr == tstr
 
-    os.close(fd)
     os.remove(fname)
 
 try:
@@ -75,9 +75,9 @@ def capture(func, *args, **kwds):
 class TestDescribe(TestCase):
     def setUp(self):
         self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
+        os.close(self.fd)
 
     def tearDown(self):
-        os.close(self.fd)
         os.remove(self.wdmname)
 
     def test_overwrite(self):

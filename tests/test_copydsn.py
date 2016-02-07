@@ -41,12 +41,12 @@ def capture(func, *args, **kwds):
 class TestDescribe(TestCase):
     def setUp(self):
         self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
+        os.close(self.fd)
         self.afd, self.awdmname = tempfile.mkstemp(suffix='.wdm')
+        os.close(self.afd)
 
     def tearDown(self):
-        os.close(self.fd)
         os.remove(self.wdmname)
-        os.close(self.afd)
         os.remove(self.awdmname)
 
     def test_copy_to_self(self):
