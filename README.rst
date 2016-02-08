@@ -6,15 +6,15 @@
     :target: https://coveralls.io/r/timcera/wdmtoolbox?branch=master
     :height: 20
 
-.. image:: https://pypip.in/v/wdmtoolbox/badge.png?style=flat
+.. image:: https://img.shields.io/pypi/v/wdmtoolbox.svg
     :alt: Latest release
     :target: https://pypi.python.org/pypi/wdmtoolbox
 
-.. image:: https://pypip.in/d/wdmtoolbox/badge.png?style=flat
+.. image:: https://img.shields.io/pypi/dm/wdmtoolbox.svg
     :alt: PyPI downloads count
     :target: https://pypi.python.org/pypi/wdmtoolbox
 
-.. image:: https://pypip.in/license/wdmtoolbox/badge.png?style=flat
+.. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
     :alt: wdmtoolbox license
     :target: https://pypi.python.org/pypi/wdmtoolbox/
 
@@ -49,9 +49,12 @@ installed and configured for your environment.
 
 Installation
 ============
-On Windows should be as easy as running ``easy_install wdmtoolbox`` in a
-command shell window.  On Linux (and maybe even Mac OSX?) you could use either
-``pip install wdmtoolbox`` or ``easy_install wdmtoolbox`` at any terminal that
-has access to gfortran and of course your Python interpreter.  Not sure on
-Windows whether this will bring in pandas but as mentioned above, if you start
-with Python(x,y) then you won't have a problem.
+On Windows should be as easy as running ``pip install wdmtoolbox`` in a
+command shell window.  For Windows, the support platforms are Python 2.7 and
+3.4.  Not sure on Windows whether this will bring in pandas but as mentioned
+above, if you start with Conda, Enthought, or Python(x,y) then you won't have
+a problem.
+
+On Linux (and maybe even Mac OSX?) you could use ``pip install wdmtoolbox`` at
+any terminal that has access to gfortran and of course your Python interpreter.  
+
