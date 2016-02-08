@@ -180,26 +180,30 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
                     collected_ts[(dsn, location)][dex]))
 
 
-@mando.command
-def extract(start_date=None, end_date=None, *wdmpath):
+def extract(*wdmpath, **kwds):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
 
-    :param wdmpath: Path and WDM filename followed by space separated list of
-                    DSNs. For example,
-
-                        'file.wdm 234 345 456'.
-                    OR
-
-                    `wdmpath` can be space separated sets of 'wdmpath,dsn'.
-                    For example,
-
-                        'file.wdm,101 file2.wdm,104 file.wdm,227'
-    :param start_date: If not given defaults to start of data set.
-    :param end_date:   If not given defaults to end of data set.
+    This is the API version also used by 'extract_cli'
     '''
     # Adapt to both forms of presenting wdm files and DSNs
     # Old form '... file.wdm 101 102 103 ...'
     # New form '... file.wdm,101 adifferentfile.wdm,101 ...
+    try:
+        start_date = kwds.pop('start_date')
+    except KeyError:
+        start_date = None
+    try:
+        end_date = kwds.pop('end_date')
+    except KeyError:
+        end_date = None
+    if len(kwds) > 0:
+        raise ValueError('''
+*
+*   The only allowed keywords are start_date and end_date.  You
+*   have given {0}.
+*
+'''.format(kwds))
+
     labels = []
     for lab in wdmpath:
         if ',' in str(lab):
@@ -228,6 +232,26 @@ def extract(start_date=None, end_date=None, *wdmpath):
 *
 '''.format(nts.columns[0]))
     return tsutils.printiso(result)
+
+
+@mando.command('extract')
+def extract_cli(start_date=None, end_date=None, *wdmpath):
+    ''' Prints out DSN data to the screen with ISO-8601 dates.
+
+    :param wdmpath: Path and WDM filename followed by space separated list of
+                    DSNs. For example,
+
+                        'file.wdm 234 345 456'.
+                    OR
+
+                    `wdmpath` can be space separated sets of 'wdmpath,dsn'.
+                    For example,
+
+                        'file.wdm,101 file2.wdm,104 file.wdm,227'
+    :param start_date: If not given defaults to start of data set.
+    :param end_date:   If not given defaults to end of data set.
+    '''
+    return extract(*wdmpath, start_date=start_date, end_date=end_date)
 
 
 @mando.command
