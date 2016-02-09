@@ -6,9 +6,9 @@ environment:
 
 platform:
   - x86
-    bitness: 1
+    bitness: "1"
   - x64
-    bitness: 
+    bitness: ""
 
 matrix:
   fast_finish: true
