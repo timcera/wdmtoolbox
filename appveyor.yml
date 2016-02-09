@@ -4,6 +4,13 @@ environment:
     - PYTHON_VERSION: "2.7"
     - PYTHON_VERSION: "3.4"
 
+platform:
+  - x86
+  - x64
+
+matrix:
+  fast_finish: true
+
 install:
   - set PATH=C:\Miniconda\Scripts
   - conda config --set always_yes yes --set changeps1 no
