@@ -1,14 +1,15 @@
 environment:
-
   matrix:
     - PYTHON_VERSION: "2.7"
+      bitness: "1"
+      bitness: ""
     - PYTHON_VERSION: "3.4"
+      bitness: "1"
+      bitness: ""
 
 platform:
   - x86
-    bitness: "1"
   - x64
-    bitness: ""
 
 matrix:
   fast_finish: true
