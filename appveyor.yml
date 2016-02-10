@@ -1,11 +1,7 @@
 environment:
   matrix:
     - PYTHON_VERSION: "2.7"
-      bitness: "1"
-      bitness: ""
     - PYTHON_VERSION: "3.4"
-      bitness: "1"
-      bitness: ""
 
 platform:
   - x86
@@ -15,6 +11,8 @@ matrix:
   fast_finish: true
 
 install:
+  - set bitness=""
+  - ps: If ($env:Platform -Match "x86") {$env:bitness="1"}
   - set PATH=C:\Miniconda\Scripts
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
