@@ -180,39 +180,30 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
                     collected_ts[(dsn, location)][dex]))
 
 
-@mando.command
 def extract(*wdmpath, **kwds):
     ''' Prints out DSN data to the screen with ISO-8601 dates.
 
-    :param wdmpath: Path and WDM filename followed by space separated list of
-                    DSNs. For example,
-
-                        'file.wdm 234 345 456'.
-                    OR
-
-                    `wdmpath` can be space separated sets of 'wdmpath,dsn'.
-                    For example,
-
-                        'file.wdm,101 file2.wdm,104 file.wdm,227'
-    :param start_date: If not given defaults to start of data set.
-    :param end_date:   If not given defaults to end of data set.
+    This is the API version also used by 'extract_cli'
     '''
-    start_date = kwds.setdefault('start_date', None)
-    end_date = kwds.setdefault('end_date', None)
-    if len(kwds) > 2:
-        kwds_list = list(kwds.keys())
-        kwds_list.remove('start_date')
-        kwds_list.remove('end_date')
-        raise ValueError('''
-*
-*   The only allowed keywords are "--start_date=..." and "--end_date=...".
-*   You passed in {0}
-*
-'''.format(kwds_list))
-
     # Adapt to both forms of presenting wdm files and DSNs
     # Old form '... file.wdm 101 102 103 ...'
     # New form '... file.wdm,101 adifferentfile.wdm,101 ...
+    try:
+        start_date = kwds.pop('start_date')
+    except KeyError:
+        start_date = None
+    try:
+        end_date = kwds.pop('end_date')
+    except KeyError:
+        end_date = None
+    if len(kwds) > 0:
+        raise ValueError('''
+*
+*   The only allowed keywords are start_date and end_date.  You
+*   have given {0}.
+*
+'''.format(kwds))
+
     labels = []
     for lab in wdmpath:
         if ',' in str(lab):
@@ -241,6 +232,26 @@ def extract(*wdmpath, **kwds):
 *
 '''.format(nts.columns[0]))
     return tsutils.printiso(result)
+
+
+@mando.command('extract')
+def extract_cli(start_date=None, end_date=None, *wdmpath):
+    ''' Prints out DSN data to the screen with ISO-8601 dates.
+
+    :param wdmpath: Path and WDM filename followed by space separated list of
+                    DSNs. For example,
+
+                        'file.wdm 234 345 456'.
+                    OR
+
+                    `wdmpath` can be space separated sets of 'wdmpath,dsn'.
+                    For example,
+
+                        'file.wdm,101 file2.wdm,104 file.wdm,227'
+    :param start_date: If not given defaults to start of data set.
+    :param end_date:   If not given defaults to end of data set.
+    '''
+    return extract(*wdmpath, start_date=start_date, end_date=end_date)
 
 
 @mando.command
@@ -440,14 +451,16 @@ def _writetodsn(wdmpath, dsn, data):
     except ValueError:
         tstep = 1
 
-    mapcode = {'A':  6,  # annual
-               'AS': 6,  # annual start
-               'M':  5,  # month
-               'MS': 5,  # month start
-               'D':  4,  # day
-               'H':  3,  # hour
-               'T':  2,  # minute
-               'S':  1   # second
+    mapcode = {
+               'A':     6,  # annual
+               'A-DEC': 6,  # annual
+               'AS':    6,  # annual start
+               'M':     5,  # month
+               'MS':    5,  # month start
+               'D':     4,  # day
+               'H':     3,  # hour
+               'T':     2,  # minute
+               'S':     1   # second
               }
     try:
         finterval = mapcode[pandacode]
@@ -455,7 +468,7 @@ def _writetodsn(wdmpath, dsn, data):
         raise KeyError('''
 *
 *   wdmtoolbox only understands PANDAS time intervals of :
-*   'A', 'AS' for annual,
+*   'A', 'AS', 'A-DEC' for annual,
 *   'M', 'MS' for monthly,
 *   'D', 'H', 'T', 'S' for day, hour, minute, and second.
 *   wdmtoolbox thinks this series is {0}.
@@ -472,7 +485,7 @@ def _writetodsn(wdmpath, dsn, data):
     if finterval != dsntcode:
         raise ValueError('''
 *
-*   The DSN has a frequency of {0}, but the data has a frequencey of {1}.
+*   The DSN has a frequency of {0}, but the data has a frequency of {1}.
 *
 '''.format(dsntcode, finterval))
 

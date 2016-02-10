@@ -1,13 +1,24 @@
 environment:
-
   matrix:
     - PYTHON_VERSION: "2.7"
+      bitness: "1"
+      bitness: ""
     - PYTHON_VERSION: "3.4"
+      bitness: "1"
+      bitness: ""
+
+platform:
+  - x86
+  - x64
+
+matrix:
+  fast_finish: true
 
 install:
   - set PATH=C:\Miniconda\Scripts
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
+  - set CONDA_FORCE_32BIT=%bitness%
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION% 
   - activate python%PYTHON_VERSION%
   - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
