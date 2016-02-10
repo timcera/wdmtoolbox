@@ -11,8 +11,10 @@ matrix:
   fast_finish: true
 
 install:
-  - ps: If ($env:Platform -Match "x64") {$env:CONDA_FORCE_32BIT=""}
   - set PATH=C:\Miniconda\Scripts
+  - ps: If ($env:Platform -Match "x64") {$env:PATH="C:\Miniconda-x64\Scripts"}
+  - set BITNESS="32"
+  - ps: If ($env:Platform -Match "x64") {$env:BITNESS="64"}
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION% 
@@ -21,8 +23,8 @@ install:
   - conda install -q --name python%PYTHON_VERSION% setuptools numpy matplotlib nose pandas wheel scipy
   - pip install -q mando tstoolbox baker
   - python.exe setup.py config_fc
-  - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - python.exe setup.py build --compiler=mingw32
+  - python.exe setup.py config --compiler=mingw%BITNESS% --fcompiler=gfortran
+  - python.exe setup.py build --compiler=mingw%BITNESS%
   - python.exe setup.py install
 
 build: off
