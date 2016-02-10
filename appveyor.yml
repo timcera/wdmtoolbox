@@ -11,7 +11,7 @@ matrix:
   fast_finish: true
 
 install:
-  - ps: If ($env:Platform -Match "x64") {$env:CONDA_FORCE_32BIT=}
+  - ps: If ($env:Platform -Match "x64") {$env:CONDA_FORCE_32BIT=""}
   - set PATH=C:\Miniconda\Scripts
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
