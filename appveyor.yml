@@ -4,7 +4,7 @@ environment:
     - PYTHON_VERSION: "3.4"
 
 platform:
-  - x86
+    #- x86
   - x64
 
 matrix:
@@ -23,6 +23,7 @@ install:
   - conda install -q --name python%PYTHON_VERSION% setuptools numpy matplotlib nose pandas wheel scipy
   - pip install -q mando tstoolbox baker
   - python.exe setup.py config_fc
+  - python.exe setup.py config --help-compiler
   - python.exe setup.py config --compiler=mingw%BITNESS% --fcompiler=gfortran
   - python.exe setup.py build --compiler=mingw%BITNESS%
   - python.exe setup.py install
