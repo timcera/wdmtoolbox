@@ -3,7 +3,6 @@
 
 import subprocess
 import os
-import time
 import shlex
 import tempfile
 from wdmtoolbox import wdmtoolbox
@@ -34,8 +33,8 @@ def test_createnewdsn_checkdefaults():
     tstr = '\n'.join(tstr)
     cmd = shlex.split('wdmtoolbox listdsns {0}'.format(fname))
     p = subprocess.Popen(cmd,
-        stdout=subprocess.PIPE,
-        universal_newlines=True)
+                         stdout=subprocess.PIPE,
+                         universal_newlines=True)
 
     astr, _ = p.communicate()
     assert p.returncode == 0
@@ -50,15 +49,9 @@ except:
     from io import StringIO
 
 from pandas.util.testing import TestCase
-from pandas.util.testing import assert_frame_equal
 from pandas.util.testing import assertRaisesRegexp
-import pandas as pd
 
-from tstoolbox import tstoolbox
-import tstoolbox.tsutils as tsutils
 from wdmtoolbox import wdmtoolbox
-from wdmtoolbox.wdmutil import WDMError
-from wdmtoolbox.wdmutil import DSNDoesNotExist
 from wdmtoolbox.wdmutil import WDMFileExists
 
 
@@ -83,7 +76,6 @@ class TestDescribe(TestCase):
 
     def test_overwrite(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        with assertRaisesRegexp(WDMFileExists,
-                'exists.'):
+        with assertRaisesRegexp(WDMFileExists, 'exists.'):
             wdmtoolbox.createnewwdm(self.wdmname)
 

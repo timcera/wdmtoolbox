@@ -5,11 +5,9 @@
 test_deletedsn
 ----------------------------------
 
-Tests for `tstoolbox` module.
+Tests for `wdmtoolbox` module.
 """
 
-import shlex
-import subprocess
 import sys
 import os
 import tempfile
@@ -19,11 +17,7 @@ except:
     from io import StringIO
 
 from pandas.util.testing import TestCase
-from pandas.util.testing import assert_frame_equal
-import pandas as pd
 
-from tstoolbox import tstoolbox
-import tstoolbox.tsutils as tsutils
 from wdmtoolbox import wdmtoolbox
 
 

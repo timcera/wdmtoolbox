@@ -8,8 +8,6 @@ test_createnewdsn
 Tests for `tstoolbox` module.
 """
 
-import shlex
-import subprocess
 import sys
 import os
 import tempfile
@@ -21,13 +19,10 @@ except:
 from pandas.util.testing import TestCase
 from pandas.util.testing import assert_frame_equal
 from pandas.util.testing import assertRaisesRegexp
-import pandas as pd
 
 from tstoolbox import tstoolbox
-import tstoolbox.tsutils as tsutils
 from wdmtoolbox import wdmtoolbox
 from wdmtoolbox.wdmutil import WDMError
-from wdmtoolbox.wdmutil import DSNDoesNotExist
 
 
 def capture(func, *args, **kwds):
@@ -52,7 +47,7 @@ class TestDescribe(TestCase):
     def test_tstep(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         ret1 = wdmtoolbox.extract(self.wdmname, 101)
@@ -66,7 +61,7 @@ class TestDescribe(TestCase):
     def test_extract_args(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         with assertRaisesRegexp(ValueError,
@@ -76,7 +71,7 @@ class TestDescribe(TestCase):
     def test_listdsns(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         ldsns = wdmtoolbox.listdsns(self.wdmname)
@@ -84,17 +79,17 @@ class TestDescribe(TestCase):
     def test_negative_dsn(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         with assertRaisesRegexp(WDMError,
-                    'WDM error: data set number out of valid range'):
+                                'WDM error: data set number out of valid range'):
             ret1 = wdmtoolbox.extract(self.wdmname,  0)
 
     def test_out_of_bounds_dsn(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         with assertRaisesRegexp(WDMError,
@@ -104,17 +99,16 @@ class TestDescribe(TestCase):
     def test_dsn_not_in_wdm(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
-        with assertRaisesRegexp(WDMError,
-                    'error code -81'):
+        with assertRaisesRegexp(WDMError, 'error code -81'):
             ret1 = wdmtoolbox.extract(self.wdmname, 32000)
 
     def test_start_date(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         ret1 = wdmtoolbox.extract(self.wdmname, 101, start_date='2014-02-21 16:00:00')
@@ -126,7 +120,7 @@ class TestDescribe(TestCase):
     def test_end_date(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         ret1 = wdmtoolbox.extract(self.wdmname,
@@ -141,7 +135,7 @@ class TestDescribe(TestCase):
     def test_dates(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         ret1 = wdmtoolbox.extract(self.wdmname,

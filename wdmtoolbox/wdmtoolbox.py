@@ -424,9 +424,9 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
 *
 ''')
     tsd = tsutils.common_kwds(tsutils.read_iso_ts(input_ts),
-                             start_date=start_date,
-                             end_date=end_date,
-                             pick=columns)
+                              start_date=start_date,
+                              end_date=end_date,
+                              pick=columns)
 
     if len(tsd.columns) > 1:
         raise ValueError('''
@@ -452,16 +452,16 @@ def _writetodsn(wdmpath, dsn, data):
         tstep = 1
 
     mapcode = {
-               'A':     6,  # annual
-               'A-DEC': 6,  # annual
-               'AS':    6,  # annual start
-               'M':     5,  # month
-               'MS':    5,  # month start
-               'D':     4,  # day
-               'H':     3,  # hour
-               'T':     2,  # minute
-               'S':     1   # second
-              }
+        'A':     6,  # annual
+        'A-DEC': 6,  # annual
+        'AS':    6,  # annual start
+        'M':     5,  # month
+        'MS':    5,  # month start
+        'D':     4,  # day
+        'H':     3,  # hour
+        'T':     2,  # minute
+        'S':     1   # second
+        }
     try:
         finterval = mapcode[pandacode]
     except:

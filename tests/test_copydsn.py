@@ -8,8 +8,6 @@ test_copydsn
 Tests for `tstoolbox` module.
 """
 
-import shlex
-import subprocess
 import sys
 import os
 import tempfile
@@ -20,10 +18,8 @@ except:
 
 from pandas.util.testing import TestCase
 from pandas.util.testing import assert_frame_equal
-import pandas as pd
 
 from tstoolbox import tstoolbox
-import tstoolbox.tsutils as tsutils
 from wdmtoolbox import wdmtoolbox
 
 
@@ -52,7 +48,7 @@ class TestDescribe(TestCase):
     def test_copy_to_self(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         ret1 = wdmtoolbox.extract(self.wdmname, 101)
@@ -69,7 +65,7 @@ class TestDescribe(TestCase):
     def test_listdsns(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         wdmtoolbox.createnewwdm(self.awdmname, overwrite=True)
