@@ -277,6 +277,14 @@ def listdsns(wdmpath):
 
     :param wdmpath: Path and WDM filename.
     '''
+
+    if not os.path.exists(wdmpath):
+        raise ValueError('''
+*
+*   File {0} does not exist.
+*
+'''.format(wdmpath))
+
     dsn_info = {}
     cli = tsutils.test_cli()
     if cli is True:
