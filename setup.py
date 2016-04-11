@@ -4,15 +4,16 @@ from numpy.distutils.core import Extension, setup
 import os
 import sys
 
+version = open("VERSION").readline().strip()
+
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
+    os.system('twine upload dist/wdmtoolbox-{0}*.whl'.format(version))
     os.system('python setup.py upload_docs')
     sys.exit()
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
-
-version = open("VERSION").readline().strip()
 
 install_requires = [
     # List your project dependencies here.
