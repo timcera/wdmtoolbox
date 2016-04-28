@@ -3,7 +3,7 @@ Usage - Command Line
 ====================
 Just run 'wdmtoolbox' to get a list of subcommands
 
-.. program-output:: wdmtoolbox
+.. program-output:: wdmtoolbox --help
 
 The default for all of the subcommands that accept time-series data is to pull
 from stdin (typically a pipe or redirection).  If a subcommand accepts an input file for an
@@ -101,12 +101,12 @@ PANDAS DataFrame and is supplied to the function via the 'input_ts' keyword.
 
 Simply import wdmtoolbox::
 
-    import wdmtoolbox
+    from wdmtoolbox import wdmtoolbox
 
     # Then you could call the functions
     ntsd = wdmtoolbox.extract('test.wdm', 4)
 
     # Once you have a PANDAS DataFrame you can use that as input.
     # For example, use 'tstoolbox' to aggregate...
-    import tstoolbox
+    from tstoolbox import tstoolbox
     ntsd = tstoolbox.aggregate(statistic='mean', agg_interval='daily', input_ts=ntsd)

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-envs=(2.6 2.7 3.3 3.4)
+program=wdmtoolbox
+
+envs=(2.6 2.7 3.3 3.4 3.5)
 
 pkg=" \
      setuptools \
@@ -18,23 +20,40 @@ pkg=" \
 
 for env in ${envs[@]}; do
     echo "${env}"
-    conda create -q -n python${env} python=${env} 
-    conda install -n python${env} ${pkg}
+    conda env list | grep -q "^python${env} "
+    if [ $? -eq 0 ]; then
+        echo "conda update -q -n python${env} ${pkgs}"
+        conda update -q -n python${env} ${pkgs}
+    else
+        conda create -q -n python${env} python=${env} ${pkgs}
+    fi
 
     source activate python${env}
+    conda update pip
     pip install mando tstoolbox baker
     if [[ ${env} == '2.6' ]]; then pip install argparse; fi
-    pip uninstall -y wdmtoolbox 
+    pip uninstall -y ${program}
     rm -rf build
-    pip install --upgrade --no-deps ../wdmtoolbox/
+    pip install --upgrade --no-deps ../${program}/
 
-    nosetests --with-doctest --with-coverage --cover-tests --cover-package=wdmtoolbox --cover-branches --cover-erase
+    nosetests \
+        --with-doctest \
+        --with-coverage \
+        --cover-tests \
+        --cover-package=${program} \
+        --cover-branches \
+        --cover-erase
 done
 
+source activate python3.4
 
 coverage erase
 coverage run `which nosetests` --with-doctest
 coverage report --include="wdmtoolbox/*" --omit="tests/*" --omit=".tox/*"
 coverage html --include="wdmtoolbox/*" --omit="tests/*" --omit=".tox/*"
 flake8 wdmtoolbox/__init__.py wdmtoolbox/wdmutil.py --exit-zero
+
+cd docsrc
+make clean
+make html
 

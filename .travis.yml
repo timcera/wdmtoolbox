@@ -30,7 +30,7 @@ before_install:
 
 # Install packages
 install:
-  - conda create -q -n $TRAVIS_PYTHON_VERSION python=$TRAVIS_PYTHON_VERSION setuptools atlas numpy scipy matplotlib nose dateutil pandas pip coverage
+  - conda create -q -n $TRAVIS_PYTHON_VERSION python=$TRAVIS_PYTHON_VERSION setuptools atlas numpy scipy matplotlib nose dateutil pandas pip coverage libgfortran gcc
 
   - source activate $TRAVIS_PYTHON_VERSION
   - pip install coveralls mando tstoolbox baker

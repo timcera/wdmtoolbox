@@ -92,7 +92,7 @@ class DSNExistsError(Exception):
 '''.format(self.dsn)
 
 
-class WDM():
+class WDM(object):
     ''' Class to open and read from WDM files.
     '''
     def __init__(self):
@@ -322,7 +322,7 @@ class WDM():
         ''' Will collect some metadata about the DSN.
         '''
         wdmfp = self._open(wdmpath, 55)
-        tdsfrc, llsdat, lledat, retcode = self.wtfndt(
+        _, llsdat, lledat, retcode = self.wtfndt(
             wdmfp,
             dsn,
             1)  # GPFLG  - get(1)/put(2) flag
@@ -507,7 +507,7 @@ class WDM():
                                     (17, 1, int(tcode)),  # tcode
                                     (33, 1, int(tsstep)),  # tsstep
                                     (27, 1, int(base_year)),  # tsbyr
-                                    ]:
+                                   ]:
             retcode = self.wdbsai(
                 wdmfp,
                 dsn,
@@ -722,5 +722,7 @@ if __name__ == '__main__':
                            scenario='OBSERVED',
                            tcode=4,
                            location='EXAMPLE')
-    wdm_obj.write_dsn(fname, 1003, listonumbers, datetime.datetime(2000, 1, 1))
+    dr = pd.date_range(start='2000-01-01', freq='D', periods=len(listonumbers))
+    df = pd.DataFrame(listonumbers, index=dr)
+    wdm_obj.write_dsn(fname, 1003, df)
     print(wdm_obj.read_dsn_por(fname, 1003))
