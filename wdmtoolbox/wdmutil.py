@@ -477,6 +477,9 @@ class WDM(object):
         self._open(wdmpath, 56, ronwfg=ronwfg)
         self._close(wdmpath)
 
+    def set_dsn_attribute(self, wdmpath, dsn, attribute=None):
+        pass
+
     def create_new_dsn(self, wdmpath, dsn, tstype='', base_year=1900, tcode=4,
                        tsstep=1, statid=' ', scenario='', location='',
                        description='', constituent='', tsfill=-999.0):
@@ -641,7 +644,7 @@ class WDM(object):
 *   The requested start date ({0}) is after the end date ({1})
 *   of the time series in the WDM file.
 *
-'''.format(datetime.datetime(*start_date), datetime.datetime(*lledat)))
+'''.format(start_date, datetime.datetime(*lledat)))
 
         if end_date is not None:
             end_date = self.dateconverter(end_date)
@@ -652,7 +655,7 @@ class WDM(object):
 *   The requested end date ({0}) is before the start date ({1})
 *   of the time series in the WDM file.
 *
-'''.format(datetime.datetime(*end_date), datetime.datetime(*llsdat)))
+'''.format(end_date, datetime.datetime(*llsdat)))
 
         iterm = self.timdif(llsdat,
                             lledat,
