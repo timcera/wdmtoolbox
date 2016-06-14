@@ -2,8 +2,6 @@
 
 program=wdmtoolbox
 
-envs=(2.6 2.7 3.3 3.4 3.5)
-
 pkg=" \
      setuptools \
      atlas \
@@ -18,20 +16,15 @@ pkg=" \
      flake8 \
      "
 
+# pandas no longer supports 2.6
+envs=(2.7 3.3 3.4 3.5)
+
 for env in ${envs[@]}; do
     echo "${env}"
-    conda env list | grep -q "^python${env} "
-    if [ $? -eq 0 ]; then
-        echo "conda update -q -n python${env} ${pkgs}"
-        conda update -q -n python${env} ${pkgs}
-    else
-        conda create -q -n python${env} python=${env} ${pkgs}
-    fi
 
-    source activate python${env}
-    conda update pip
-    pip install mando tstoolbox baker
-    if [[ ${env} == '2.6' ]]; then pip install argparse; fi
+    pew in python${env} << EOT
+    pip install --upgrade ${pkgs}
+    pip install --no-deps --upgrade ../mando/
     pip uninstall -y ${program}
     rm -rf build
     pip install --upgrade --no-deps ../${program}/
@@ -43,10 +36,10 @@ for env in ${envs[@]}; do
         --cover-package=${program} \
         --cover-branches \
         --cover-erase
+EOT
 done
 
-source activate python3.4
-
+pew in python3.4 << EOTT
 coverage erase
 coverage run `which nosetests` --with-doctest
 coverage report --include="wdmtoolbox/*" --omit="tests/*" --omit=".tox/*"
@@ -56,4 +49,7 @@ flake8 wdmtoolbox/__init__.py wdmtoolbox/wdmutil.py --exit-zero
 cd docsrc
 make clean
 make html
+EOTT
+
+
 
