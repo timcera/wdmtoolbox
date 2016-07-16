@@ -514,3 +514,7 @@ def main():
     if not os.path.exists('debug_wdmtoolbox'):
         sys.tracebacklimit = 0
     mando.main()
+
+
+if __name__ == '__main__':
+    main()
