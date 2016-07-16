@@ -58,7 +58,8 @@ class TestDescribe(TestCase):
         ret1.columns = ['Area']
         assert_frame_equal(ret1, ret3)
 
-        ret4 = tstoolbox.read('tests/sunspot_area_with_missing.csv', dense=True)
+        ret4 = tstoolbox.read('tests/sunspot_area_with_missing.csv',
+                              dropna='no')
 
         wdmtoolbox.createnewdsn(self.wdmname, 500, tcode=5,
                                 base_year=1870)

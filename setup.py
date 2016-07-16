@@ -23,7 +23,7 @@ install_requires = [
     'python-dateutil >= 2.1',
     'numpy',
     'pandas >= 0.9.0',
-    'tstoolbox >= 0.9.7',
+    'tstoolbox >= 0.11.12.8',
 ]
 
 libraries = []
