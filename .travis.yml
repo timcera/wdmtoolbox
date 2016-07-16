@@ -15,6 +15,8 @@ python:
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y liblapack-dev libopenblas-dev
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get install -y gfortran
 
 # Install packages
 install:
