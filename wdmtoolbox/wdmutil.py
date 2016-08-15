@@ -420,7 +420,7 @@ class WDM(object):
             48)      # salen
         self._close(wdmpath)
         if retcode == -107:
-            scen_ostr = ''
+            desc_ostr = ''
             retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
