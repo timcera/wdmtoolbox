@@ -1,7 +1,7 @@
 !    -*- f90 -*-
 ! Note: the context of this file is case sensitive.
 
-python module wdm ! in 
+python module _wdm_lib ! in 
     interface  ! in :wdm
 !        subroutine wdsysd(idate) ! in :wdm:DTTM90.f
 !            integer dimension(4) :: idate
@@ -2610,7 +2610,7 @@ python module wdm ! in
 !            integer :: retcod
 !        end subroutine wdainf
     end interface 
-end python module wdm
+end python module _wdm_lib
 
 ! This file was auto-generated with f2py (version:2).
 ! See http://cens.ioc.ee/projects/f2py2e/

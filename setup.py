@@ -30,7 +30,7 @@ libraries = []
 if sys.platform.startswith('win'):
     libraries = ['quadmath']
 
-wdm_support = Extension('wdm', [
+wdm_support = Extension('_wdm_lib', [
           'wdm_support/wdm.pyf',
           'wdm_support/DTTM90.f',
           'wdm_support/TSBUFR.f',

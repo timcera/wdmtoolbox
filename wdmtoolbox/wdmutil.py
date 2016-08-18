@@ -15,7 +15,7 @@ import sys
 
 import pandas as pd
 
-import wdm
+import _wdm_lib
 from tstoolbox import tsutils
 
 # Load in WDM subroutines
@@ -112,24 +112,24 @@ class WDM(object):
         # wddsdl: Delete a DSN
         # wddscl: Copy a label
 
-        self.timcvt = wdm.timcvt
-        self.timdif = wdm.timdif
-        self.wdbopn = wdm.wdbopn
-        self.wdbsac = wdm.wdbsac
-        self.wdbsai = wdm.wdbsai
-        self.wdbsar = wdm.wdbsar
-        self.wdbsgc = wdm.wdbsgc
-        self.wdbsgi = wdm.wdbsgi
-        self.wdbsgr = wdm.wdbsgr
-        self.wdckdt = wdm.wdckdt
-        self.wdflcl = wdm.wdflcl
-        self.wdlbax = wdm.wdlbax
-        self.wdtget = wdm.wdtget
-        self.wdtput = wdm.wdtput
-        self.wtfndt = wdm.wtfndt
-        self.wddsrn = wdm.wddsrn
-        self.wddsdl = wdm.wddsdl
-        self.wddscl = wdm.wddscl
+        self.timcvt = _wdm_lib.timcvt
+        self.timdif = _wdm_lib.timdif
+        self.wdbopn = _wdm_lib.wdbopn
+        self.wdbsac = _wdm_lib.wdbsac
+        self.wdbsai = _wdm_lib.wdbsai
+        self.wdbsar = _wdm_lib.wdbsar
+        self.wdbsgc = _wdm_lib.wdbsgc
+        self.wdbsgi = _wdm_lib.wdbsgi
+        self.wdbsgr = _wdm_lib.wdbsgr
+        self.wdckdt = _wdm_lib.wdckdt
+        self.wdflcl = _wdm_lib.wdflcl
+        self.wdlbax = _wdm_lib.wdlbax
+        self.wdtget = _wdm_lib.wdtget
+        self.wdtput = _wdm_lib.wdtput
+        self.wtfndt = _wdm_lib.wtfndt
+        self.wddsrn = _wdm_lib.wddsrn
+        self.wddsdl = _wdm_lib.wddsdl
+        self.wddscl = _wdm_lib.wddscl
 
         self.openfiles = {}
 
