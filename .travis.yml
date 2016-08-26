@@ -21,6 +21,9 @@ before_install:
 install:
   - pip install --upgrade pip
   - pip install wheel
+  - pip install numpy
+  - pip install scipy
+  - pip install matplotlib
   - pip install coveralls
   - python setup.py install
 
