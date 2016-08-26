@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-'''
-The component functions of the wdmtoolbox.
+"""The component functions of the wdmtoolbox.
+
 Used to manipulate Watershed Data Management files for time-series.
-'''
+"""
 from __future__ import print_function
 
 # Python batteries included imports
@@ -23,15 +23,12 @@ WDM = wdmutil.WDM()
 
 
 def _describedsn(wdmpath, dsn):
-    ''' The local underlying function used by all routines that need a
-        description of DSN.
-    '''
+    """Private function used by routines that need a description of DSN."""
     return WDM.describe_dsn(wdmpath, int(dsn))
 
 
 def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
-    ''' The local underlying function to copy a DSN.
-    '''
+    """The local underlying function to copy a DSN."""
     WDM.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
     nts = WDM.read_dsn(inwdmpath, indsn)
     WDM.write_dsn(outwdmpath, int(outdsn), nts)
@@ -39,13 +36,13 @@ def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
 
 @mando.command
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
-    ''' Make a copy of a DSN.
+    """Make a copy of a DSN.
 
     :param inwdmpath: Path to input WDM file.
     :param indsn: Source DSN.
     :param outwdmpath: Path to clean copy WDM file.
     :param outdsn: Target DSN.
-    '''
+    """
     if inwdmpath == outwdmpath:
         import tempfile
         tempdir = tempfile.mkdtemp()
@@ -61,18 +58,18 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
 
 @mando.command
 def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
-    ''' Make a clean copy of a WDM file.
+    """Make a clean copy of a WDM file.
 
     :param inwdmpath: Path to input WDM file.
     :param outwdmpath: Path to clean copy WDM file.
     :param overwrite: Whether to overwrite an existing outwdmpath.
-    '''
+    """
     if inwdmpath == outwdmpath:
-        raise ValueError('''
+        raise ValueError("""
 *
 *   The "inwdmpath" cannot be the same as "outwdmpath".
 *
-''')
+""")
     createnewwdm(outwdmpath, overwrite=overwrite)
     activedsn = []
     for i in range(1, 32000):
@@ -90,34 +87,34 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
 
 @mando.command
 def renumberdsn(wdmpath, olddsn, newdsn):
-    ''' Renumber olddsn to newdsn
+    """Renumber olddsn to newdsn.
 
     :param wdmpath: Path and WDM filename.
     :param olddsn: Old DSN to renumber.
     :param newdsn: New DSN to change old DSN to.
-    '''
+    """
     WDM.renumber_dsn(wdmpath, olddsn, newdsn)
 
 
 @mando.command
 def deletedsn(wdmpath, dsn):
-    ''' Delete DSN
+    """Delete DSN.
 
     :param wdmpath: Path and WDM filename.
     :param dsn: DSN to delete.
-    '''
+    """
     WDM.delete_dsn(wdmpath, dsn)
 
 
 @mando.command
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
-    ''' Prints out DSN data to the screen in SWMM5 RDII format.
+    """Print out DSN data to the screen in SWMM5 RDII format.
 
     :param wdmpath: Path and WDM filename.
     :param dsns:     The Data Set Numbers in the WDM file.
     :param start_date: If not given defaults to start of data set.
     :param end_date:   If not given defaults to end of data set.
-    '''
+    """
     start_date = kwds.setdefault('start_date', None)
     end_date = kwds.setdefault('end_date', None)
 
@@ -181,10 +178,10 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
 
 
 def extract(*wdmpath, **kwds):
-    ''' Prints out DSN data to the screen with ISO-8601 dates.
+    """Print out DSN data to the screen with ISO-8601 dates.
 
     This is the API version also used by 'extract_cli'
-    '''
+    """
     # Adapt to both forms of presenting wdm files and DSNs
     # Old form '... file.wdm 101 102 103 ...'
     # New form '... file.wdm,101 adifferentfile.wdm,101 ...
@@ -197,12 +194,12 @@ def extract(*wdmpath, **kwds):
     except KeyError:
         end_date = None
     if len(kwds) > 0:
-        raise ValueError('''
+        raise ValueError("""
 *
 *   The only allowed keywords are start_date and end_date.  You
 *   have given {0}.
 *
-'''.format(kwds))
+""".format(kwds))
 
     labels = []
     for lab in wdmpath:
@@ -226,17 +223,17 @@ def extract(*wdmpath, **kwds):
             try:
                 result = result.join(nts, how='outer')
             except:
-                raise ValueError('''
+                raise ValueError("""
 *
 *   The column {0} is duplicated.  Dataset names must be unique.
 *
-'''.format(nts.columns[0]))
+""".format(nts.columns[0]))
     return tsutils.printiso(result)
 
 
 @mando.command('extract')
 def extract_cli(start_date=None, end_date=None, *wdmpath):
-    ''' Prints out DSN data to the screen with ISO-8601 dates.
+    """Print out DSN data to the screen with ISO-8601 dates.
 
     :param wdmpath: Path and WDM filename followed by space separated list of
                     DSNs. For example,
@@ -250,40 +247,38 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
                         'file.wdm,101 file2.wdm,104 file.wdm,227'
     :param start_date: If not given defaults to start of data set.
     :param end_date:   If not given defaults to end of data set.
-    '''
+    """
     return extract(*wdmpath, start_date=start_date, end_date=end_date)
 
 
 @mando.command
 def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
-    ''' DEPRECATED: New scripts use 'extract'. Will be removed in the future.
-    '''
+    """DEPRECATED: New scripts use 'extract'. Will be removed in the future."""
     return extract(wdmpath, *dsns, **kwds)
 
 
 @mando.command
 def describedsn(wdmpath, dsn):
-    ''' Prints out a description of a single DSN.
+    """Print out a description of a single DSN.
 
     :param wdmpath: Path and WDM filename.
     :param dsn:     The Data Set Number in the WDM file.
-    '''
+    """
     print(_describedsn(wdmpath, dsn))
 
 
 @mando.command
 def listdsns(wdmpath):
-    ''' Prints out a table describing all DSNs in the WDM.
+    """Print out a table describing all DSNs in the WDM.
 
     :param wdmpath: Path and WDM filename.
-    '''
-
+    """
     if not os.path.exists(wdmpath):
-        raise ValueError('''
+        raise ValueError("""
 *
 *   File {0} does not exist.
 *
-'''.format(wdmpath))
+""".format(wdmpath))
 
     dsn_info = {}
     cli = tsutils.test_cli()
@@ -306,11 +301,11 @@ def listdsns(wdmpath):
 
 @mando.command
 def createnewwdm(wdmpath, overwrite=False):
-    ''' Create a new WDM file, optional to overwrite.
+    """Create a new WDM file, optional to overwrite.
 
     :param wdmpath: Path and WDM filename.
     :param overwrite: Defaults to not overwrite existing file.
-    '''
+    """
     WDM.create_new_wdm(wdmpath, overwrite=overwrite)
 
 
@@ -318,7 +313,7 @@ def createnewwdm(wdmpath, overwrite=False):
 def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
                  statid='', scenario='', location='', description='',
                  constituent='', tsfill=-999.0):
-    ''' Create a new DSN.
+    """Create a new DSN.
 
     :param wdmpath: Path and WDM filename.
     :param dsn: The Data Set Number in the WDM file.  This number must be
@@ -342,7 +337,7 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
     :param constituent: The constituent that the time series represents,
                         defaults to ''.
     :param tsfill: The value used as placeholder for missing values.
-    '''
+    """
     if tstype == '' and len(constituent) > 0:
         tstype = constituent[:4]
     WDM.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year,
@@ -354,14 +349,14 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
 
 @mando.command
 def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
-    ''' Writes HYDHR sequential file to a DSN.
+    """Write HYDHR sequential file to a DSN.
 
     :param wdmpath: Path and WDM filename.
     :param dsn: The Data Set Number in the WDM file.
     :param input_ts: Input filename, defaults to standard input.
     :param start_century: Since 2 digit years are used, need century, defaults
                           to 1900.
-    '''
+    """
     import pandas as pd
     dsn = int(dsn)
     if isinstance(input_ts, str):
@@ -395,16 +390,15 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
 
 @mando.command
 def stdtowdm(wdmpath, dsn, infile='-'):
-    ''' DEPRECATED: Use 'csvtowdm'.
-
-    '''
+    """DEPRECATED: Use 'csvtowdm'."""
     csvtowdm(wdmpath, dsn, input_ts=infile)
 
 
 @mando.command
 def csvtowdm(wdmpath, dsn, input=None, start_date=None,
              end_date=None, columns=None, input_ts='-'):
-    ''' Writes data from a CSV file to a DSN.
+    """Write data from a CSV file to a DSN.
+
     File can have comma separated
     'year', 'month', 'day', 'hour', 'minute', 'second', 'value'
     OR
@@ -423,33 +417,32 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
         column numbers.  If using numbers, column number 1 is the first column.
         To pick multiple columns; separate by commas with no spaces. As used in
         'pick' command.
-    '''
+    """
     if input is not None:
-        raise ValueError('''
+        raise ValueError("""
 *
 *   The '--input' option has been deprecated.  Please use '--input_ts'
 *   instead.
 *
-''')
+""")
     tsd = tsutils.common_kwds(tsutils.read_iso_ts(input_ts),
                               start_date=start_date,
                               end_date=end_date,
                               pick=columns)
 
     if len(tsd.columns) > 1:
-        raise ValueError('''
+        raise ValueError("""
 *
 *   The input data set must contain only 1 time series.
 *   You gave {0}.
 *
-'''.format(len(tsd.columns)))
+""".format(len(tsd.columns)))
 
     _writetodsn(wdmpath, dsn, tsd)
 
 
 def _writetodsn(wdmpath, dsn, data):
-    ''' Local function to write Pandas data frame to DSN.
-    '''
+    """Local function to write Pandas data frame to DSN."""
     data = tsutils.asbestfreq(data)
     infer = data.index.freqstr
     pandacode = infer.lstrip('0123456789')
@@ -473,7 +466,7 @@ def _writetodsn(wdmpath, dsn, data):
     try:
         finterval = mapcode[pandacode]
     except:
-        raise KeyError('''
+        raise KeyError("""
 *
 *   wdmtoolbox only understands PANDAS time intervals of :
 *   'A', 'AS', 'A-DEC' for annual,
@@ -481,7 +474,7 @@ def _writetodsn(wdmpath, dsn, data):
 *   'D', 'H', 'T', 'S' for day, hour, minute, and second.
 *   wdmtoolbox thinks this series is {0}.
 *
-'''.format(pandacode))
+""".format(pandacode))
 
     # Convert string to int
     dsn = int(dsn)
@@ -491,26 +484,25 @@ def _writetodsn(wdmpath, dsn, data):
 
     dsntcode = desc_dsn['tcode']
     if finterval != dsntcode:
-        raise ValueError('''
+        raise ValueError("""
 *
 *   The DSN has a frequency of {0}, but the data has a frequency of {1}.
 *
-'''.format(dsntcode, finterval))
+""".format(dsntcode, finterval))
 
     dsntstep = desc_dsn['tstep']
     if dsntstep != tstep:
-        raise ValueError('''
+        raise ValueError("""
 *
 *   The DSN has a tstep of {0}, but the data has a tstep of {1}.
 *
-'''.format(dsntstep, tstep))
+""".format(dsntstep, tstep))
 
     WDM.write_dsn(wdmpath, dsn, data)
 
 
 def main():
-    ''' Main function
-    '''
+    """Main function."""
     if not os.path.exists('debug_wdmtoolbox'):
         sys.tracebacklimit = 0
     mando.main()

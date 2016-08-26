@@ -1,9 +1,10 @@
 #!/usr/bin/env python2
-'''
+"""Utilities to work with WDM files.
+
 The WDM class supplies a series of utilities for working with WDM files
 with Python.  The class uses f2py to wrap the minimally necessary WDM
 routines.
-'''
+"""
 
 from __future__ import print_function
 
@@ -41,62 +42,72 @@ MAPFREQ = {
 
 
 class WDMError(Exception):
-    ''' The default Error class.'''
+    """The default Error class."""
+
     pass
 
 
 class DSNDoesNotExist(Exception):
-    ''' The Error class if DSN does no exist.'''
+    """The Error class if DSN does no exist."""
+
     def __init__(self, dsn):
+        """Initialize DSN number."""
         self.dsn = dsn
 
     def __str__(self):
+        """Print detailed error message."""
         if self.dsn < 1 or self.dsn > 32000:
-            return '''
+            return """
 *
 *   The DSN number must be >= 1 and <= 32000.
 *   You supplied {0}.
 *
-'''.format(self.dsn)
+""".format(self.dsn)
 
-        return '''
+        return """
 *
 *   The DSN {0} does not exist in the dataset.
 *
-'''.format(self.dsn)
+""".format(self.dsn)
 
 
 class WDMFileExists(Exception):
-    ''' Error class if WDM file exists. '''
+    """Error class if WDM file exist."""
+
     def __init__(self, filename):
+        """Initialize filename."""
         self.filename = filename
 
     def __str__(self):
-        return '''
+        """Return detailed error message."""
+        return """
 *
 *   File {0} exists.
 *
-'''.format(self.filename)
+""".format(self.filename)
 
 
 class DSNExistsError(Exception):
-    ''' Error class if DSN exists. '''
+    """Error class if DSN exist."""
+
     def __init__(self, dsn):
+        """Initialize DSN."""
         self.dsn = dsn
 
     def __str__(self):
-        return '''
+        """Return detailed error message."""
+        return """
 *
 *   DSN {0} exists.
 *
-'''.format(self.dsn)
+""".format(self.dsn)
 
 
 class WDM(object):
-    ''' Class to open and read from WDM files.
-    '''
-    def __init__(self):
+    """Class to open and read from WDM files."""
 
+    def __init__(self):
+        """Set functions from WDM library to class function objects."""
         # timcvt: Convert times to account for 24 hour
         # timdif: Time difference
         # wdmopn: Open WDM file
@@ -134,8 +145,7 @@ class WDM(object):
         self.openfiles = {}
 
     def wmsgop(self):
-        ''' WMSGOP is a simple open of the message file.
-        '''
+        """WMSGOP is a simple open of the message file."""
         afilename = os.path.join(sys.prefix,
                                  'share',
                                  'wdmtoolbox',
@@ -143,9 +153,11 @@ class WDM(object):
         return self._open(afilename, 50, ronwfg=1)
 
     def dateconverter(self, datestr):
-        ''' Extracts all of the grouped numbers out of a string
+        """Extract and convert dates.
+
+        Extract all of the grouped numbers out of a string
         to create an array suitable for dates and times.
-        '''
+        """
         words = re.findall(r'\d+', str(datestr))
         words = [int(i) for i in words]
         dtime = [1900, 1, 1, 0, 0, 0]
@@ -153,19 +165,18 @@ class WDM(object):
         return pd.np.array(dtime)
 
     def _open(self, wdname, wdmsfl, ronwfg=0):
-        ''' Private method to open WDM file.
-        '''
+        """Private method to open WDM file."""
         wdname = wdname.strip()
         if wdname not in self.openfiles:
             if ronwfg == 1:
                 if not os.path.exists(wdname):
-                    raise ValueError('''
+                    raise ValueError("""
 *
 *   Trying to open
 *   {0}
 *   in read-only mode and it cannot be found.
 *
-    '''.format(wdname))
+    """.format(wdname))
             retcode = self.wdbopn(wdmsfl,
                                   wdname,
                                   ronwfg)
@@ -174,14 +185,13 @@ class WDM(object):
         return wdmsfl
 
     def _retcode_check(self, retcode, additional_info=' '):
-        ''' Central place to run through the return code.
-        '''
+        """Central place to run through the return code."""
         if retcode == 0:
             return
         retcode_dict = {
             -1: 'non specific error on WDM file open',
-            -4: '''copy/update failed due to data overlap problem - part of
-    source needed''',
+            -4: """copy/update failed due to data overlap problem - part of
+    source needed""",
             -5: 'copy/update failed due to data overlap problem',
             -6: 'no data present',
             -8: 'bad dates',
@@ -189,10 +199,10 @@ class WDM(object):
             -10: 'no date in this group',
             -11: 'no non-missing data, data has not started yet',
             -14: 'data specified not within valid range for data set',
-            -15: '''time units and time step must match label exactly with
-    VBTIME = 1''',
-            -20: '''problem with one or more of
-    GPGLG, DXX, NVAL, QUALVL, LTSTEP, LTUNIT''',
+            -15: """time units and time step must match label exactly with
+    VBTIME = 1""",
+            -20: """problem with one or more of
+    GPGLG, DXX, NVAL, QUALVL, LTSTEP, LTUNIT""",
             -21: 'data from WDM does not match expected date',
             -23: 'not a valid table',
             -24: 'not a valid associated table',
@@ -254,24 +264,23 @@ class WDM(object):
             lopenfiles = self.openfiles.copy()
             for fn in lopenfiles:
                 self._close(fn)
-            raise WDMError('''
+            raise WDMError("""
 *
 *   WDM library function returned error code {0}. {1}
 *   WDM error: {2}
 *
-'''.format(retcode, additional_info, retcode_dict[retcode]))
+""".format(retcode, additional_info, retcode_dict[retcode]))
         if retcode != 0:
             for fn in self.openfiles:
                 self._close(fn)
-            raise WDMError('''
+            raise WDMError("""
 *
 *   WDM library function returned error code {0}. {1}
 *
-'''.format(retcode, additional_info))
+""".format(retcode, additional_info))
 
     def renumber_dsn(self, wdmpath, odsn, ndsn):
-        ''' Will renumber the odsn to the ndsn.
-        '''
+        """Will renumber the odsn to the ndsn."""
         odsn = int(odsn)
         ndsn = int(ndsn)
 
@@ -284,8 +293,7 @@ class WDM(object):
         self._retcode_check(retcode, additional_info='wddsrn')
 
     def delete_dsn(self, wdmpath, dsn):
-        ''' Function to delete a DSN.
-        '''
+        """Function to delete a DSN."""
         dsn = int(dsn)
 
         wdmfp = self._open(wdmpath, 52)
@@ -293,16 +301,14 @@ class WDM(object):
         self._close(wdmpath)
         if testreturn != 0:
             wdmfp = self._open(wdmpath, 52)
-            retcode = self.wddsdl(
-                wdmfp,
-                dsn)
+            retcode = self.wddsdl(wdmfp,
+                                  dsn)
             self._close(wdmpath)
             self._retcode_check(retcode, additional_info='wddsdl')
         self._close(wdmpath)
 
     def copydsnlabel(self, inwdmpath, indsn, outwdmpath, outdsn):
-        ''' Will copy a complete DSN label from one DSN to another.
-        '''
+        """Will copy a complete DSN label from one DSN to another."""
         assert inwdmpath != outwdmpath
         indsn = int(indsn)
         outdsn = int(outdsn)
@@ -319,8 +325,7 @@ class WDM(object):
         self._retcode_check(retcode, additional_info='wddscl')
 
     def describe_dsn(self, wdmpath, dsn):
-        ''' Will collect some metadata about the DSN.
-        '''
+        """Will collect some metadata about the DSN."""
         wdmfp = self._open(wdmpath, 55)
         _, llsdat, lledat, retcode = self.wtfndt(
             wdmfp,
@@ -466,8 +471,7 @@ class WDM(object):
                 'base_year':   base_year}
 
     def create_new_wdm(self, wdmpath, overwrite=False):
-        ''' Create a new WDM fileronwfg
-        '''
+        """Create a new WDM fileronwfg."""
         if overwrite and os.path.exists(wdmpath):
             self._close(wdmpath)
             os.remove(wdmpath)
@@ -478,12 +482,13 @@ class WDM(object):
         self._close(wdmpath)
 
     def set_dsn_attribute(self, wdmpath, dsn, attribute=None):
+        """Set DSN attributes."""
         pass
 
     def create_new_dsn(self, wdmpath, dsn, tstype='', base_year=1900, tcode=4,
                        tsstep=1, statid=' ', scenario='', location='',
                        description='', constituent='', tsfill=-999.0):
-        ''' Create self.wdmfp/dsn. '''
+        """Create self.wdmfp/dsn."""
         wdmfp = self._open(wdmpath, 57)
         messfp = self.wmsgop()
 
@@ -540,12 +545,12 @@ class WDM(object):
                 ]:
             saval = saval.strip()
             if len(saval) > salen:
-                raise ValueError('''
+                raise ValueError("""
 *
 *   String "{0}" is too long for {1}.  Must
 *   have a length equal or less than {2}.
 *
-'''.format(saval, error_name, salen))
+""".format(saval, error_name, salen))
 
             saval = '{0: <{1}}'.format(saval, salen)
 
@@ -560,7 +565,7 @@ class WDM(object):
         self._close(wdmpath)
 
     def _tcode_date(self, tcode, date):
-        ''' Uses tcode to set the significant parts of the date tuple. '''
+        """Use tcode to set the significant parts of the date tuple."""
         rdate = [1, 1, 1, 0, 0, 0]
         if tcode <= 6:
             rdate[0] = date[0]
@@ -577,7 +582,7 @@ class WDM(object):
         return rdate
 
     def write_dsn(self, wdmpath, dsn, data):
-        ''' Write to self.wdmfp/dsn the time-series data. '''
+        """Write to self.wdmfp/dsn the time-series data."""
         dsn_desc = self.describe_dsn(wdmpath, dsn)
         tcode = dsn_desc['tcode']
         tstep = dsn_desc['tstep']
@@ -589,12 +594,12 @@ class WDM(object):
         dstart_date = start_date.timetuple()[:6]
         llsdat = self._tcode_date(tcode, dstart_date)
         if dsn_desc['base_year'] > llsdat[0]:
-            raise ValueError('''
+            raise ValueError("""
 *
 *   The base year for this DSN is {0}.  All data to insert must be after the
 *   base year.  Instead the first year of the series is {1}.
 *
-'''.format(dsn_desc['base_year'], llsdat[0]))
+""".format(dsn_desc['base_year'], llsdat[0]))
 
         nval = len(data)
         wdmfp = self._open(wdmpath, 58)
@@ -612,15 +617,13 @@ class WDM(object):
         self._retcode_check(retcode, additional_info='wdtput')
 
     def read_dsn(self, wdmpath, dsn, start_date=None, end_date=None):
-        ''' Read from a DSN.
-        '''
-
+        """Read from a DSN."""
         if not os.path.exists(wdmpath):
-            raise ValueError('''
+            raise ValueError("""
 ***
 *** {0} does not exist.
 ***
-'''.format(wdmpath))
+""".format(wdmpath))
 
         # Call wdatim_ to get LLSDAT, LLEDAT, TSTEP, TCODE
         desc_dsn = self.describe_dsn(wdmpath, dsn)
@@ -639,23 +642,23 @@ class WDM(object):
             start_date = self.dateconverter(start_date)
             start_date = datetime.datetime(*start_date)
             if start_date > datetime.datetime(*lledat):
-                raise ValueError('''
+                raise ValueError("""
 *
 *   The requested start date ({0}) is after the end date ({1})
 *   of the time series in the WDM file.
 *
-'''.format(start_date, datetime.datetime(*lledat)))
+""".format(start_date, datetime.datetime(*lledat)))
 
         if end_date is not None:
             end_date = self.dateconverter(end_date)
             end_date = datetime.datetime(*end_date)
             if end_date < datetime.datetime(*llsdat):
-                raise ValueError('''
+                raise ValueError("""
 *
 *   The requested end date ({0}) is before the start date ({1})
 *   of the time series in the WDM file.
 *
-'''.format(end_date, datetime.datetime(*llsdat)))
+""".format(end_date, datetime.datetime(*llsdat)))
 
         iterm = self.timdif(llsdat,
                             lledat,
@@ -698,13 +701,11 @@ class WDM(object):
         return tmpval
 
     def read_dsn_por(self, wdmpath, dsn):
-        ''' Read the period of record for a DSN.
-        '''
+        """Read the period of record for a DSN."""
         return self.read_dsn(wdmpath, dsn, start_date=None, end_date=None)
 
     def _close(self, wdmpath):
-        ''' Close the WDM file.
-        '''
+        """Close the WDM file."""
         wdmpath = wdmpath.strip()
         if wdmpath in self.openfiles:
             retcode = self.wdflcl(self.openfiles[wdmpath])
