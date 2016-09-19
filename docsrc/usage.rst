@@ -28,6 +28,29 @@ To look at the DSN table::
 
     wdmtoolbox listdsns met.wdm
 
+You can also use "tsgettoolbox" to populate the DSN with data from various
+on-line sources.  Look at the "tsgettoolbox" documentation at
+http://tsgettoolbox.readthedocs.io for particulars on installation, but it may
+be as easy as "pip install tsgettoolbox".
+
+"tsgettoolbox" examples::   
+
+    # Make a new wdm.
+    wdmtoolbox createnewwdm obs.wdm
+
+    # Create new DSN.
+    wdmtoolbox createnewdsn obs.wdm 10 --scenario SIMULATE --location 02232000 --constituent FLOW
+
+    # Download flow data for USGS station 02232000 and pipe into DSN.
+    # The --startDT option is required otherwise only the latest value is
+    # returned.
+    tsgettoolbox nwis --sites=02232000 --parameterCd=00060 --startDT 2000-01-01 | wdmtoolbox csvtowdm obs.wdm 10
+
+    # List DSNs.
+    wdmtoolbox listdsns obs.wdm
+
+    # Plot the flow data in DSN 10.
+    wdmtoolbox extract obs.wdm 10 | tstoolbox plot
 
 Sub-command Detail
 ''''''''''''''''''
