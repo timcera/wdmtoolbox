@@ -1,6 +1,9 @@
 .. include:: ../BADGES.rst
-'wdmtoolbox' Documentation
-==========================
+
+.. _wdmtoolbox_documentation:   
+
+wdmtoolbox
+==========
 
 This is the home page for 'wdmtoolbox'.  'wdmtoolbox' is a command line
 program and Python library to work with Watershed Data Management (WDM) files
@@ -17,6 +20,7 @@ Table of Contents
 
    readme
    usage
+   function_summary
    contributing
    authors
    license
@@ -26,9 +30,8 @@ API
 .. toctree::
    :maxdepth: 2
 
-   wdmtoolbox
 
-Related Work
-------------
+Other Projects
+--------------
 http://timcera.bitbucket.org
 

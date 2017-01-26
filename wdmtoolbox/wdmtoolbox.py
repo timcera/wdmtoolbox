@@ -292,7 +292,14 @@ def listdsns(wdmpath):
         except wdmutil.WDMError:
             continue
         if cli is True:
-            print('{dsn:5} {scenario!s:8} {location!s:8} {constituent!s:8}    {start_date!s:19} {end_date!s:19} {tcode_name!s:>5}({tcode}) {tstep}'.format(**testv))
+            print('{dsn:5} '
+                  '{scenario!s:8} '
+                  '{location!s:8} '
+                  '{constituent!s:8}    '
+                  '{start_date!s:19} '
+                  '{end_date!s:19} '
+                  '{tcode_name!s:>5}({tcode}) '
+                  '{tstep}'.format(**testv))
         else:
             dsn_info[testv['dsn']] = testv
     if cli is False:

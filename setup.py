@@ -24,6 +24,7 @@ install_requires = [
     'numpy',
     'pandas >= 0.9.0',
     'tstoolbox >= 0.11.12.8',
+    'lockfile',
 ]
 
 libraries = []
@@ -78,7 +79,7 @@ setup(name='wdmtoolbox',
       keywords='WDM watershed data_management data hydrology hydrological simulation fortran HSPF',
       author='Tim Cera, P.E.',
       author_email='tim@cerazone.net',
-      url='http://pypi.python.org/pypi/wdmtoolbox',
+      url='http://timcera.bitbucket.org/wdmtoolbox/docsrc/index.html',
       packages=['wdmtoolbox'],
       include_package_data=True,
       zip_safe=False,

@@ -14,17 +14,21 @@ pkg=" \
      pip \
      coverage \
      flake8 \
+     mando \
      "
 
 # pandas no longer supports 2.6
-envs=(2.7 3.3 3.4 3.5)
+envs=(~/python_ves/python-2.7.13 \
+      ~/python_ves/python-3.4.5 \
+      ~/python_ves/python-3.5.2 \
+      ~/python_ves/python-3.6.0)
 
 for env in ${envs[@]}; do
     echo "${env}"
 
-    pew in python${env} << EOT
+    source "${env}"/bin/activate
+    pip install --upgrade pip
     pip install --upgrade ${pkgs}
-    pip install --no-deps --upgrade ../mando/
     pip uninstall -y ${program}
     rm -rf build
     pip install --upgrade --no-deps ../${program}/
@@ -36,20 +40,14 @@ for env in ${envs[@]}; do
         --cover-package=${program} \
         --cover-branches \
         --cover-erase
-EOT
+    deactivate
 done
 
-pew in python3.4 << EOTT
+source ~/python_ves/python-3.4.5/bin/activate
 coverage erase
 coverage run `which nosetests` --with-doctest
-coverage report --include="wdmtoolbox/*" --omit="tests/*" --omit=".tox/*"
-coverage html --include="wdmtoolbox/*" --omit="tests/*" --omit=".tox/*"
-flake8 wdmtoolbox/__init__.py wdmtoolbox/wdmutil.py --exit-zero
-
-cd docsrc
-make clean
-make html
-EOTT
-
-
+coverage report --include="${program}/*" --omit="tests/*"
+coverage html --include="${program}/*" --omit="tests/*"
+flake8 ${program}/__init__.py ${program}/${program}.py ${program}/wdmutil.py --exit-zero
+deactivate
 

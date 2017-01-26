@@ -30,7 +30,7 @@ To look at the DSN table::
 
 You can also use "tsgettoolbox" to populate the DSN with data from various
 on-line sources.  Look at the "tsgettoolbox" documentation at
-http://tsgettoolbox.readthedocs.io for particulars on installation, but it may
+:ref:`tsgettoolbox_documentation` for particulars on installation, but it may
 be as easy as "pip install tsgettoolbox".
 
 "tsgettoolbox" examples::   

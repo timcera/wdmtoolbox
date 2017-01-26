@@ -16,6 +16,8 @@ import sys
 
 import pandas as pd
 
+from lockfile import LockFile
+
 import _wdm_lib
 from tstoolbox import tsutils
 
@@ -284,11 +286,14 @@ class WDM(object):
         odsn = int(odsn)
         ndsn = int(ndsn)
 
+        lock = LockFile(wdmpath)
+        lock.acquire()
         wdmfp = self._open(wdmpath, 51)
         retcode = self.wddsrn(
             wdmfp,
             odsn,
             ndsn)
+        lock.release()
         self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wddsrn')
 
@@ -296,6 +301,8 @@ class WDM(object):
         """Function to delete a DSN."""
         dsn = int(dsn)
 
+        lock = LockFile(wdmpath)
+        lock.acquire()
         wdmfp = self._open(wdmpath, 52)
         testreturn = self.wdckdt(wdmfp, dsn)
         self._close(wdmpath)
@@ -305,6 +312,7 @@ class WDM(object):
                                   dsn)
             self._close(wdmpath)
             self._retcode_check(retcode, additional_info='wddsdl')
+        lock.release()
         self._close(wdmpath)
 
     def copydsnlabel(self, inwdmpath, indsn, outwdmpath, outdsn):
@@ -314,6 +322,8 @@ class WDM(object):
         outdsn = int(outdsn)
         dsntype = 0
         inwdmfp = self._open(inwdmpath, 53, ronwfg=1)
+        lock = LockFile(outwdmpath)
+        lock.acquire()
         outwdmfp = self._open(outwdmpath, 54)
         retcode = self.wddscl(inwdmfp,
                               indsn,
@@ -321,12 +331,13 @@ class WDM(object):
                               outdsn,
                               dsntype)
         self._close(inwdmpath)
+        lock.release()
         self._close(outwdmpath)
         self._retcode_check(retcode, additional_info='wddscl')
 
     def describe_dsn(self, wdmpath, dsn):
         """Will collect some metadata about the DSN."""
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         _, llsdat, lledat, retcode = self.wtfndt(
             wdmfp,
             dsn,
@@ -338,7 +349,7 @@ class WDM(object):
             retcode = 0
         self._retcode_check(retcode, additional_info='wtfndt')
 
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         tstep, retcode = self.wdbsgi(
             wdmfp,
             dsn,
@@ -347,7 +358,7 @@ class WDM(object):
         self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdbsgi')
 
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         tcode, retcode = self.wdbsgi(
             wdmfp,
             dsn,
@@ -356,7 +367,7 @@ class WDM(object):
         self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdbsgi')
 
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         tsfill, retcode = self.wdbsgr(
             wdmfp,
             dsn,
@@ -372,7 +383,7 @@ class WDM(object):
             tsfill = tsfill[0]
         self._retcode_check(retcode, additional_info='wdbsgr')
 
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         ostr, retcode = self.wdbsgc(
             wdmfp,
             dsn,
@@ -384,7 +395,7 @@ class WDM(object):
             retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         scen_ostr, retcode = self.wdbsgc(
             wdmfp,
             dsn,
@@ -396,7 +407,7 @@ class WDM(object):
             retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         con_ostr, retcode = self.wdbsgc(
             wdmfp,
             dsn,
@@ -408,7 +419,7 @@ class WDM(object):
             retcode = 0
         self._retcode_check(retcode, additional_info='wdbsgr')
 
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         base_year, retcode = self.wdbsgi(
             wdmfp,
             dsn,
@@ -417,7 +428,7 @@ class WDM(object):
         self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdbsgi')
 
-        wdmfp = self._open(wdmpath, 55)
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
         desc_ostr, retcode = self.wdbsgc(
             wdmfp,
             dsn,
@@ -489,6 +500,8 @@ class WDM(object):
                        tsstep=1, statid=' ', scenario='', location='',
                        description='', constituent='', tsfill=-999.0):
         """Create self.wdmfp/dsn."""
+        lock = LockFile(wdmpath)
+        lock.acquire()
         wdmfp = self._open(wdmpath, 57)
         messfp = self.wmsgop()
 
@@ -562,6 +575,7 @@ class WDM(object):
                 salen,
                 saval)
             self._retcode_check(retcode, additional_info='wdbsac')
+        lock.release()
         self._close(wdmpath)
 
     def _tcode_date(self, tcode, date):
@@ -602,6 +616,8 @@ class WDM(object):
 """.format(dsn_desc['base_year'], llsdat[0]))
 
         nval = len(data)
+        lock = LockFile(wdmpath)
+        lock.acquire()
         wdmfp = self._open(wdmpath, 58)
         retcode = self.wdtput(
             wdmfp,
@@ -613,6 +629,7 @@ class WDM(object):
             0,
             tcode,
             data)
+        lock.release()
         self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdtput')
 
