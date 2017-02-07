@@ -35,14 +35,17 @@ def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
 
 
 @mando.command
-def copydsn(inwdmpath, indsn, outwdmpath, outdsn):
+def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     """Make a copy of a DSN.
 
     :param inwdmpath: Path to input WDM file.
     :param indsn: Source DSN.
     :param outwdmpath: Path to clean copy WDM file.
     :param outdsn: Target DSN.
+    :param overwrite: Whether to overwrite the target DSN if it exists.
     """
+    if overwrite is True:
+        deletedsn(outwdmpath, outdsn)
     if inwdmpath == outwdmpath:
         import tempfile
         tempdir = tempfile.mkdtemp()

@@ -528,7 +528,7 @@ class WDM(object):
                                     (17, 1, int(tcode)),  # tcode
                                     (33, 1, int(tsstep)),  # tsstep
                                     (27, 1, int(base_year)),  # tsbyr
-                                   ]:
+                                    ]:
             retcode = self.wdbsai(
                 wdmfp,
                 dsn,
