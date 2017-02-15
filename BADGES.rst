@@ -10,10 +10,6 @@
     :alt: Latest release
     :target: https://pypi.python.org/pypi/wdmtoolbox
 
-.. image:: https://img.shields.io/pypi/dm/wdmtoolbox.svg
-    :alt: PyPI downloads count
-    :target: https://pypi.python.org/pypi/wdmtoolbox
-
 .. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
     :alt: wdmtoolbox license
     :target: https://pypi.python.org/pypi/wdmtoolbox/

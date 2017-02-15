@@ -9,7 +9,6 @@ version = open("VERSION").readline().strip()
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     os.system('twine upload dist/wdmtoolbox-{0}*.whl'.format(version))
-    os.system('python setup.py upload_docs')
     sys.exit()
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -19,10 +18,6 @@ install_requires = [
     # List your project dependencies here.
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
-    'mando >= 0.3.2',
-    'python-dateutil >= 2.1',
-    'numpy',
-    'pandas >= 0.9.0',
     'tstoolbox >= 0.11.12.8',
     'lockfile',
 ]
