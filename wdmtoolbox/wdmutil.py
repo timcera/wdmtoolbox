@@ -148,9 +148,7 @@ class WDM(object):
 
     def wmsgop(self):
         """WMSGOP is a simple open of the message file."""
-        afilename = os.path.join(sys.prefix,
-                                 'share',
-                                 'wdmtoolbox',
+        afilename = os.path.join(os.path.dirname(__file__),
                                  'message.wdm')
         return self._open(afilename, 50, ronwfg=1)
 

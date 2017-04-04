@@ -76,11 +76,11 @@ setup(name='wdmtoolbox',
       author_email='tim@cerazone.net',
       url='http://timcera.bitbucket.org/wdmtoolbox/docsrc/index.html',
       packages=['wdmtoolbox'],
+      package_dir={'wdmtoolbox': 'wdmtoolbox'},
+      package_data={'wdmtoolbox': ['message.wdm']},
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
-      data_files=[(os.path.join(sys.prefix, 'share', 'wdmtoolbox'),
-          ['data/message.wdm'])],
       ext_modules=[wdm_support],
       entry_points={
           'console_scripts':

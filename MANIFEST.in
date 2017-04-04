@@ -3,7 +3,7 @@ include *.txt
 include *.rst
 include setup.py
 include setup.cfg
-include data/message.wdm
+include wdmtoolbox.data/*
 include wdm_support/*
 include wdmtoolbox/*.py
 include docsrc/*
