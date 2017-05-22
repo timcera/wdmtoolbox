@@ -9,15 +9,17 @@ from __future__ import print_function
 import os
 import sys
 import datetime
+from collections import OrderedDict
 
 # Third party imports
 import mando
+from mando.rst_text_formatter import RSTHelpFormatter
 from dateutil.parser import parse as dateparser
 
 # Local imports
 # Load in WDM subroutines
-from . import wdmutil
 from tstoolbox import tsutils
+from . import wdmutil
 
 WDM = wdmutil.WDM()
 
@@ -34,15 +36,24 @@ def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
     WDM.write_dsn(outwdmpath, int(outdsn), nts)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     """Make a copy of a DSN.
 
-    :param inwdmpath: Path to input WDM file.
-    :param indsn: Source DSN.
-    :param outwdmpath: Path to clean copy WDM file.
-    :param outdsn: Target DSN.
-    :param overwrite: Whether to overwrite the target DSN if it exists.
+    Parameters
+    ----------
+    inwdmpath
+        Path to input WDM file.
+    indsn
+        Source DSN.
+    outwdmpath
+        Path to clean copy WDM file.
+    outdsn
+        Target DSN.
+    overwrite
+        Whether to overwrite the target DSN if it exists.
+
     """
     if overwrite is True:
         deletedsn(outwdmpath, outdsn)
@@ -59,13 +70,20 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
         _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
     """Make a clean copy of a WDM file.
 
-    :param inwdmpath: Path to input WDM file.
-    :param outwdmpath: Path to clean copy WDM file.
-    :param overwrite: Whether to overwrite an existing outwdmpath.
+    Parameters
+    ----------
+    inwdmpath
+        Path to input WDM file.
+    outwdmpath
+        Path to clean copy WDM file.
+    overwrite
+        Whether to overwrite an existing outwdmpath.
+
     """
     if inwdmpath == outwdmpath:
         raise ValueError("""
@@ -88,35 +106,56 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
             pass
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def renumberdsn(wdmpath, olddsn, newdsn):
     """Renumber olddsn to newdsn.
 
-    :param wdmpath: Path and WDM filename.
-    :param olddsn: Old DSN to renumber.
-    :param newdsn: New DSN to change old DSN to.
+    Parameters
+    ----------
+    wdmpath
+        Path and WDM filename.
+    olddsn
+        Old DSN to renumber.
+    newdsn
+        New DSN to change old DSN to.
+
     """
     WDM.renumber_dsn(wdmpath, olddsn, newdsn)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def deletedsn(wdmpath, dsn):
     """Delete DSN.
 
-    :param wdmpath: Path and WDM filename.
-    :param dsn: DSN to delete.
+    Parameters
+    ----------
+    wdmpath
+        Path and WDM filename.
+    dsn
+        DSN to delete.
+
     """
     WDM.delete_dsn(wdmpath, dsn)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     """Print out DSN data to the screen in SWMM5 RDII format.
 
-    :param wdmpath: Path and WDM filename.
-    :param dsns:     The Data Set Numbers in the WDM file.
-    :param start_date: If not given defaults to start of data set.
-    :param end_date:   If not given defaults to end of data set.
+    Parameters
+    ----------
+    wdmpath
+        Path and WDM filename.
+    dsns
+        The Data Set Numbers in the WDM file.
+    start_date
+        If not given defaults to start of data set.
+    end_date
+        If not given defaults to end of data set.
+
     """
     start_date = kwds.setdefault('start_date', None)
     end_date = kwds.setdefault('end_date', None)
@@ -234,47 +273,66 @@ def extract(*wdmpath, **kwds):
     return tsutils.printiso(result)
 
 
-@mando.command('extract')
+@mando.command('extract', formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def extract_cli(start_date=None, end_date=None, *wdmpath):
     """Print out DSN data to the screen with ISO-8601 dates.
 
-    :param wdmpath: Path and WDM filename followed by space separated list of
-                    DSNs. For example,
+    Parameters
+    ----------
+    wdmpath
+        Path and WDM filename followed by space separated list of
+        DSNs. For example::
 
-                        'file.wdm 234 345 456'.
-                    OR
+            'file.wdm 234 345 456'
 
-                    `wdmpath` can be space separated sets of 'wdmpath,dsn'.
-                    For example,
+            OR
 
-                        'file.wdm,101 file2.wdm,104 file.wdm,227'
-    :param start_date: If not given defaults to start of data set.
-    :param end_date:   If not given defaults to end of data set.
+            `wdmpath` can be space separated sets of 'wdmpath,dsn'.
+
+            'file.wdm,101 file2.wdm,104 file.wdm,227'
+    start_date
+        If not given defaults to start of data set.
+    end_date
+        If not given defaults to end of data set.
+
     """
     return extract(*wdmpath, start_date=start_date, end_date=end_date)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
     """DEPRECATED: New scripts use 'extract'. Will be removed in the future."""
     return extract(wdmpath, *dsns, **kwds)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def describedsn(wdmpath, dsn):
     """Print out a description of a single DSN.
 
-    :param wdmpath: Path and WDM filename.
-    :param dsn:     The Data Set Number in the WDM file.
+    Parameter
+    ---------
+    wdmpath
+        Path and WDM filename.
+    dsn
+        The Data Set Number in the WDM file.
+
     """
     print(_describedsn(wdmpath, dsn))
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def listdsns(wdmpath):
     """Print out a table describing all DSNs in the WDM.
 
-    :param wdmpath: Path and WDM filename.
+    Parameters
+    ----------
+    wdmpath
+        Path and WDM filename.
+
     """
     if not os.path.exists(wdmpath):
         raise ValueError("""
@@ -283,70 +341,86 @@ def listdsns(wdmpath):
 *
 """.format(wdmpath))
 
-    dsn_info = {}
-    cli = tsutils.test_cli()
-    if cli is True:
-        print('#{0:<4} {1:>8} {2:>8} {3:>8} {4:<19} {5:<19} {6:>5} {7}'.format(
-            'DSN', 'SCENARIO', 'LOCATION', 'CONSTITUENT', 'START DATE',
-            'END DATE', 'TCODE', 'TSTEP'))
+    collect = OrderedDict()
     for i in range(1, 32001):
         try:
             testv = _describedsn(wdmpath, i)
         except wdmutil.WDMError:
             continue
-        if cli is True:
-            print('{dsn:5} '
-                  '{scenario!s:8} '
-                  '{location!s:8} '
-                  '{constituent!s:8}    '
-                  '{start_date!s:19} '
-                  '{end_date!s:19} '
-                  '{tcode_name!s:>5}({tcode}) '
-                  '{tstep}'.format(**testv))
-        else:
-            dsn_info[testv['dsn']] = testv
-    if cli is False:
-        return dsn_info
+        for key in ['DSN',
+                    'SCENARIO',
+                    'LOCATION',
+                    'CONSTITUENT',
+                    'START_DATE',
+                    'END_DATE',
+                    'TCODE',
+                    'TSTEP']:
+            collect.setdefault(key, []).append(testv[key.lower()])
+    return tsutils.printiso(collect,
+                            tablefmt='plain')
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def createnewwdm(wdmpath, overwrite=False):
     """Create a new WDM file, optional to overwrite.
 
-    :param wdmpath: Path and WDM filename.
-    :param overwrite: Defaults to not overwrite existing file.
+    Parameter
+    ---------
+    wdmpath
+        Path and WDM filename.
+    overwrite
+        Defaults to not overwrite existing file.
+
     """
     WDM.create_new_wdm(wdmpath, overwrite=overwrite)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
                  statid='', scenario='', location='', description='',
                  constituent='', tsfill=-999.0):
     """Create a new DSN.
 
-    :param wdmpath: Path and WDM filename.
-    :param dsn: The Data Set Number in the WDM file.  This number must be
-                greater or equal to 1 and less than or equal to 32000.  HSPF
-                can only use for input or output DSNs of 999 or less.
-    :param tstype: Time series type.  Can be any 4 character string, but
-                   if not specified defaults to first 4 characters of
-                   'constituent'.  Must match what is used in HSPF UCI
-                   file.
-    :param base_year: Base year of time series, defaults to 1900.  The DSN will
-                      not accept any time-stamps before this date.
-    :param tcode: Time series code, (1=second, 2=minute, 3=hour, 4=day,
-                  5=month, 6= year) defaults to 4 = daily.
-    :param tsstep: Time series steps, defaults (and almost always is) 1.
-    :param statid: The station name, defaults to ''.
-    :param scenario: The name of the scenario, defaults to ''.  Can be
-                     anything, but typically, 'OBSERVED' for calibration and
-                     input time-series and 'SIMULATED' for HSPF results.
-    :param location: The location, defaults to ''.
-    :param description: Descriptive text, defaults to ''.
-    :param constituent: The constituent that the time series represents,
-                        defaults to ''.
-    :param tsfill: The value used as placeholder for missing values.
+    Parameters
+    ----------
+    wdmpath
+        Path and WDM filename.  HSPF is limited to a path
+        and WDM file name of 64 characters.  'wdmtoolbox' is
+        only limited by the command line limits.
+    dsn
+        The Data Set Number in the WDM file.  This number
+        must be greater or equal to 1 and less than or equal
+        to 32000.  HSPF can only use for input or output
+        DSNs of 1 to 9999, inclusive.
+    tstype
+        Time series type.  Can be any 4 character string, but if not
+        specified defaults to first 4 characters of 'constituent'.  Must
+        match what is used in HSPF UCI file.
+    base_year
+        Base year of time series, defaults to 1900.  The DSN will not
+        accept any time-stamps before this date.
+    tcode
+        Time series code, (1=second, 2=minute, 3=hour, 4=day, 5=month,
+        6=year) defaults to 4=daily.
+    tsstep
+        Time series steps, defaults (and almost always is) 1.
+    statid
+        The station name, defaults to ''.
+    scenario
+        The name of the scenario, defaults to ''.  Can be anything, but
+        typically, 'OBSERVED' for calibration and input time-series and
+        'SIMULATED' for HSPF results.
+    location
+        The location, defaults to ''.
+    description
+        Descriptive text, defaults to ''.
+    constituent
+        The constituent that the time series represents, defaults to ''.
+    tsfill
+        The value used as placeholder for missing values.
+
     """
     if tstype == '' and len(constituent) > 0:
         tstype = constituent[:4]
@@ -357,15 +431,23 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
                        tsfill=tsfill)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     """Write HYDHR sequential file to a DSN.
 
-    :param wdmpath: Path and WDM filename.
-    :param dsn: The Data Set Number in the WDM file.
-    :param input_ts: Input filename, defaults to standard input.
-    :param start_century: Since 2 digit years are used, need century, defaults
-                          to 1900.
+    Parameters
+    ----------
+    wdmpath
+        Path and WDM filename.
+    dsn
+        The Data Set Number in the WDM file.
+    input_ts
+        Input filename, defaults to standard input.
+    start_century
+        Since 2 digit years are used, need century, defaults
+        to 1900.
+
     """
     import pandas as pd
     dsn = int(dsn)
@@ -398,13 +480,15 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     _writetodsn(wdmpath, dsn, data)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def stdtowdm(wdmpath, dsn, infile='-'):
     """DEPRECATED: Use 'csvtowdm'."""
     csvtowdm(wdmpath, dsn, input_ts=infile)
 
 
-@mando.command
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@tsutils.doc(tsutils.docstrings)
 def csvtowdm(wdmpath, dsn, input=None, start_date=None,
              end_date=None, columns=None, input_ts='-'):
     """Write data from a CSV file to a DSN.
@@ -414,19 +498,19 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
     OR
     'date/time string', 'value'
 
-    :param wdmpath: Path and WDM filename.
-    :param dsn: The Data Set Number in the WDM file.
-    :param input: DEPRECATED - use input_ts instead.
-    :param input_ts: Filename with data in 'ISOdate,value' format or '-' for
-       stdin.
-    :param start_date: The start_date of the series in ISOdatetime format, or
-        'None' for beginning.
-    :param end_date: The end_date of the series in ISOdatetime format, or
-        'None' for end.
-    :param columns: Columns to pick out of input.  Can use column names or
-        column numbers.  If using numbers, column number 1 is the first column.
-        To pick multiple columns; separate by commas with no spaces. As used in
-        'pick' command.
+    Parameters
+    ----------
+    wdmpath
+        Path and WDM filename.
+    dsn
+        The Data Set Number in the WDM file.
+    input
+        DEPRECATED - use input_ts instead.
+    {input_ts}
+    {start_date}
+    {end_date}
+    {columns}
+
     """
     if input is not None:
         raise ValueError("""
