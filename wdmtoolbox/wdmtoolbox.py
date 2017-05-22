@@ -351,6 +351,7 @@ def listdsns(wdmpath):
                     'SCENARIO',
                     'LOCATION',
                     'CONSTITUENT',
+                    'TSTYPE',
                     'START_DATE',
                     'END_DATE',
                     'TCODE',

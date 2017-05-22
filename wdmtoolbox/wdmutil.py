@@ -436,7 +436,19 @@ class WDM(object):
         if retcode == -107:
             desc_ostr = ''
             retcode = 0
-        self._retcode_check(retcode, additional_info='wdbsgr')
+        self._retcode_check(retcode, additional_info='wdbsgc')
+
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
+        tstype, retcode = self.wdbsgc(
+            wdmfp,
+            dsn,
+            1,      # saind = 1 for tstype
+            4)      # salen
+        self._close(wdmpath)
+        if retcode == -107:
+            tstype = ''
+            retcode = 0
+        self._retcode_check(retcode, additional_info='wdbsgc')
 
         self.timcvt(llsdat)
         self.timcvt(lledat)
@@ -458,11 +470,13 @@ class WDM(object):
             scen_ostr = str(scen_ostr, "utf-8").strip()
             con_ostr = str(con_ostr, "utf-8").strip()
             desc_ostr = str(desc_ostr, "utf-8").strip()
+            tstype = str(tstype, "utf-8").strip()
         except TypeError:
             ostr = ''.join(ostr).strip()
             scen_ostr = ''.join(scen_ostr).strip()
             con_ostr = ''.join(con_ostr).strip()
             desc_ostr = ''.join(desc_ostr).strip()
+            tstyp = ''.join(tstyp).strip()
 
         return {'dsn':         dsn,
                 'start_date':  sdate,
@@ -477,7 +491,8 @@ class WDM(object):
                 'constituent': con_ostr.strip(),
                 'tsfill':      tsfill,
                 'description': desc_ostr,
-                'base_year':   base_year}
+                'base_year':   base_year,
+                'tstype':      tstype}
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         """Create a new WDM fileronwfg."""
