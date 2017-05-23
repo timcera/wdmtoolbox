@@ -18,7 +18,7 @@ install_requires = [
     # List your project dependencies here.
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
-    'tstoolbox >= 9.25.17.13',
+    'tstoolbox >= 9.26.17.13',
     'lockfile',
 ]
 
