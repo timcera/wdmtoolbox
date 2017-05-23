@@ -12,7 +12,6 @@ import datetime
 import os
 import os.path
 import re
-import sys
 
 import pandas as pd
 
@@ -333,7 +332,6 @@ class WDM(object):
         self._close(outwdmpath)
         self._retcode_check(retcode, additional_info='wddscl')
 
-
     def describe_dsn(self, wdmpath, dsn):
         """Will collect some metadata about the DSN."""
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -484,11 +482,11 @@ class WDM(object):
             scen_ostr = ''.join(scen_ostr).strip()
             con_ostr = ''.join(con_ostr).strip()
             desc_ostr = ''.join(desc_ostr).strip()
-            tstyp = ''.join(tstyp).strip()
+            tstype = ''.join(tstype).strip()
 
         return {'dsn':         dsn,
-                'start_date':  pd.Period(sdate,freq=dateFormat_dict[tcode]),
-                'end_date':    pd.Period(edate,freq=dateFormat_dict[tcode]),
+                'start_date':  pd.Period(sdate, freq=dateFormat_dict[tcode]),
+                'end_date':    pd.Period(edate, freq=dateFormat_dict[tcode]),
                 'llsdat':      llsdat,
                 'lledat':      lledat,
                 'tstep':       tstep,
@@ -501,7 +499,6 @@ class WDM(object):
                 'description': desc_ostr,
                 'base_year':   base_year,
                 'tstype':      tstype}
-
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         """Create a new WDM fileronwfg."""
