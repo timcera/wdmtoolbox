@@ -27,9 +27,11 @@ def test_createnewdsn_checkdefaults():
     cmd = shlex.split('wdmtoolbox createnewdsn {0} 101'.format(fname))
     retcode = subprocess.call(cmd)
     assert retcode == 0
-    tstr = ['#DSN  SCENARIO LOCATION CONSTITUENT START DATE          END DATE            TCODE TSTEP',
-            '  101                               None                None                    D(4) 1',
+    tstr = [' DSN  SCENARIO LOCATION CONSTITUENT TSTYPE START_DATE          END_DATE            TCODE TSTEP',
+            '  101                               NaT                NaT                    4 1',
             '']
+    tstr = [i.strip().split() for i in tstr]
+    tstr = [' '.join(i) for i in tstr]
     tstr = '\n'.join(tstr)
     cmd = shlex.split('wdmtoolbox listdsns {0}'.format(fname))
     p = subprocess.Popen(cmd,
@@ -38,6 +40,11 @@ def test_createnewdsn_checkdefaults():
 
     astr, _ = p.communicate()
     assert p.returncode == 0
+
+    astr = astr.split('\n')
+    astr = [i.strip().split() for i in astr]
+    astr = [' '.join(i) for i in astr]
+    astr = '\n'.join(astr)
 
     assert astr == tstr
 
@@ -48,8 +55,7 @@ try:
 except:
     from io import StringIO
 
-from pandas.util.testing import TestCase
-from pandas.util.testing import assertRaisesRegexp
+from unittest import TestCase
 
 from wdmtoolbox import wdmtoolbox
 from wdmtoolbox.wdmutil import WDMFileExists
@@ -76,6 +82,6 @@ class TestDescribe(TestCase):
 
     def test_overwrite(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        with assertRaisesRegexp(WDMFileExists, 'exists.'):
+        with self.assertRaisesRegexp(WDMFileExists, 'exists.'):
             wdmtoolbox.createnewwdm(self.wdmname)
 

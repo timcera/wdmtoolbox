@@ -15,8 +15,7 @@ try:
 except:
     from io import StringIO
 
-from pandas.util.testing import TestCase
-from pandas.util.testing import assertRaisesRegexp
+from unittest import TestCase
 
 from wdmtoolbox import wdmtoolbox
 
@@ -46,7 +45,7 @@ class TestDescribe(TestCase):
                                 base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
-        with assertRaisesRegexp(ValueError,
+        with self.assertRaisesRegexp(ValueError,
             'The "inwdmpath" cannot be the same as "outwdmpath"'):
             wdmtoolbox.cleancopywdm(self.wdmname, self.wdmname)
 

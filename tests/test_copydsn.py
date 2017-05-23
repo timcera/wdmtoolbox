@@ -16,7 +16,7 @@ try:
 except:
     from io import StringIO
 
-from pandas.util.testing import TestCase
+from unittest import TestCase
 from pandas.util.testing import assert_frame_equal
 
 from tstoolbox import tstoolbox
