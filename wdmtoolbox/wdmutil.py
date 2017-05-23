@@ -333,6 +333,7 @@ class WDM(object):
         self._close(outwdmpath)
         self._retcode_check(retcode, additional_info='wddscl')
 
+
     def describe_dsn(self, wdmpath, dsn):
         """Will collect some metadata about the DSN."""
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -453,13 +454,20 @@ class WDM(object):
         self.timcvt(llsdat)
         self.timcvt(lledat)
         try:
-            sdate = datetime.datetime(*llsdat).isoformat()
+            sdate = datetime.datetime(*llsdat).date()
         except ValueError:
             sdate = None
         try:
-            edate = datetime.datetime(*lledat).isoformat()
+            edate = datetime.datetime(*lledat).date()
         except ValueError:
             edate = None
+
+        dateFormat_dict = {1: "S",
+                           2: "T",
+                           3: "H",
+                           4: "D",
+                           5: "M",
+                           6: "A"}
 
         tstep = tstep[0]
         tcode = tcode[0]
@@ -479,8 +487,8 @@ class WDM(object):
             tstyp = ''.join(tstyp).strip()
 
         return {'dsn':         dsn,
-                'start_date':  sdate,
-                'end_date':    edate,
+                'start_date':  pd.Period(sdate,freq=dateFormat_dict[tcode]),
+                'end_date':    pd.Period(edate,freq=dateFormat_dict[tcode]),
                 'llsdat':      llsdat,
                 'lledat':      lledat,
                 'tstep':       tstep,
@@ -493,6 +501,7 @@ class WDM(object):
                 'description': desc_ostr,
                 'base_year':   base_year,
                 'tstype':      tstype}
+
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         """Create a new WDM fileronwfg."""
