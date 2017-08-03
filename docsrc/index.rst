@@ -19,6 +19,7 @@ Table of Contents
    :maxdepth: 2
 
    readme
+   install
    usage
    function_summary
    contributing
@@ -33,5 +34,5 @@ API
 
 Other Projects
 --------------
-http://timcera.bitbucket.org
+http://timcera.bitbucket.io
 

@@ -43,14 +43,15 @@ attempt to download and install.
 If you use the source distribution you have to have a FORTRAN compiler
 installed and configured for your environment.
 
-Installation
-============
-On Windows should be as easy as running ``pip install wdmtoolbox`` in a
-command shell window.  For Windows, the support platforms are Python 2.7 and
-3.4.  Not sure on Windows whether this will bring in pandas but as mentioned
-above, if you start with Conda, Enthought, or Python(x,y) then you won't have
-a problem.
+Installation for the Impatient
+==============================
 
-On Linux (and maybe even Mac OSX?) you could use ``pip install wdmtoolbox`` at
-any terminal that has access to gfortran and of course your Python interpreter.  
+Compile From Source
+-------------------
+Aside from using pre-compiled binaries on Windows, the following command needs
+gcc, gfortran, and probably want the Python science stack already installed.  
+::
+
+        pip install wdmtoolbox
+
 
