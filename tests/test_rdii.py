@@ -48,5 +48,3 @@ class TestDescribe(TestCase):
                             input_ts='tests/nwisiv_02246000.csv')
         wdmtoolbox.copydsn(self.wdmname, 101, self.wdmname, 1101)
         wdmtoolbox.wdmtoswmm5rdii(self.wdmname, 101, 1101)
-
-

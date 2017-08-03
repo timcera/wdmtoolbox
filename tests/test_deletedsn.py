@@ -43,7 +43,7 @@ class TestDescribe(TestCase):
     def test_deletedsn(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                      base_year=1970, tsstep=15)
+                                base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         wdmtoolbox.deletedsn(self.wdmname, 101)

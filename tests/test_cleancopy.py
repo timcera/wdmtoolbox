@@ -46,7 +46,7 @@ class TestDescribe(TestCase):
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         with self.assertRaisesRegexp(ValueError,
-            'The "inwdmpath" cannot be the same as "outwdmpath"'):
+                                     'The "inwdmpath" cannot be the same as "outwdmpath"'):
             wdmtoolbox.cleancopywdm(self.wdmname, self.wdmname)
 
     def test_cleancopy_a_to_b(self):
@@ -59,4 +59,3 @@ class TestDescribe(TestCase):
         os.close(tfd)
         wdmtoolbox.cleancopywdm(self.wdmname, twdmname, overwrite=True)
         os.remove(twdmname)
-

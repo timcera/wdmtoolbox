@@ -30,7 +30,7 @@ MAPTCODE = {
     4: 'D',
     5: 'MS',
     6: 'AS',
-    }
+}
 
 MAPFREQ = {
     'S': 1,
@@ -39,7 +39,7 @@ MAPFREQ = {
     'D': 4,
     'M': 5,
     'A': 6,
-    }
+}
 
 
 class WDMError(Exception):
@@ -257,7 +257,7 @@ class WDM(object):
             -121: 'no space for another attribute',
             1: 'varies - generally more data/groups/table',
             2: 'no more data available for this DLG group'
-            }
+        }
 
         if retcode in retcode_dict:
             lopenfiles = self.openfiles.copy()
@@ -538,7 +538,7 @@ class WDM(object):
             30,    # NSA    - number of search attributes
             100,   # NSASP  - amount of search attribute space
             300,   # NDP    - number of data pointers
-            )      # PSA    - pointer to search attribute space
+        )      # PSA    - pointer to search attribute space
 
         for saind, salen, saval in [(34, 1, 6),  # tgroup
                                     (83, 1, 1),  # compfg
@@ -574,7 +574,7 @@ class WDM(object):
                 (288, 8, scenario.upper(), 'Scenario'),
                 (289, 8, constituent.upper(), 'Constituent'),
                 (290, 8, location.upper(), 'Location'),
-                ]:
+        ]:
             saval = saval.strip()
             if len(saval) > salen:
                 raise ValueError("""

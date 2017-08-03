@@ -7,9 +7,11 @@ import shlex
 import tempfile
 from wdmtoolbox import wdmtoolbox
 
+
 def _createwdm(fname):
     cmd = shlex.split('wdmtoolbox createnewwdm --overwrite {0}'.format(fname))
     return subprocess.call(cmd)
+
 
 def test_createwdm():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
@@ -17,8 +19,9 @@ def test_createwdm():
     assert _createwdm(fname) == 0
     wdmtoolbox.createnewwdm(fname, overwrite=True)
     # A brand spanking new wdm should be 40k
-    assert os.path.getsize(fname) == 40*1024
+    assert os.path.getsize(fname) == 40 * 1024
     os.remove(fname)
+
 
 def test_createnewdsn_checkdefaults():
     fd, fname = tempfile.mkstemp(suffix='.wdm')
@@ -49,6 +52,7 @@ def test_createnewdsn_checkdefaults():
     assert astr == tstr
 
     os.remove(fname)
+
 
 try:
     from cStringIO import StringIO
@@ -84,4 +88,3 @@ class TestDescribe(TestCase):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         with self.assertRaisesRegexp(WDMFileExists, 'exists.'):
             wdmtoolbox.createnewwdm(self.wdmname)
-

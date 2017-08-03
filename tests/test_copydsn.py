@@ -61,7 +61,6 @@ class TestDescribe(TestCase):
 
         wdmtoolbox.copydsn(self.wdmname, 101, self.wdmname, 1101)
 
-
     def test_listdsns(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
@@ -70,4 +69,3 @@ class TestDescribe(TestCase):
                             input_ts='tests/nwisiv_02246000.csv')
         wdmtoolbox.createnewwdm(self.awdmname, overwrite=True)
         wdmtoolbox.copydsn(self.wdmname, 101, self.awdmname, 1101)
-

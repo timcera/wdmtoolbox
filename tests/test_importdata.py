@@ -64,7 +64,7 @@ class TestDescribe(TestCase):
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         with self.assertRaisesRegexp(ValueError,
-                                'The only allowed keywords are'):
+                                     'The only allowed keywords are'):
             ret1 = wdmtoolbox.extract(self.wdmname, 101, ph=True)
 
     def test_listdsns(self):
@@ -82,7 +82,7 @@ class TestDescribe(TestCase):
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         with self.assertRaisesRegexp(WDMError,
-                                'WDM error: data set number out of valid range'):
+                                     'WDM error: data set number out of valid range'):
             ret1 = wdmtoolbox.extract(self.wdmname,  0)
 
     def test_out_of_bounds_dsn(self):
@@ -92,7 +92,7 @@ class TestDescribe(TestCase):
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         with self.assertRaisesRegexp(WDMError,
-                    'WDM error: data set number out of valid range'):
+                                     'WDM error: data set number out of valid range'):
             ret1 = wdmtoolbox.extract(self.wdmname, 32001)
 
     def test_dsn_not_in_wdm(self):
@@ -110,9 +110,11 @@ class TestDescribe(TestCase):
                                 base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
-        ret1 = wdmtoolbox.extract(self.wdmname, 101, start_date='2014-02-21 16:00:00')
+        ret1 = wdmtoolbox.extract(
+            self.wdmname, 101, start_date='2014-02-21 16:00:00')
 
-        ret3 = tstoolbox.read('tests/nwisiv_02246000.csv', start_date='2014-02-21 16:00:00').astype('float64')
+        ret3 = tstoolbox.read('tests/nwisiv_02246000.csv',
+                              start_date='2014-02-21 16:00:00').astype('float64')
         ret1.columns = ['02246000_iv_00060']
         assert_frame_equal(ret1, ret3)
 

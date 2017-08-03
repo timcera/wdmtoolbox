@@ -197,11 +197,11 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
         2: 60,
         3: 3600,
         4: 86400,
-        }
+    }
 
     print('SWMM5')
     print('RDII dump of DSNS {0} from {1}'.format(dsns, wdmpath))
-    print(maptcode[collect_tcodes]*collect_tsteps)
+    print(maptcode[collect_tcodes] * collect_tsteps)
     print(1)
     print('FLOW CFS')
     print(len(dsns))
@@ -557,7 +557,7 @@ def _writetodsn(wdmpath, dsn, data):
         'H':     3,  # hour
         'T':     2,  # minute
         'S':     1   # second
-        }
+    }
     try:
         finterval = mapcode[pandacode]
     except:

@@ -27,29 +27,29 @@ if sys.platform.startswith('win'):
     libraries = ['quadmath']
 
 wdm_support = Extension('_wdm_lib', [
-          'wdm_support/wdm.pyf',
-          'wdm_support/DTTM90.f',
-          'wdm_support/TSBUFR.f',
-          'wdm_support/UTCHAR.f',
-          'wdm_support/UTCP90.f',
-          'wdm_support/UTDATE.f',
-          'wdm_support/UTNUMB.f',
-          'wdm_support/UTWDMD.f',
-          'wdm_support/UTWDMF.f',
-          'wdm_support/UTWDT1.f',
-          'wdm_support/WDATM1.f',
-          'wdm_support/WDATM2.f',
-          'wdm_support/WDATRB.f',
-          'wdm_support/WDBTCH.f',
-          'wdm_support/WDMESS.f',
-          'wdm_support/WDMID.f',
-          'wdm_support/WDOP.f',
-          'wdm_support/WDTMS1.f',
-          'wdm_support/WDTMS2.f',
-          ],
-          include_dirs=['wdm_support'],
-          libraries=libraries,
-          )
+    'wdm_support/wdm.pyf',
+    'wdm_support/DTTM90.f',
+    'wdm_support/TSBUFR.f',
+    'wdm_support/UTCHAR.f',
+    'wdm_support/UTCP90.f',
+    'wdm_support/UTDATE.f',
+    'wdm_support/UTNUMB.f',
+    'wdm_support/UTWDMD.f',
+    'wdm_support/UTWDMF.f',
+    'wdm_support/UTWDT1.f',
+    'wdm_support/WDATM1.f',
+    'wdm_support/WDATM2.f',
+    'wdm_support/WDATRB.f',
+    'wdm_support/WDBTCH.f',
+    'wdm_support/WDMESS.f',
+    'wdm_support/WDMID.f',
+    'wdm_support/WDOP.f',
+    'wdm_support/WDTMS1.f',
+    'wdm_support/WDTMS2.f',
+],
+    include_dirs=['wdm_support'],
+    libraries=libraries,
+)
 
 setup(name='wdmtoolbox',
       version=version,
@@ -70,7 +70,7 @@ setup(name='wdmtoolbox',
           'Programming Language :: Python :: 3',
           'Topic :: Scientific/Engineering',
           'Topic :: Software Development :: Libraries :: Python Modules',
-          ],
+      ],
       keywords='WDM watershed data_management data hydrology hydrological simulation fortran HSPF',
       author='Tim Cera, P.E.',
       author_email='tim@cerazone.net',
@@ -85,5 +85,5 @@ setup(name='wdmtoolbox',
       entry_points={
           'console_scripts':
           ['wdmtoolbox=wdmtoolbox.wdmtoolbox:main']
-          }
+      }
       )

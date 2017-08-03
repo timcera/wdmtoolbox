@@ -47,4 +47,3 @@ class TestDescribe(TestCase):
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
         wdmtoolbox.renumberdsn(self.wdmname, 101, 1101)
-
