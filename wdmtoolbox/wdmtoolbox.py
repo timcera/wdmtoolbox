@@ -44,15 +44,20 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     Parameters
     ----------
     inwdmpath
-        Path to input WDM file.
+        Path to input WDM
+        file.
     indsn
-        Source DSN.
+        Source
+        DSN.
     outwdmpath
-        Path to clean copy WDM file.
+        Path to clean copy WDM
+        file.
     outdsn
-        Target DSN.
+        Target
+        DSN.
     overwrite
-        Whether to overwrite the target DSN if it exists.
+        Whether to overwrite the target DSN if it
+        exists.
 
     """
     if overwrite is True:
@@ -78,11 +83,14 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
     Parameters
     ----------
     inwdmpath
-        Path to input WDM file.
+        Path to input WDM
+        file.
     outwdmpath
-        Path to clean copy WDM file.
+        Path to clean copy WDM
+        file.
     overwrite
-        Whether to overwrite an existing outwdmpath.
+        Whether to overwrite an existing
+        outwdmpath.
 
     """
     if inwdmpath == outwdmpath:
@@ -113,12 +121,15 @@ def renumberdsn(wdmpath, olddsn, newdsn):
 
     Parameters
     ----------
-    wdmpath
-        Path and WDM filename.
-    olddsn
-        Old DSN to renumber.
-    newdsn
-        New DSN to change old DSN to.
+    wdmpath : str
+        Path and WDM
+        filename.
+    olddsn : int
+        Old DSN to
+        renumber.
+    newdsn : int
+        New DSN to change old DSN
+        to.
 
     """
     WDM.renumber_dsn(wdmpath, olddsn, newdsn)
@@ -132,9 +143,11 @@ def deletedsn(wdmpath, dsn):
     Parameters
     ----------
     wdmpath
-        Path and WDM filename.
+        Path and WDM
+        filename.
     dsn
-        DSN to delete.
+        DSN to
+        delete.
 
     """
     WDM.delete_dsn(wdmpath, dsn)
@@ -148,13 +161,13 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     Parameters
     ----------
     wdmpath
-        Path and WDM filename.
+        Path and WDM
+        filename.
     dsns
-        The Data Set Numbers in the WDM file.
-    start_date
-        If not given defaults to start of data set.
-    end_date
-        If not given defaults to end of data set.
+        The Data Set Numbers in the WDM
+        file.
+    {start_date}
+    {end_date}
 
     """
     start_date = kwds.setdefault('start_date', None)
@@ -287,14 +300,11 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
             'file.wdm 234 345 456'
 
             OR
-
             `wdmpath` can be space separated sets of 'wdmpath,dsn'.
 
             'file.wdm,101 file2.wdm,104 file.wdm,227'
-    start_date
-        If not given defaults to start of data set.
-    end_date
-        If not given defaults to end of data set.
+    {start_date}
+    {end_date}
 
     """
     return extract(*wdmpath, start_date=start_date, end_date=end_date)
@@ -312,12 +322,14 @@ def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
 def describedsn(wdmpath, dsn):
     """Print out a description of a single DSN.
 
-    Parameter
-    ---------
+    Parameters
+    ----------
     wdmpath
-        Path and WDM filename.
+        Path and WDM
+        filename.
     dsn
-        The Data Set Number in the WDM file.
+        The Data Set Number in the WDM
+        file.
 
     """
     print(_describedsn(wdmpath, dsn))
@@ -331,7 +343,8 @@ def listdsns(wdmpath):
     Parameters
     ----------
     wdmpath
-        Path and WDM filename.
+        Path and WDM
+        filename.
 
     """
     if not os.path.exists(wdmpath):
@@ -366,12 +379,14 @@ def listdsns(wdmpath):
 def createnewwdm(wdmpath, overwrite=False):
     """Create a new WDM file, optional to overwrite.
 
-    Parameter
-    ---------
+    Parameters
+    ----------
     wdmpath
-        Path and WDM filename.
+        Path and WDM
+        filename.
     overwrite
-        Defaults to not overwrite existing file.
+        Defaults to not overwrite existing
+        file.
 
     """
     WDM.create_new_wdm(wdmpath, overwrite=overwrite)
@@ -406,21 +421,27 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
         Time series code, (1=second, 2=minute, 3=hour, 4=day, 5=month,
         6=year) defaults to 4=daily.
     tsstep
-        Time series steps, defaults (and almost always is) 1.
+        Time series steps, defaults (and almost always is)
+        1.
     statid
-        The station name, defaults to ''.
+        The station name, defaults to
+        ''.
     scenario
         The name of the scenario, defaults to ''.  Can be anything, but
         typically, 'OBSERVED' for calibration and input time-series and
         'SIMULATED' for HSPF results.
     location
-        The location, defaults to ''.
+        The location, defaults to
+        ''.
     description
-        Descriptive text, defaults to ''.
+        Descriptive text, defaults to
+        ''.
     constituent
-        The constituent that the time series represents, defaults to ''.
+        The constituent that the time series represents, defaults to
+        ''.
     tsfill
-        The value used as placeholder for missing values.
+        The value used as placeholder for missing
+        values.
 
     """
     if tstype == '' and len(constituent) > 0:
@@ -440,11 +461,14 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     Parameters
     ----------
     wdmpath
-        Path and WDM filename.
+        Path and WDM
+        filename.
     dsn
-        The Data Set Number in the WDM file.
+        The Data Set Number in the WDM
+        file.
     input_ts
-        Input filename, defaults to standard input.
+        Input filename, defaults to standard
+        input.
     start_century
         Since 2 digit years are used, need century, defaults
         to 1900.
@@ -502,9 +526,11 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
     Parameters
     ----------
     wdmpath
-        Path and WDM filename.
+        Path and WDM
+        filename.
     dsn
-        The Data Set Number in the WDM file.
+        The Data Set Number in the WDM
+        file.
     input
         DEPRECATED - use input_ts instead.
     {input_ts}
