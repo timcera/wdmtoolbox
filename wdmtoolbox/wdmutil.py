@@ -729,9 +729,9 @@ class WDM(object):
                 name='{0}_DSN_{1}'.format(
                     os.path.basename(wdmpath), dsn)), dtype=pd.np.float64)
 
-        tmpval = tsutils.date_slice(tmpval,
-                                    start_date=start_date,
-                                    end_date=end_date)
+        tmpval = tsutils.common_kwds(tmpval,
+                                     start_date=start_date,
+                                     end_date=end_date)
         tmpval.replace(tsfill, pd.np.nan, inplace=True)
         tmpval.index.name = 'Datetime'
         return tmpval
