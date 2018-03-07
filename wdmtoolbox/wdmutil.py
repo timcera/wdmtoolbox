@@ -8,6 +8,8 @@ routines.
 
 from __future__ import print_function
 
+from builtins import str
+from builtins import object
 import datetime
 import os
 import os.path
@@ -471,18 +473,11 @@ class WDM(object):
         tcode = tcode[0]
         base_year = base_year[0]
 
-        try:
-            ostr = str(ostr, "utf-8").strip()
-            scen_ostr = str(scen_ostr, "utf-8").strip()
-            con_ostr = str(con_ostr, "utf-8").strip()
-            desc_ostr = str(desc_ostr, "utf-8").strip()
-            tstype = str(tstype, "utf-8").strip()
-        except TypeError:
-            ostr = ''.join(ostr).strip()
-            scen_ostr = ''.join(scen_ostr).strip()
-            con_ostr = ''.join(con_ostr).strip()
-            desc_ostr = ''.join(desc_ostr).strip()
-            tstype = ''.join(tstype).strip()
+        ostr = b''.join(ostr).strip()
+        scen_ostr = b''.join(scen_ostr).strip()
+        con_ostr = b''.join(con_ostr).strip()
+        desc_ostr = b''.join(desc_ostr).strip()
+        tstype = b''.join(tstype).strip()
 
         return {'dsn':         dsn,
                 'start_date':  pd.Period(sdate, freq=dateFormat_dict[tcode]),

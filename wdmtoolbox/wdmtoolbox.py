@@ -6,6 +6,8 @@ Used to manipulate Watershed Data Management files for time-series.
 from __future__ import print_function
 
 # Python batteries included imports
+from builtins import str
+from builtins import range
 import os
 import sys
 import datetime
@@ -219,7 +221,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     print('FLOW CFS')
     print(len(dsns))
     for dsn, location in collect_keys:
-        print(str(dsn) + '_' + location)
+        print('{0}_{1}'.format(dsn, location))
     print('Node Year Mon Day Hr Min Sec Flow')
     # Can pick any time series because they should all have the same interval
     # and start and end dates.
