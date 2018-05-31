@@ -1,7 +1,13 @@
 environment:
   matrix:
     - PYTHON_VERSION: "2.7"
+    - PYTHON_VERSION: "3.1"
+    - PYTHON_VERSION: "3.2"
+    - PYTHON_VERSION: "3.3"
     - PYTHON_VERSION: "3.4"
+    - PYTHON_VERSION: "3.5"
+    - PYTHON_VERSION: "3.6"
+    - PYTHON_VERSION: "3.7"
 
 platform:
   - x86
@@ -17,12 +23,13 @@ install:
   - conda update -q conda
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION% 
   - activate python%PYTHON_VERSION%
-  - pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
+  - conda install -q m2w64-toolchain
   - conda install -q --name python%PYTHON_VERSION% setuptools numpy matplotlib nose pandas wheel scipy sphinx lockfile
   - pip install -q mando tstoolbox
-  - python.exe setup.py config_fc
-  - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - python.exe setup.py build --compiler=mingw32
+    # - python.exe setup.py config_fc
+    # - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
+    # - python.exe setup.py build --compiler=mingw32
+  - python.exe setup.py build
   - python.exe setup.py install
 
 build: off
