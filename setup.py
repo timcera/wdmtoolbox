@@ -4,6 +4,11 @@ from numpy.distutils.core import Extension, setup
 import os
 import sys
 
+# temporarily redirect config directory to prevent matplotlib importing
+# testing that for writeable directory which results in sandbox error in
+# certain easy_install versions
+os.environ["MPLCONFIGDIR"] = "."
+
 version = open("VERSION").readline().strip()
 
 if sys.argv[-1] == 'publish':

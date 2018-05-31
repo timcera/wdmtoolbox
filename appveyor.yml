@@ -1,13 +1,17 @@
 environment:
   matrix:
     - PYTHON_VERSION: "2.7"
-    - PYTHON_VERSION: "3.1"
-    - PYTHON_VERSION: "3.2"
-    - PYTHON_VERSION: "3.3"
+      CONDAPATH: 'C:\Miniconda'
     - PYTHON_VERSION: "3.4"
+      CONDAPATH: 'C:\Miniconda34'
     - PYTHON_VERSION: "3.5"
+      CONDAPATH: 'C:\Miniconda35'
     - PYTHON_VERSION: "3.6"
-    - PYTHON_VERSION: "3.7"
+      CONDAPATH: 'C:\Miniconda36'
+
+cache:
+  - '%LOCALAPPDATA%\pip\Cache'
+  - '%USERPROFILE%\.cache\matplotlib'
 
 platform:
   - x86
@@ -17,25 +21,22 @@ matrix:
   fast_finish: false
 
 install:
-  - set PATH=C:\Miniconda\Scripts
-  - ps: If ($env:Platform -Match "x64") {$env:PATH="C:\Miniconda-x64\Scripts"}
+  - if "%PLATFORM%" == "x86" set PATH=%CONDPATH%\bin;%CONDAPATH%\Scripts;%PATH%
+  - if "%PLATFORM%" == "x64" set PATH=%CONDPATH%-x64\bin;%CONDAPATH%-x64\Scripts;%PATH%
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION% 
   - activate python%PYTHON_VERSION%
-  - conda install -q m2w64-toolchain
-  - conda install -q --name python%PYTHON_VERSION% setuptools numpy matplotlib nose pandas wheel scipy sphinx lockfile
-  - pip install -q mando tstoolbox
-    # - python.exe setup.py config_fc
-    # - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
-    # - python.exe setup.py build --compiler=mingw32
+  - conda install -q --name python%PYTHON_VERSION% setuptools numpy matplotlib nose pandas wheel scipy sphinx lockfile pip setuptools
+  - if not "%PYTHON_VERSION%" == "3.4" conda install -q --name python%PYTHON_VERSION% -c anaconda libpython
+  - if not "%PYTHON_VERSION%" == "3.4" conda install -q --name python%PYTHON_VERSION% -c msys2 m2w64-toolchain
+  - if "%PYTHON_VERSION%" == "3.4" pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
+  - python.exe setup.py config_fc
+  - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
+  - python.exe setup.py build --compiler=mingw32
   - python.exe setup.py build
-  - python.exe setup.py install
 
 build: off
-
-test_script:
-  - nosetests
 
 after_test:
   # This step builds your wheels.
