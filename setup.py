@@ -97,5 +97,6 @@ setup(name='wdmtoolbox',
       entry_points={
           'console_scripts':
           ['wdmtoolbox=wdmtoolbox.wdmtoolbox:main']
-      }
+      },
+      python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*',
       )

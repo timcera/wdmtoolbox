@@ -2,12 +2,12 @@ environment:
   matrix:
     - PYTHON_VERSION: "2.7"
       CONDAPATH: 'C:\Miniconda'
-    - PYTHON_VERSION: "3.4"
-      CONDAPATH: 'C:\Miniconda34'
     - PYTHON_VERSION: "3.5"
       CONDAPATH: 'C:\Miniconda35'
     - PYTHON_VERSION: "3.6"
       CONDAPATH: 'C:\Miniconda36'
+    - PYTHON_VERSION: "3.7"
+      CONDAPATH: 'C:\Miniconda37'
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
@@ -28,9 +28,8 @@ install:
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION% 
   - activate python%PYTHON_VERSION%
   - conda install -q --name python%PYTHON_VERSION% setuptools numpy matplotlib nose pandas wheel scipy sphinx lockfile pip setuptools
-  - if not "%PYTHON_VERSION%" == "3.4" conda install -q --name python%PYTHON_VERSION% -c anaconda libpython
-  - if not "%PYTHON_VERSION%" == "3.4" conda install -q --name python%PYTHON_VERSION% -c msys2 m2w64-toolchain
-  - if "%PYTHON_VERSION%" == "3.4" pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy
+  - conda install -q --name python%PYTHON_VERSION% -c anaconda libpython
+  - conda install -q --name python%PYTHON_VERSION% -c msys2 m2w64-toolchain
   - python.exe setup.py config_fc
   - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
   - python.exe setup.py build --compiler=mingw32
