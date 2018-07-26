@@ -374,8 +374,8 @@ def listdsns(wdmpath):
                         'TCODE',
                         'TSTEP']:
                 collect.setdefault(key, []).append(testv[key.lower()])
-            else:
-                collect[i] = testv
+        else:
+            collect[i] = testv
     if cli is True:
         return tsutils.printiso(collect,
                                 tablefmt='plain')
