@@ -356,24 +356,30 @@ def listdsns(wdmpath):
 *
 """.format(wdmpath))
 
+    cli = tsutils.test_cli()
     collect = OrderedDict()
     for i in range(1, 32001):
         try:
             testv = _describedsn(wdmpath, i)
         except wdmutil.WDMError:
             continue
-        for key in ['DSN',
-                    'SCENARIO',
-                    'LOCATION',
-                    'CONSTITUENT',
-                    'TSTYPE',
-                    'START_DATE',
-                    'END_DATE',
-                    'TCODE',
-                    'TSTEP']:
-            collect.setdefault(key, []).append(testv[key.lower()])
-    return tsutils.printiso(collect,
-                            tablefmt='plain')
+        if cli is True:
+            for key in ['DSN',
+                        'SCENARIO',
+                        'LOCATION',
+                        'CONSTITUENT',
+                        'TSTYPE',
+                        'START_DATE',
+                        'END_DATE',
+                        'TCODE',
+                        'TSTEP']:
+                collect.setdefault(key, []).append(testv[key.lower()])
+            else:
+                collect[i] = testv
+    if cli is True:
+        return tsutils.printiso(collect,
+                                tablefmt='plain')
+    return collect
 
 
 @mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
