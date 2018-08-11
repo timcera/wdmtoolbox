@@ -7,7 +7,7 @@ environment:
     - PYTHON_VERSION: "3.6"
       CONDAPATH: 'C:\Miniconda36'
     - PYTHON_VERSION: "3.7"
-      CONDAPATH: 'C:\Miniconda37'
+      CONDAPATH: 'C:\Miniconda36'  # The version of Miniconda shouldn't matter.
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
