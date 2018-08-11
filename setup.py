@@ -30,7 +30,7 @@ install_requires = [
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
     'tstoolbox >= 9.26.17.13',
-    'lockfile',
+    'filelock',
 ]
 
 libraries = []

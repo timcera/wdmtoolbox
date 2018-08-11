@@ -5,18 +5,17 @@ Used to manipulate Watershed Data Management files for time-series.
 """
 from __future__ import print_function
 
-# Python batteries included imports
-from builtins import str
-from builtins import range
+from collections import OrderedDict
+import datetime
 import os
 import sys
-import datetime
-from collections import OrderedDict
 
 # Third party imports
+from builtins import range
+from builtins import str
+from dateutil.parser import parse as dateparser
 import mando
 from mando.rst_text_formatter import RSTHelpFormatter
-from dateutil.parser import parse as dateparser
 
 # Local imports
 # Load in WDM subroutines
@@ -32,7 +31,7 @@ def _describedsn(wdmpath, dsn):
 
 
 def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
-    """The local underlying function to copy a DSN."""
+    """Copy a DSN."""
     WDM.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
     nts = WDM.read_dsn(inwdmpath, indsn)
     WDM.write_dsn(outwdmpath, int(outdsn), nts)
@@ -279,7 +278,7 @@ def extract(*wdmpath, **kwds):
         else:
             try:
                 result = result.join(nts, how='outer')
-            except:
+            except ValueError:
                 raise ValueError("""
 *
 *   The column {0} is duplicated.  Dataset names must be unique.
@@ -522,7 +521,7 @@ def stdtowdm(wdmpath, dsn, infile='-'):
 
 @mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
 @tsutils.doc(tsutils.docstrings)
-def csvtowdm(wdmpath, dsn, input=None, start_date=None,
+def csvtowdm(wdmpath, dsn, start_date=None,
              end_date=None, columns=None, input_ts='-'):
     """Write data from a CSV file to a DSN.
 
@@ -539,21 +538,12 @@ def csvtowdm(wdmpath, dsn, input=None, start_date=None,
     dsn
         The Data Set Number in the WDM
         file.
-    input
-        DEPRECATED - use input_ts instead.
     {input_ts}
     {start_date}
     {end_date}
     {columns}
 
     """
-    if input is not None:
-        raise ValueError("""
-*
-*   The '--input' option has been deprecated.  Please use '--input_ts'
-*   instead.
-*
-""")
     tsd = tsutils.common_kwds(tsutils.read_iso_ts(input_ts),
                               start_date=start_date,
                               end_date=end_date,
@@ -594,7 +584,7 @@ def _writetodsn(wdmpath, dsn, data):
     }
     try:
         finterval = mapcode[pandacode]
-    except:
+    except KeyError:
         raise KeyError("""
 *
 *   wdmtoolbox only understands PANDAS time intervals of :
@@ -631,7 +621,7 @@ def _writetodsn(wdmpath, dsn, data):
 
 
 def main():
-    """Main function."""
+    """Run the main function."""
     if not os.path.exists('debug_wdmtoolbox'):
         sys.tracebacklimit = 0
     mando.main()

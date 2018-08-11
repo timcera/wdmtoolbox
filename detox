@@ -31,7 +31,7 @@ for env in ${envs[@]}; do
     pip install --upgrade ${pkgs}
     pip uninstall -y ${program}
     rm -rf build
-    pip install --upgrade --no-deps --no-cache ../${program}/
+    python setup.py develop
 
     nosetests \
         --with-doctest \

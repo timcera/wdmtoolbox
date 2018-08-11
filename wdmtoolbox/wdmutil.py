@@ -8,21 +8,18 @@ routines.
 
 from __future__ import print_function
 
-from builtins import str
-from builtins import object
 import datetime
 import os
 import os.path
 import re
 
+from builtins import object
+from builtins import str
+from filelock import SoftFileLock
 import pandas as pd
 
-from lockfile import LockFile
-
-import _wdm_lib
 from tstoolbox import tsutils
-
-# Load in WDM subroutines
+import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
 MAPTCODE = {
@@ -285,34 +282,32 @@ class WDM(object):
         odsn = int(odsn)
         ndsn = int(ndsn)
 
-        lock = LockFile(wdmpath)
-        lock.acquire()
-        wdmfp = self._open(wdmpath, 51)
-        retcode = self.wddsrn(
-            wdmfp,
-            odsn,
-            ndsn)
-        lock.release()
-        self._close(wdmpath)
+        lock = SoftFileLock(wdmpath + '.lock', timeout=30)
+        with lock:
+            wdmfp = self._open(wdmpath, 51)
+            retcode = self.wddsrn(
+                wdmfp,
+                odsn,
+                ndsn)
+            self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wddsrn')
 
     def delete_dsn(self, wdmpath, dsn):
-        """Function to delete a DSN."""
+        """Delete a DSN."""
         dsn = int(dsn)
 
-        lock = LockFile(wdmpath)
-        lock.acquire()
-        wdmfp = self._open(wdmpath, 52)
-        testreturn = self.wdckdt(wdmfp, dsn)
-        self._close(wdmpath)
-        if testreturn != 0:
+        lock = SoftFileLock(wdmpath + '.lock', timeout=30)
+        with lock:
             wdmfp = self._open(wdmpath, 52)
-            retcode = self.wddsdl(wdmfp,
-                                  dsn)
+            testreturn = self.wdckdt(wdmfp, dsn)
             self._close(wdmpath)
-            self._retcode_check(retcode, additional_info='wddsdl')
-        lock.release()
-        self._close(wdmpath)
+            if testreturn != 0:
+                wdmfp = self._open(wdmpath, 52)
+                retcode = self.wddsdl(wdmfp,
+                                      dsn)
+                self._close(wdmpath)
+                self._retcode_check(retcode, additional_info='wddsdl')
+            self._close(wdmpath)
 
     def copydsnlabel(self, inwdmpath, indsn, outwdmpath, outdsn):
         """Will copy a complete DSN label from one DSN to another."""
@@ -321,17 +316,16 @@ class WDM(object):
         outdsn = int(outdsn)
         dsntype = 0
         inwdmfp = self._open(inwdmpath, 53, ronwfg=1)
-        lock = LockFile(outwdmpath)
-        lock.acquire()
-        outwdmfp = self._open(outwdmpath, 54)
-        retcode = self.wddscl(inwdmfp,
-                              indsn,
-                              outwdmfp,
-                              outdsn,
-                              dsntype)
+        lock = SoftFileLock(outwdmpath + '.lock', timeout=30)
+        with lock:
+            outwdmfp = self._open(outwdmpath, 54)
+            retcode = self.wddscl(inwdmfp,
+                                  indsn,
+                                  outwdmfp,
+                                  outdsn,
+                                  dsntype)
+            self._close(outwdmpath)
         self._close(inwdmpath)
-        lock.release()
-        self._close(outwdmpath)
         self._retcode_check(retcode, additional_info='wddscl')
 
     def describe_dsn(self, wdmpath, dsn):
@@ -462,12 +456,12 @@ class WDM(object):
         except ValueError:
             edate = None
 
-        dateFormat_dict = {1: "S",
-                           2: "T",
-                           3: "H",
-                           4: "D",
-                           5: "M",
-                           6: "A"}
+        dateformat_dict = {1: 'S',
+                           2: 'T',
+                           3: 'H',
+                           4: 'D',
+                           5: 'M',
+                           6: 'A'}
 
         tstep = tstep[0]
         tcode = tcode[0]
@@ -480,8 +474,8 @@ class WDM(object):
         tstype = b''.join(tstype).strip()
 
         return {'dsn':         dsn,
-                'start_date':  pd.Period(sdate, freq=dateFormat_dict[tcode]),
-                'end_date':    pd.Period(edate, freq=dateFormat_dict[tcode]),
+                'start_date':  pd.Period(sdate, freq=dateformat_dict[tcode]),
+                'end_date':    pd.Period(edate, freq=dateformat_dict[tcode]),
                 'llsdat':      llsdat,
                 'lledat':      lledat,
                 'tstep':       tstep,
@@ -514,83 +508,82 @@ class WDM(object):
                        tsstep=1, statid=' ', scenario='', location='',
                        description='', constituent='', tsfill=-999.0):
         """Create self.wdmfp/dsn."""
-        lock = LockFile(wdmpath)
-        lock.acquire()
-        wdmfp = self._open(wdmpath, 57)
-        messfp = self.wmsgop()
+        lock = SoftFileLock(wdmpath + '.lock', timeout=30)
+        with lock:
+            wdmfp = self._open(wdmpath, 57)
+            messfp = self.wmsgop()
 
-        if self.wdckdt(wdmfp, dsn) == 1:
-            self._close(wdmpath)
-            raise DSNExistsError(dsn)
+            if self.wdckdt(wdmfp, dsn) == 1:
+                self._close(wdmpath)
+                raise DSNExistsError(dsn)
 
-        # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
-        self.wdlbax(
-            wdmfp,
-            dsn,
-            1,     # DSTYPE - always 1 for time series
-            10,    # NDN    - number of down pointers
-            10,    # NUP    - number of up pointers
-            30,    # NSA    - number of search attributes
-            100,   # NSASP  - amount of search attribute space
-            300,   # NDP    - number of data pointers
-        )      # PSA    - pointer to search attribute space
-
-        for saind, salen, saval in [(34, 1, 6),  # tgroup
-                                    (83, 1, 1),  # compfg
-                                    (84, 1, 1),  # tsform
-                                    (85, 1, 1),  # vbtime
-                                    (17, 1, int(tcode)),  # tcode
-                                    (33, 1, int(tsstep)),  # tsstep
-                                    (27, 1, int(base_year)),  # tsbyr
-                                    ]:
-            retcode = self.wdbsai(
+            # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
+            self.wdlbax(
                 wdmfp,
                 dsn,
-                messfp,
-                saind,
-                salen,
-                saval)
-            self._retcode_check(retcode, additional_info='wdbsai')
+                1,     # DSTYPE - always 1 for time series
+                10,    # NDN    - number of down pointers
+                10,    # NUP    - number of up pointers
+                30,    # NSA    - number of search attributes
+                100,   # NSASP  - amount of search attribute space
+                300,   # NDP    - number of data pointers
+            )      # PSA    - pointer to search attribute space
 
-        for saind, salen, saval in [(32, 1, tsfill)]:  # tsfill
-            retcode = self.wdbsar(
-                wdmfp,
-                dsn,
-                messfp,
-                saind,
-                salen,
-                saval)
-            self._retcode_check(retcode, additional_info='wdbsar')
+            for saind, salen, saval in [(34, 1, 6),  # tgroup
+                                        (83, 1, 1),  # compfg
+                                        (84, 1, 1),  # tsform
+                                        (85, 1, 1),  # vbtime
+                                        (17, 1, int(tcode)),  # tcode
+                                        (33, 1, int(tsstep)),  # tsstep
+                                        (27, 1, int(base_year)),  # tsbyr
+                                        ]:
+                retcode = self.wdbsai(
+                    wdmfp,
+                    dsn,
+                    messfp,
+                    saind,
+                    salen,
+                    saval)
+                self._retcode_check(retcode, additional_info='wdbsai')
 
-        for saind, salen, saval, error_name in [
-                (2, 16, statid, 'Station ID'),
-                (1, 4, tstype.upper(), 'Time series type - tstype'),
-                (45, 48, description.upper(), 'Description'),
-                (288, 8, scenario.upper(), 'Scenario'),
-                (289, 8, constituent.upper(), 'Constituent'),
-                (290, 8, location.upper(), 'Location'),
-        ]:
-            saval = saval.strip()
-            if len(saval) > salen:
-                raise ValueError("""
+            for saind, salen, saval in [(32, 1, tsfill)]:  # tsfill
+                retcode = self.wdbsar(
+                    wdmfp,
+                    dsn,
+                    messfp,
+                    saind,
+                    salen,
+                    saval)
+                self._retcode_check(retcode, additional_info='wdbsar')
+
+            for saind, salen, saval, error_name in [
+                    (2, 16, statid, 'Station ID'),
+                    (1, 4, tstype.upper(), 'Time series type - tstype'),
+                    (45, 48, description.upper(), 'Description'),
+                    (288, 8, scenario.upper(), 'Scenario'),
+                    (289, 8, constituent.upper(), 'Constituent'),
+                    (290, 8, location.upper(), 'Location'),
+            ]:
+                saval = saval.strip()
+                if len(saval) > salen:
+                    raise ValueError("""
 *
 *   String "{0}" is too long for {1}.  Must
 *   have a length equal or less than {2}.
 *
 """.format(saval, error_name, salen))
 
-            saval = '{0: <{1}}'.format(saval, salen)
+                saval = '{0: <{1}}'.format(saval, salen)
 
-            retcode = self.wdbsac(
-                wdmfp,
-                dsn,
-                messfp,
-                saind,
-                salen,
-                saval)
-            self._retcode_check(retcode, additional_info='wdbsac')
-        lock.release()
-        self._close(wdmpath)
+                retcode = self.wdbsac(
+                    wdmfp,
+                    dsn,
+                    messfp,
+                    saind,
+                    salen,
+                    saval)
+                self._retcode_check(retcode, additional_info='wdbsac')
+            self._close(wdmpath)
 
     def _tcode_date(self, tcode, date):
         """Use tcode to set the significant parts of the date tuple."""
@@ -630,21 +623,20 @@ class WDM(object):
 """.format(dsn_desc['base_year'], llsdat[0]))
 
         nval = len(data)
-        lock = LockFile(wdmpath)
-        lock.acquire()
-        wdmfp = self._open(wdmpath, 58)
-        retcode = self.wdtput(
-            wdmfp,
-            dsn,
-            tstep,
-            llsdat,
-            nval,
-            1,
-            0,
-            tcode,
-            data)
-        lock.release()
-        self._close(wdmpath)
+        lock = SoftFileLock(wdmpath + '.lock', timeout=30)
+        with lock:
+            wdmfp = self._open(wdmpath, 58)
+            retcode = self.wdtput(
+                wdmfp,
+                dsn,
+                tstep,
+                llsdat,
+                nval,
+                1,
+                0,
+                tcode,
+                data)
+            self._close(wdmpath)
         self._retcode_check(retcode, additional_info='wdtput')
 
     def read_dsn(self, wdmpath, dsn, start_date=None, end_date=None):
