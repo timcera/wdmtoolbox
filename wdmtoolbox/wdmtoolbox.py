@@ -421,6 +421,8 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
         Time series type.  Can be any 4 character string, but if not
         specified defaults to first 4 characters of 'constituent'.  Must
         match what is used in HSPF UCI file.
+
+        Limited to 4 characters.
     base_year
         Base year of time series, defaults to 1900.  The DSN will not
         accept any time-stamps before this date.
@@ -433,19 +435,29 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
     statid
         The station name, defaults to
         ''.
+
+        Limited to 16 characters.
     scenario
         The name of the scenario, defaults to ''.  Can be anything, but
         typically, 'OBSERVED' for calibration and input time-series and
-        'SIMULATED' for HSPF results.
+        'SIMULATE' for HSPF results.
+
+        Limited to 8 characters.
     location
         The location, defaults to
         ''.
+
+        Limited to 8 characters.
     description
         Descriptive text, defaults to
         ''.
+
+        Limited to 48 characters.
     constituent
         The constituent that the time series represents, defaults to
         ''.
+
+        Limited to 8 characters.
     tsfill
         The value used as placeholder for missing
         values.
