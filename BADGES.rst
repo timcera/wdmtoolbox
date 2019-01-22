@@ -13,3 +13,7 @@
 .. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
     :alt: wdmtoolbox license
     :target: https://pypi.python.org/pypi/wdmtoolbox/
+
+.. image:: http://img.shields.io/pypi/dd/wdmtoolbox.svg
+    :alt: wdmtoolbox downloads
+    :target: https://pypi.python.org/pypi/wdmtoolbox/
