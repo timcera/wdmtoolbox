@@ -533,8 +533,20 @@ def stdtowdm(wdmpath, dsn, infile='-'):
 
 @mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
 @tsutils.doc(tsutils.docstrings)
-def csvtowdm(wdmpath, dsn, start_date=None,
-             end_date=None, columns=None, input_ts='-'):
+def csvtowdm(wdmpath,
+             dsn,
+             start_date=None,
+             end_date=None,
+             columns=None,
+             force_freq=None,
+             groupby=None,
+             round_index=None,
+             clean=False,
+             target_units=None,
+             source_units=None,
+             bestfreq=True,
+             input_ts='-'):
+
     """Write data from a CSV file to a DSN.
 
     File can have comma separated
@@ -554,12 +566,26 @@ def csvtowdm(wdmpath, dsn, start_date=None,
     {start_date}
     {end_date}
     {columns}
+    {force_freq}
+    {groupby}
+    {round_index}
+    {clean}
+    {target_units}
+    {source_units}
+    {bestfreq}
 
     """
     tsd = tsutils.common_kwds(tsutils.read_iso_ts(input_ts),
                               start_date=start_date,
                               end_date=end_date,
-                              pick=columns)
+                              pick=columns,
+                              force_freq=force_freq,
+                              groupby=groupby,
+                              round_index=round_index,
+                              clean=clean,
+                              target_units=target_units,
+                              source_units=source_units,
+                              bestfreq=bestfreq)
 
     if len(tsd.columns) > 1:
         raise ValueError("""
