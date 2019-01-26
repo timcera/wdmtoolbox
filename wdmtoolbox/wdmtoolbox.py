@@ -544,7 +544,6 @@ def csvtowdm(wdmpath,
              clean=False,
              target_units=None,
              source_units=None,
-             bestfreq=True,
              input_ts='-'):
 
     """Write data from a CSV file to a DSN.
@@ -572,7 +571,6 @@ def csvtowdm(wdmpath,
     {clean}
     {target_units}
     {source_units}
-    {bestfreq}
 
     """
     tsd = tsutils.common_kwds(tsutils.read_iso_ts(input_ts),
@@ -584,8 +582,7 @@ def csvtowdm(wdmpath,
                               round_index=round_index,
                               clean=clean,
                               target_units=target_units,
-                              source_units=source_units,
-                              bestfreq=bestfreq)
+                              source_units=source_units)
 
     if len(tsd.columns) > 1:
         raise ValueError("""
