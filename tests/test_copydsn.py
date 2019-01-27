@@ -56,6 +56,7 @@ class TestDescribe(TestCase):
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
         ret3 = tstoolbox.read('tests/nwisiv_02246000.csv').astype('float64')
+        ret3.index = ret3.index.tz_localize(None)
         ret1.columns = ['02246000_iv_00060']
         assert_frame_equal(ret1, ret3, check_index_type=False)
 
