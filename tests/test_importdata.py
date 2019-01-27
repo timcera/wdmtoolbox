@@ -51,11 +51,11 @@ class TestDescribe(TestCase):
                             input_ts='tests/nwisiv_02246000.csv')
         ret1 = wdmtoolbox.extract(self.wdmname, 101)
         ret2 = wdmtoolbox.extract('{0},101'.format(self.wdmname))
-        assert_frame_equal(ret1, ret2)
+        assert_frame_equal(ret1, ret2, check_index_type=False)
 
         ret3 = tstoolbox.read('tests/nwisiv_02246000.csv').astype('float64')
         ret1.columns = ['02246000_iv_00060']
-        assert_frame_equal(ret1, ret3)
+        assert_frame_equal(ret1, ret3, check_index_type=False)
 
     def test_extract_args(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
@@ -116,7 +116,7 @@ class TestDescribe(TestCase):
         ret3 = tstoolbox.read('tests/nwisiv_02246000.csv',
                               start_date='2014-02-21 16:00:00').astype('float64')
         ret1.columns = ['02246000_iv_00060']
-        assert_frame_equal(ret1, ret3)
+        assert_frame_equal(ret1, ret3, check_index_type=False)
 
     def test_end_date(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
@@ -131,7 +131,7 @@ class TestDescribe(TestCase):
         ret3 = tstoolbox.read('tests/nwisiv_02246000.csv',
                               end_date='2014-02-22 11:00:00').astype('float64')
         ret1.columns = ['02246000_iv_00060']
-        assert_frame_equal(ret1, ret3)
+        assert_frame_equal(ret1, ret3, check_index_type=False)
 
     def test_dates(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
@@ -148,4 +148,4 @@ class TestDescribe(TestCase):
                               start_date='2014-02-21 16:00:00',
                               end_date='2014-02-22 11:00:00').astype('float64')
         ret1.columns = ['02246000_iv_00060']
-        assert_frame_equal(ret1, ret3)
+        assert_frame_equal(ret1, ret3, check_index_type=False)
