@@ -284,7 +284,7 @@ def extract(*wdmpath, **kwds):
 *   The column {0} is duplicated.  Dataset names must be unique.
 *
 """.format(nts.columns[0]))
-    return tsutils.printiso(result)
+    return result
 
 
 @mando.command('extract', formatter_class=RSTHelpFormatter, doctype='numpy')
@@ -308,7 +308,9 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
     {end_date}
 
     """
-    return extract(*wdmpath, start_date=start_date, end_date=end_date)
+    return tsutils._printiso(extract(*wdmpath,
+                                     start_date=start_date,
+                                     end_date=end_date))
 
 
 @mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
@@ -336,9 +338,9 @@ def describedsn(wdmpath, dsn):
     print(_describedsn(wdmpath, dsn))
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command('listdsns', formatter_class=RSTHelpFormatter, doctype='numpy')
 @tsutils.doc(tsutils.docstrings)
-def listdsns(wdmpath):
+def listdsns_cli(wdmpath):
     """Print out a table describing all DSNs in the WDM.
 
     Parameters
@@ -348,6 +350,25 @@ def listdsns(wdmpath):
         filename.
 
     """
+    collect = OrderedDict()
+    for testv in listdsns(wdmpath):
+        for key in ['DSN',
+                    'SCENARIO',
+                    'LOCATION',
+                    'CONSTITUENT',
+                    'TSTYPE',
+                    'START_DATE',
+                    'END_DATE',
+                    'TCODE',
+                    'TSTEP']:
+            collect.setdefault(key, []).append(testv[key.lower()])
+    return tsutils._printiso(collect,
+                             tablefmt='plain')
+
+
+def listdsns(wdmpath):
+    """Print out a table describing all DSNs in the WDM.
+    """
     if not os.path.exists(wdmpath):
         raise ValueError("""
 *
@@ -355,29 +376,13 @@ def listdsns(wdmpath):
 *
 """.format(wdmpath))
 
-    cli = tsutils.test_cli()
     collect = OrderedDict()
     for i in range(1, 32001):
         try:
             testv = _describedsn(wdmpath, i)
         except wdmutil.WDMError:
             continue
-        if cli is True:
-            for key in ['DSN',
-                        'SCENARIO',
-                        'LOCATION',
-                        'CONSTITUENT',
-                        'TSTYPE',
-                        'START_DATE',
-                        'END_DATE',
-                        'TCODE',
-                        'TSTEP']:
-                collect.setdefault(key, []).append(testv[key.lower()])
-        else:
-            collect[i] = testv
-    if cli is True:
-        return tsutils.printiso(collect,
-                                tablefmt='plain')
+        collect[i] = testv
     return collect
 
 
