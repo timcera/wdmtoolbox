@@ -7,7 +7,7 @@ environment:
     - PYTHON_VERSION: "3.6"
       CONDAPATH: 'C:\Miniconda36'
     - PYTHON_VERSION: "3.7"
-      CONDAPATH: 'C:\Miniconda36'  # The version of Miniconda shouldn't matter.
+      CONDAPATH: 'C:\Miniconda37'
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
@@ -25,14 +25,12 @@ install:
   - if "%PLATFORM%" == "x64" set PATH=%CONDPATH%-x64\bin;%CONDAPATH%-x64\Scripts;%PATH%
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
-  - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION% 
-  - activate python%PYTHON_VERSION%
-  - conda install -q --name python%PYTHON_VERSION% setuptools numpy matplotlib nose pandas wheel scipy sphinx lockfile pip setuptools
-  - conda install -q --name python%PYTHON_VERSION% -c anaconda libpython
-  - conda install -q --name python%PYTHON_VERSION% -c msys2 m2w64-toolchain
+  - conda create -q --name python%PYTHON_VERSION%-%PLATFORM% python=%PYTHON_VERSION% 
+  - activate python%PYTHON_VERSION%-%PLATFORM%
+  - conda install -q setuptools matplotlib nose pandas wheel scipy sphinx lockfile pip libpython
+  - conda install -q -c msys2 m2w64-toolchain
   - python.exe setup.py config_fc
   - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - python.exe setup.py build --compiler=mingw32
   - python.exe setup.py build
 
 build: off
