@@ -350,8 +350,9 @@ def listdsns_cli(wdmpath):
         filename.
 
     """
+    nvars = listdsns(wdmpath)
     collect = OrderedDict()
-    for testv in listdsns(wdmpath):
+    for _, testv in nvars.items():
         for key in ['DSN',
                     'SCENARIO',
                     'LOCATION',
