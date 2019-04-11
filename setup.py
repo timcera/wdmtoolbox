@@ -18,7 +18,7 @@ os.environ["MPLCONFIGDIR"] = "."
 version = open("VERSION").readline().strip()
 
 if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
+    os.system('python setup.py sdist')
     os.system('twine upload dist/wdmtoolbox-{0}*.whl'.format(version))
     sys.exit()
 
