@@ -178,8 +178,11 @@ class WDM(object):
             retcode = self.wdbopn(wdmsfl,
                                   wdname,
                                   ronwfg)
-            self._retcode_check(retcode,
-                                additional_info='wdbopn file={0} DSN={1}'.format(wdname, 'NA'))
+            self._retcode_check(
+                retcode,
+                additional_info='wdbopn file={0} DSN={1}'.format(
+                    wdname,
+                    'NA'))
             self.openfiles[wdname] = wdmsfl
         return wdmsfl
 
@@ -291,8 +294,11 @@ class WDM(object):
                 odsn,
                 ndsn)
             self._close(wdmpath)
-        self._retcode_check(retcode,
-                            additional_info='wddsrn file={0} DSN={1}'.format(wdmpath, odsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wddsrn file={0} DSN={1}'.format(
+                wdmpath,
+                odsn))
 
     def delete_dsn(self, wdmpath, dsn):
         """Delete a DSN."""
@@ -308,8 +314,9 @@ class WDM(object):
                 retcode = self.wddsdl(wdmfp,
                                       dsn)
                 self._close(wdmpath)
-                self._retcode_check(retcode,
-                                    additional_info='wddsdl file={0} DSN={1}'.format(wdmpath, dsn))
+                self._retcode_check(
+                    retcode, additional_info='wddsdl file={0} DSN={1}'.format(
+                        wdmpath, dsn))
             self._close(wdmpath)
 
     def copydsnlabel(self, inwdmpath, indsn, outwdmpath, outdsn):
@@ -329,8 +336,11 @@ class WDM(object):
                                   dsntype)
             self._close(outwdmpath)
         self._close(inwdmpath)
-        self._retcode_check(retcode,
-                            additional_info='wddscl file={0} DSN={1}'.format(inwdmpath, indsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wddscl file={0} DSN={1}'.format(
+                inwdmpath,
+                indsn))
 
     def describe_dsn(self, wdmpath, dsn):
         """Will collect some metadata about the DSN."""
@@ -344,8 +354,11 @@ class WDM(object):
         # It it is a new dsn, of course it doesn't have any data.
         if retcode == -6:
             retcode = 0
-        self._retcode_check(retcode,
-                            additional_info='wtfndt file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wtfndt file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         tstep, retcode = self.wdbsgi(
@@ -354,8 +367,11 @@ class WDM(object):
             33,  # saind = 33 for time step
             1)   # salen
         self._close(wdmpath)
-        self._retcode_check(retcode,
-                            additional_info='wdbsgi file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgi file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         tcode, retcode = self.wdbsgi(
@@ -364,8 +380,11 @@ class WDM(object):
             17,  # saind = 17 for time code
             1)   # salen
         self._close(wdmpath)
-        self._retcode_check(retcode,
-                            additional_info='wdbsgi file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgi file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         tsfill, retcode = self.wdbsgr(
@@ -381,8 +400,11 @@ class WDM(object):
             retcode = 0
         else:
             tsfill = tsfill[0]
-        self._retcode_check(retcode,
-                            additional_info='wdbsgr file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgr file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         ostr, retcode = self.wdbsgc(
@@ -394,8 +416,11 @@ class WDM(object):
         if retcode == -107:
             ostr = ''
             retcode = 0
-        self._retcode_check(retcode,
-                            additional_info='wdbsgr file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgr file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         scen_ostr, retcode = self.wdbsgc(
@@ -407,8 +432,11 @@ class WDM(object):
         if retcode == -107:
             scen_ostr = ''
             retcode = 0
-        self._retcode_check(retcode,
-                            additional_info='wdbsgr file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgr file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         con_ostr, retcode = self.wdbsgc(
@@ -420,8 +448,11 @@ class WDM(object):
         if retcode == -107:
             con_ostr = ''
             retcode = 0
-        self._retcode_check(retcode,
-                            additional_info='wdbsgr file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgr file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         base_year, retcode = self.wdbsgi(
@@ -430,8 +461,11 @@ class WDM(object):
             27,  # saind = 27 for base_year
             1)   # salen
         self._close(wdmpath)
-        self._retcode_check(retcode,
-                            additional_info='wdbsgi file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgi file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         desc_ostr, retcode = self.wdbsgc(
@@ -443,8 +477,11 @@ class WDM(object):
         if retcode == -107:
             desc_ostr = ''
             retcode = 0
-        self._retcode_check(retcode,
-                            additional_info='wdbsgc file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgc file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         tstype, retcode = self.wdbsgc(
@@ -456,8 +493,11 @@ class WDM(object):
         if retcode == -107:
             tstype = ''
             retcode = 0
-        self._retcode_check(retcode,
-                            additional_info='wdbsgc file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdbsgc file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         self.timcvt(llsdat)
         self.timcvt(lledat)
@@ -487,21 +527,21 @@ class WDM(object):
         desc_ostr = b''.join(desc_ostr).strip()
         tstype = b''.join(tstype).strip()
 
-        return {'dsn':         dsn,
-                'start_date':  pd.Period(sdate, freq=dateformat_dict[tcode]),
-                'end_date':    pd.Period(edate, freq=dateformat_dict[tcode]),
-                'llsdat':      llsdat,
-                'lledat':      lledat,
-                'tstep':       tstep,
-                'tcode':       tcode,
-                'tcode_name':  MAPTCODE[tcode],
-                'location':    ostr.strip(),
-                'scenario':    scen_ostr.strip(),
+        return {'dsn': dsn,
+                'start_date': pd.Period(sdate, freq=dateformat_dict[tcode]),
+                'end_date': pd.Period(edate, freq=dateformat_dict[tcode]),
+                'llsdat': llsdat,
+                'lledat': lledat,
+                'tstep': tstep,
+                'tcode': tcode,
+                'tcode_name': MAPTCODE[tcode],
+                'location': ostr.strip(),
+                'scenario': scen_ostr.strip(),
                 'constituent': con_ostr.strip(),
-                'tsfill':      tsfill,
+                'tsfill': tsfill,
                 'description': desc_ostr,
-                'base_year':   base_year,
-                'tstype':      tstype}
+                'base_year': base_year,
+                'tstype': tstype}
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         """Create a new WDM fileronwfg."""
@@ -558,8 +598,9 @@ class WDM(object):
                     saind,
                     salen,
                     saval)
-                self._retcode_check(retcode,
-                                    additional_info='wdbsai file={0} DSN={1}'.format(wdmpath, dsn))
+                self._retcode_check(
+                    retcode, additional_info='wdbsai file={0} DSN={1}'.format(
+                        wdmpath, dsn))
 
             for saind, salen, saval in [(32, 1, tsfill)]:  # tsfill
                 retcode = self.wdbsar(
@@ -569,8 +610,9 @@ class WDM(object):
                     saind,
                     salen,
                     saval)
-                self._retcode_check(retcode,
-                                    additional_info='wdbsar file={0} DSN={1}'.format(wdmpath, dsn))
+                self._retcode_check(
+                    retcode, additional_info='wdbsar file={0} DSN={1}'.format(
+                        wdmpath, dsn))
 
             for saind, salen, saval, error_name in [
                     (2, 16, statid, 'Station ID'),
@@ -598,8 +640,9 @@ class WDM(object):
                     saind,
                     salen,
                     saval)
-                self._retcode_check(retcode,
-                                    additional_info='wdbsac file={0} DSN={1}'.format(wdmpath, dsn))
+                self._retcode_check(
+                    retcode, additional_info='wdbsac file={0} DSN={1}'.format(
+                        wdmpath, dsn))
             self._close(wdmpath)
 
     def _tcode_date(self, tcode, date):
@@ -654,8 +697,11 @@ class WDM(object):
                 tcode,
                 data)
             self._close(wdmpath)
-        self._retcode_check(retcode,
-                            additional_info='wdtput file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdtput file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
     def read_dsn(self, wdmpath, dsn, start_date=None, end_date=None):
         """Read from a DSN."""
@@ -720,8 +766,11 @@ class WDM(object):
             qualfg,
             tcode)
         self._close(wdmpath)
-        self._retcode_check(retcode,
-                            additional_info='wdtget file={0} DSN={1}'.format(wdmpath, dsn))
+        self._retcode_check(
+            retcode,
+            additional_info='wdtget file={0} DSN={1}'.format(
+                wdmpath,
+                dsn))
 
         index = pd.date_range(datetime.datetime(*llsdat),
                               periods=iterm,
@@ -751,8 +800,11 @@ class WDM(object):
         wdmpath = wdmpath.strip()
         if wdmpath in self.openfiles:
             retcode = self.wdflcl(self.openfiles[wdmpath])
-            self._retcode_check(retcode,
-                                additional_info='wdflcl file={0} DSN={1}'.format(wdmpath, 'NA'))
+            self._retcode_check(
+                retcode,
+                additional_info='wdflcl file={0} DSN={1}'.format(
+                    wdmpath,
+                    'NA'))
             self.openfiles.pop(wdmpath)
 
 

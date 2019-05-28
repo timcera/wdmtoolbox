@@ -551,7 +551,6 @@ def csvtowdm(wdmpath,
              target_units=None,
              source_units=None,
              input_ts='-'):
-
     """Write data from a CSV file to a DSN.
 
     File can have comma separated
@@ -613,15 +612,15 @@ def _writetodsn(wdmpath, dsn, data):
         tstep = 1
 
     mapcode = {
-        'A':     6,  # annual
+        'A': 6,  # annual
         'A-DEC': 6,  # annual
-        'AS':    6,  # annual start
-        'M':     5,  # month
-        'MS':    5,  # month start
-        'D':     4,  # day
-        'H':     3,  # hour
-        'T':     2,  # minute
-        'S':     1   # second
+        'AS': 6,  # annual start
+        'M': 5,  # month
+        'MS': 5,  # month start
+        'D': 4,  # day
+        'H': 3,  # hour
+        'T': 2,  # minute
+        'S': 1   # second
     }
     try:
         finterval = mapcode[pandacode]
