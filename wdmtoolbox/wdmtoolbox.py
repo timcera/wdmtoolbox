@@ -37,7 +37,7 @@ def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
     WDM.write_dsn(outwdmpath, int(outdsn), nts)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     """Make a copy of a DSN.
@@ -65,8 +65,9 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
         deletedsn(outwdmpath, outdsn)
     if inwdmpath == outwdmpath:
         import tempfile
+
         tempdir = tempfile.mkdtemp()
-        tmpwdmpath = os.path.join(tempdir, 'temp.wdm')
+        tmpwdmpath = os.path.join(tempdir, "temp.wdm")
         createnewwdm(tmpwdmpath)
         _copy_dsn(inwdmpath, indsn, tmpwdmpath, outdsn)
         _copy_dsn(tmpwdmpath, outdsn, outwdmpath, outdsn)
@@ -76,7 +77,7 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
         _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
     """Make a clean copy of a WDM file.
@@ -95,16 +96,18 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
 
     """
     if inwdmpath == outwdmpath:
-        raise ValueError("""
+        raise ValueError(
+            """
 *
 *   The "inwdmpath" cannot be the same as "outwdmpath".
 *
-""")
+"""
+        )
     createnewwdm(outwdmpath, overwrite=overwrite)
     activedsn = []
     for i in range(1, 32000):
         try:
-            activedsn.append(_describedsn(inwdmpath, i)['dsn'])
+            activedsn.append(_describedsn(inwdmpath, i)["dsn"])
         except wdmutil.WDMError:
             continue
     # Copy labels (which copies DSN metadata and data)
@@ -115,7 +118,7 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
             pass
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def renumberdsn(wdmpath, olddsn, newdsn):
     """Renumber olddsn to newdsn.
@@ -136,7 +139,7 @@ def renumberdsn(wdmpath, olddsn, newdsn):
     WDM.renumber_dsn(wdmpath, olddsn, newdsn)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def deletedsn(wdmpath, dsn):
     """Delete DSN.
@@ -154,7 +157,7 @@ def deletedsn(wdmpath, dsn):
     WDM.delete_dsn(wdmpath, dsn)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     """Print out DSN data to the screen in SWMM5 RDII format.
@@ -171,8 +174,8 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     {end_date}
 
     """
-    start_date = kwds.setdefault('start_date', None)
-    end_date = kwds.setdefault('end_date', None)
+    start_date = kwds.setdefault("start_date", None)
+    end_date = kwds.setdefault("end_date", None)
 
     # Need to make sure that all DSNs are the same interval and all are
     # within start and end dates.
@@ -181,13 +184,13 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     collect_keys = []
     for dsn in dsns:
         dsn_desc = _describedsn(wdmpath, dsn)
-        collect_tcodes[dsn_desc['tcode']] = 1
-        collect_tsteps[dsn_desc['tstep']] = 1
+        collect_tcodes[dsn_desc["tcode"]] = 1
+        collect_tsteps[dsn_desc["tstep"]] = 1
         if start_date:
-            assert dateparser(start_date) >= dateparser(dsn_desc['start_date'])
+            assert dateparser(start_date) >= dateparser(dsn_desc["start_date"])
         if end_date:
-            assert dateparser(end_date) <= dateparser(dsn_desc['end_date'])
-        collect_keys.append((dsn_desc['dsn'], dsn_desc['location']))
+            assert dateparser(end_date) <= dateparser(dsn_desc["end_date"])
+        collect_keys.append((dsn_desc["dsn"], dsn_desc["location"]))
     assert len(collect_tcodes) == 1
     assert len(collect_tsteps) == 1
 
@@ -198,39 +201,39 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     collected_end_dates = []
     collected_ts = {}
     for dsn, location in collect_keys:
-        tmp = WDM.read_dsn(wdmpath,
-                           int(dsn),
-                           start_date=start_date,
-                           end_date=end_date)
+        tmp = WDM.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
         collected_start_dates.append(tmp.index[0])
         collected_end_dates.append(tmp.index[-1])
         collected_ts[(dsn, location)] = tmp.values
 
-    maptcode = {
-        1: 1,
-        2: 60,
-        3: 3600,
-        4: 86400,
-    }
+    maptcode = {1: 1, 2: 60, 3: 3600, 4: 86400}
 
-    print('SWMM5')
-    print('RDII dump of DSNS {0} from {1}'.format(dsns, wdmpath))
+    print("SWMM5")
+    print("RDII dump of DSNS {0} from {1}".format(dsns, wdmpath))
     print(maptcode[collect_tcodes] * collect_tsteps)
     print(1)
-    print('FLOW CFS')
+    print("FLOW CFS")
     print(len(dsns))
     for dsn, location in collect_keys:
-        print('{0}_{1}'.format(dsn, location))
-    print('Node Year Mon Day Hr Min Sec Flow')
+        print("{0}_{1}".format(dsn, location))
+    print("Node Year Mon Day Hr Min Sec Flow")
     # Can pick any time series because they should all have the same interval
     # and start and end dates.
     for dex, date in enumerate(tmp.index):
         for dsn, location in collect_keys:
             print(
-                '{0}_{1} {2} {3:02} {4:02} {5:02} {6:02} {7:02} {8}'.format(
-                    dsn, location, date.year, date.month, date.day, date.hour,
-                    date.minute, date.second,
-                    collected_ts[(dsn, location)][dex]))
+                "{0}_{1} {2} {3:02} {4:02} {5:02} {6:02} {7:02} {8}".format(
+                    dsn,
+                    location,
+                    date.year,
+                    date.month,
+                    date.day,
+                    date.hour,
+                    date.minute,
+                    date.second,
+                    collected_ts[(dsn, location)][dex],
+                )
+            )
 
 
 def extract(*wdmpath, **kwds):
@@ -242,25 +245,29 @@ def extract(*wdmpath, **kwds):
     # Old form '... file.wdm 101 102 103 ...'
     # New form '... file.wdm,101 adifferentfile.wdm,101 ...
     try:
-        start_date = kwds.pop('start_date')
+        start_date = kwds.pop("start_date")
     except KeyError:
         start_date = None
     try:
-        end_date = kwds.pop('end_date')
+        end_date = kwds.pop("end_date")
     except KeyError:
         end_date = None
     if len(kwds) > 0:
-        raise ValueError("""
+        raise ValueError(
+            """
 *
 *   The only allowed keywords are start_date and end_date.  You
 *   have given {0}.
 *
-""".format(kwds))
+""".format(
+                kwds
+            )
+        )
 
     labels = []
     for lab in wdmpath:
-        if ',' in str(lab):
-            labels.append(lab.split(','))
+        if "," in str(lab):
+            labels.append(lab.split(","))
         else:
             if lab == wdmpath[0]:
                 continue
@@ -269,25 +276,26 @@ def extract(*wdmpath, **kwds):
     for index, lab in enumerate(labels):
         wdmpath = lab[0]
         dsn = lab[1]
-        nts = WDM.read_dsn(wdmpath,
-                           int(dsn),
-                           start_date=start_date,
-                           end_date=end_date)
+        nts = WDM.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
         if index == 0:
             result = nts
         else:
             try:
-                result = result.join(nts, how='outer')
+                result = result.join(nts, how="outer")
             except ValueError:
-                raise ValueError("""
+                raise ValueError(
+                    """
 *
 *   The column {0} is duplicated.  Dataset names must be unique.
 *
-""".format(nts.columns[0]))
+""".format(
+                        nts.columns[0]
+                    )
+                )
     return result
 
 
-@mando.command('extract', formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command("extract", formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def extract_cli(start_date=None, end_date=None, *wdmpath):
     """Print out DSN data to the screen with ISO-8601 dates.
@@ -308,19 +316,19 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
     {end_date}
 
     """
-    return tsutils._printiso(extract(*wdmpath,
-                                     start_date=start_date,
-                                     end_date=end_date))
+    return tsutils._printiso(
+        extract(*wdmpath, start_date=start_date, end_date=end_date)
+    )
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
     """DEPRECATED: New scripts use 'extract'. Will be removed in the future."""
     return extract(wdmpath, *dsns, **kwds)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def describedsn(wdmpath, dsn):
     """Print out a description of a single DSN.
@@ -338,7 +346,7 @@ def describedsn(wdmpath, dsn):
     print(_describedsn(wdmpath, dsn))
 
 
-@mando.command('listdsns', formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command("listdsns", formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def listdsns_cli(wdmpath):
     """Print out a table describing all DSNs in the WDM.
@@ -353,29 +361,34 @@ def listdsns_cli(wdmpath):
     nvars = listdsns(wdmpath)
     collect = OrderedDict()
     for _, testv in nvars.items():
-        for key in ['DSN',
-                    'SCENARIO',
-                    'LOCATION',
-                    'CONSTITUENT',
-                    'TSTYPE',
-                    'START_DATE',
-                    'END_DATE',
-                    'TCODE',
-                    'TSTEP']:
+        for key in [
+            "DSN",
+            "SCENARIO",
+            "LOCATION",
+            "CONSTITUENT",
+            "TSTYPE",
+            "START_DATE",
+            "END_DATE",
+            "TCODE",
+            "TSTEP",
+        ]:
             collect.setdefault(key, []).append(testv[key.lower()])
-    return tsutils._printiso(collect,
-                             tablefmt='plain')
+    return tsutils._printiso(collect, tablefmt="plain")
 
 
 def listdsns(wdmpath):
     """Print out a table describing all DSNs in the WDM.
     """
     if not os.path.exists(wdmpath):
-        raise ValueError("""
+        raise ValueError(
+            """
 *
 *   File {0} does not exist.
 *
-""".format(wdmpath))
+""".format(
+                wdmpath
+            )
+        )
 
     collect = OrderedDict()
     for i in range(1, 32001):
@@ -387,7 +400,7 @@ def listdsns(wdmpath):
     return collect
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def createnewwdm(wdmpath, overwrite=False):
     """Create a new WDM file, optional to overwrite.
@@ -405,11 +418,22 @@ def createnewwdm(wdmpath, overwrite=False):
     WDM.create_new_wdm(wdmpath, overwrite=overwrite)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
-def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
-                 statid='', scenario='', location='', description='',
-                 constituent='', tsfill=-999.0):
+def createnewdsn(
+    wdmpath,
+    dsn,
+    tstype="",
+    base_year=1900,
+    tcode=4,
+    tsstep=1,
+    statid="",
+    scenario="",
+    location="",
+    description="",
+    constituent="",
+    tsfill=-999.0,
+):
     """Create a new DSN.
 
     Parameters
@@ -469,16 +493,25 @@ def createnewdsn(wdmpath, dsn, tstype='', base_year=1900, tcode=4, tsstep=1,
         values.
 
     """
-    if tstype == '' and len(constituent) > 0:
+    if tstype == "" and len(constituent) > 0:
         tstype = constituent[:4]
-    WDM.create_new_dsn(wdmpath, int(dsn), tstype=tstype, base_year=base_year,
-                       tcode=tcode, tsstep=tsstep, statid=statid,
-                       scenario=scenario, location=location,
-                       description=description, constituent=constituent,
-                       tsfill=tsfill)
+    WDM.create_new_dsn(
+        wdmpath,
+        int(dsn),
+        tstype=tstype,
+        base_year=base_year,
+        tcode=tcode,
+        tsstep=tsstep,
+        statid=statid,
+        scenario=scenario,
+        location=location,
+        description=description,
+        constituent=constituent,
+        tsfill=tsfill,
+    )
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
 def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     """Write HYDHR sequential file to a DSN.
@@ -500,9 +533,10 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
 
     """
     import pandas as pd
+
     dsn = int(dsn)
     if isinstance(input_ts, str):
-        input_ts = open(input_ts, 'r')
+        input_ts = open(input_ts, "r")
     dates = pd.np.array([])
     data = pd.np.array([])
     for line in input_ts:
@@ -517,40 +551,44 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
         data = pd.np.append(data, [float(i) for i in words[4:16]])
         try:
             if ampmflag == 1:
-                dates = pd.np.append(dates,
-                                     [datetime.datetime(year, month, day, i)
-                                      for i in range(0, 12)])
+                dates = pd.np.append(
+                    dates,
+                    [datetime.datetime(year, month, day, i) for i in range(0, 12)],
+                )
             if ampmflag == 2:
-                dates = pd.np.append(dates,
-                                     [datetime.datetime(year, month, day, i)
-                                      for i in range(12, 24)])
+                dates = pd.np.append(
+                    dates,
+                    [datetime.datetime(year, month, day, i) for i in range(12, 24)],
+                )
         except ValueError:
             print(start_century, line)
     data = pd.DataFrame(data, index=dates)
     _writetodsn(wdmpath, dsn, data)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
-def stdtowdm(wdmpath, dsn, infile='-'):
+def stdtowdm(wdmpath, dsn, infile="-"):
     """DEPRECATED: Use 'csvtowdm'."""
     csvtowdm(wdmpath, dsn, input_ts=infile)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
 @tsutils.doc(tsutils.docstrings)
-def csvtowdm(wdmpath,
-             dsn,
-             start_date=None,
-             end_date=None,
-             columns=None,
-             force_freq=None,
-             groupby=None,
-             round_index=None,
-             clean=False,
-             target_units=None,
-             source_units=None,
-             input_ts='-'):
+def csvtowdm(
+    wdmpath,
+    dsn,
+    start_date=None,
+    end_date=None,
+    columns=None,
+    force_freq=None,
+    groupby=None,
+    round_index=None,
+    clean=False,
+    target_units=None,
+    source_units=None,
+    input_ts="-",
+):
     """Write data from a CSV file to a DSN.
 
     File can have comma separated
@@ -578,24 +616,30 @@ def csvtowdm(wdmpath,
     {source_units}
 
     """
-    tsd = tsutils.common_kwds(tsutils.read_iso_ts(input_ts),
-                              start_date=start_date,
-                              end_date=end_date,
-                              pick=columns,
-                              force_freq=force_freq,
-                              groupby=groupby,
-                              round_index=round_index,
-                              clean=clean,
-                              target_units=target_units,
-                              source_units=source_units)
+    tsd = tsutils.common_kwds(
+        tsutils.read_iso_ts(input_ts),
+        start_date=start_date,
+        end_date=end_date,
+        pick=columns,
+        force_freq=force_freq,
+        groupby=groupby,
+        round_index=round_index,
+        clean=clean,
+        target_units=target_units,
+        source_units=source_units,
+    )
 
     if len(tsd.columns) > 1:
-        raise ValueError("""
+        raise ValueError(
+            """
 *
 *   The input data set must contain only 1 time series.
 *   You gave {0}.
 *
-""".format(len(tsd.columns)))
+""".format(
+                len(tsd.columns)
+            )
+        )
 
     _writetodsn(wdmpath, dsn, tsd)
 
@@ -604,28 +648,29 @@ def _writetodsn(wdmpath, dsn, data):
     """Local function to write Pandas data frame to DSN."""
     data = tsutils.asbestfreq(data)
     infer = data.index.freqstr
-    pandacode = infer.lstrip('0123456789')
-    tstep = infer[:infer.find(pandacode)]
+    pandacode = infer.lstrip("0123456789")
+    tstep = infer[: infer.find(pandacode)]
     try:
         tstep = int(tstep)
     except ValueError:
         tstep = 1
 
     mapcode = {
-        'A': 6,  # annual
-        'A-DEC': 6,  # annual
-        'AS': 6,  # annual start
-        'M': 5,  # month
-        'MS': 5,  # month start
-        'D': 4,  # day
-        'H': 3,  # hour
-        'T': 2,  # minute
-        'S': 1   # second
+        "A": 6,  # annual
+        "A-DEC": 6,  # annual
+        "AS": 6,  # annual start
+        "M": 5,  # month
+        "MS": 5,  # month start
+        "D": 4,  # day
+        "H": 3,  # hour
+        "T": 2,  # minute
+        "S": 1,  # second
     }
     try:
         finterval = mapcode[pandacode]
     except KeyError:
-        raise KeyError("""
+        raise KeyError(
+            """
 *
 *   wdmtoolbox only understands PANDAS time intervals of :
 *   'A', 'AS', 'A-DEC' for annual,
@@ -633,7 +678,10 @@ def _writetodsn(wdmpath, dsn, data):
 *   'D', 'H', 'T', 'S' for day, hour, minute, and second.
 *   wdmtoolbox thinks this series is {0}.
 *
-""".format(pandacode))
+""".format(
+                pandacode
+            )
+        )
 
     # Convert string to int
     dsn = int(dsn)
@@ -641,31 +689,39 @@ def _writetodsn(wdmpath, dsn, data):
     # Make sure that input data metadata matches target DSN
     desc_dsn = _describedsn(wdmpath, dsn)
 
-    dsntcode = desc_dsn['tcode']
+    dsntcode = desc_dsn["tcode"]
     if finterval != dsntcode:
-        raise ValueError("""
+        raise ValueError(
+            """
 *
 *   The DSN has a frequency of {0}, but the data has a frequency of {1}.
 *
-""".format(dsntcode, finterval))
+""".format(
+                dsntcode, finterval
+            )
+        )
 
-    dsntstep = desc_dsn['tstep']
+    dsntstep = desc_dsn["tstep"]
     if dsntstep != tstep:
-        raise ValueError("""
+        raise ValueError(
+            """
 *
 *   The DSN has a tstep of {0}, but the data has a tstep of {1}.
 *
-""".format(dsntstep, tstep))
+""".format(
+                dsntstep, tstep
+            )
+        )
 
     WDM.write_dsn(wdmpath, dsn, data)
 
 
 def main():
     """Run the main function."""
-    if not os.path.exists('debug_wdmtoolbox'):
+    if not os.path.exists("debug_wdmtoolbox"):
         sys.tracebacklimit = 0
     mando.main()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
