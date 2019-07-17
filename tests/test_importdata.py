@@ -64,7 +64,7 @@ class TestDescribe(TestCase):
                                 base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
-        with self.assertRaisesRegexp(ValueError,
+        with self.assertRaisesRegex(ValueError,
                                      'The only allowed keywords are'):
             ret1 = wdmtoolbox.extract(self.wdmname, 101, ph=True)
 
@@ -82,7 +82,7 @@ class TestDescribe(TestCase):
                                 base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
-        with self.assertRaisesRegexp(WDMError,
+        with self.assertRaisesRegex(WDMError,
                                      'WDM error: data set number out of valid range'):
             ret1 = wdmtoolbox.extract(self.wdmname,  0)
 
@@ -92,7 +92,7 @@ class TestDescribe(TestCase):
                                 base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
-        with self.assertRaisesRegexp(WDMError,
+        with self.assertRaisesRegex(WDMError,
                                      'WDM error: data set number out of valid range'):
             ret1 = wdmtoolbox.extract(self.wdmname, 32001)
 
@@ -102,7 +102,7 @@ class TestDescribe(TestCase):
                                 base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101,
                             input_ts='tests/nwisiv_02246000.csv')
-        with self.assertRaisesRegexp(WDMError, 'error code -81'):
+        with self.assertRaisesRegex(WDMError, 'error code -81'):
             ret1 = wdmtoolbox.extract(self.wdmname, 32000)
 
     def test_start_date(self):

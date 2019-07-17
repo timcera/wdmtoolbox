@@ -75,6 +75,6 @@ class TestDescribe(TestCase):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5,
                                 base_year=1870)
-        with self.assertRaisesRegexp(DSNExistsError, 'exists.'):
+        with self.assertRaisesRegex(DSNExistsError, 'exists.'):
             wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5,
                                     base_year=1870)

@@ -655,6 +655,15 @@ def _writetodsn(wdmpath, dsn, data):
     except ValueError:
         tstep = 1
 
+    invmapcode = {
+        1: "second",
+        2: "minute",
+        3: "hour",
+        4: "day",
+        5: "month",
+        6: "annual",
+    }
+
     mapcode = {
         "A": 6,  # annual
         "A-DEC": 6,  # annual
@@ -694,10 +703,11 @@ def _writetodsn(wdmpath, dsn, data):
         raise ValueError(
             """
 *
-*   The DSN has a frequency of {0}, but the data has a frequency of {1}.
+*   The DSN {2} has a tcode of {0} ({3}),
+*   but the data has a tcode of {1} ({4}).
 *
 """.format(
-                dsntcode, finterval
+                dsntcode, finterval, dsn, invmapcode[dsntcode], invmapcode[finterval]
             )
         )
 

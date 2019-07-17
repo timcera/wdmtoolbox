@@ -81,5 +81,5 @@ class TestDescribe(TestCase):
 
     def test_overwrite(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        with self.assertRaisesRegexp(WDMFileExists, 'exists.'):
+        with self.assertRaisesRegex(WDMFileExists, 'exists.'):
             wdmtoolbox.createnewwdm(self.wdmname)
