@@ -9,12 +9,12 @@ from wdmtoolbox import wdmtoolbox
 
 
 def _createwdm(fname):
-    cmd = shlex.split('wdmtoolbox createnewwdm --overwrite {0}'.format(fname))
+    cmd = shlex.split("wdmtoolbox createnewwdm --overwrite {0}".format(fname))
     return subprocess.call(cmd)
 
 
 def test_createwdm():
-    fd, fname = tempfile.mkstemp(suffix='.wdm')
+    fd, fname = tempfile.mkstemp(suffix=".wdm")
     os.close(fd)
     assert _createwdm(fname) == 0
     wdmtoolbox.createnewwdm(fname, overwrite=True)
@@ -24,10 +24,10 @@ def test_createwdm():
 
 
 def test_createnewdsn_checkdefaults():
-    fd, fname = tempfile.mkstemp(suffix='.wdm')
+    fd, fname = tempfile.mkstemp(suffix=".wdm")
     os.close(fd)
     assert _createwdm(fname) == 0
-    cmd = shlex.split('wdmtoolbox createnewdsn {0} 101'.format(fname))
+    cmd = shlex.split("wdmtoolbox createnewdsn {0} 101".format(fname))
     retcode = subprocess.call(cmd)
     assert retcode == 0
     # tstr = [' DSN  SCENARIO LOCATION CONSTITUENT TSTYPE START_DATE          END_DATE            TCODE TSTEP',
@@ -61,11 +61,11 @@ from wdmtoolbox.wdmutil import WDMFileExists
 
 
 def capture(func, *args, **kwds):
-    sys.stdout = StringIO()      # capture output
+    sys.stdout = StringIO()  # capture output
     out = func(*args, **kwds)
     out = sys.stdout.getvalue()  # release output
     try:
-        out = bytes(out, 'utf-8')
+        out = bytes(out, "utf-8")
     except:
         pass
     return out
@@ -73,7 +73,7 @@ def capture(func, *args, **kwds):
 
 class TestDescribe(TestCase):
     def setUp(self):
-        self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
+        self.fd, self.wdmname = tempfile.mkstemp(suffix=".wdm")
         os.close(self.fd)
 
     def tearDown(self):
@@ -81,5 +81,5 @@ class TestDescribe(TestCase):
 
     def test_overwrite(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        with self.assertRaisesRegex(WDMFileExists, 'exists.'):
+        with self.assertRaisesRegex(WDMFileExists, "exists."):
             wdmtoolbox.createnewwdm(self.wdmname)

@@ -11,6 +11,7 @@ Tests for `tstoolbox` module.
 import sys
 import os
 import tempfile
+
 try:
     from cStringIO import StringIO
 except:
@@ -24,11 +25,11 @@ from wdmtoolbox import wdmtoolbox
 
 
 def capture(func, *args, **kwds):
-    sys.stdout = StringIO()      # capture output
+    sys.stdout = StringIO()  # capture output
     out = func(*args, **kwds)
     out = sys.stdout.getvalue()  # release output
     try:
-        out = bytes(out, 'utf-8')
+        out = bytes(out, "utf-8")
     except:
         pass
     return out
@@ -36,9 +37,9 @@ def capture(func, *args, **kwds):
 
 class TestDescribe(TestCase):
     def setUp(self):
-        self.fd, self.wdmname = tempfile.mkstemp(suffix='.wdm')
+        self.fd, self.wdmname = tempfile.mkstemp(suffix=".wdm")
         os.close(self.fd)
-        self.afd, self.awdmname = tempfile.mkstemp(suffix='.wdm')
+        self.afd, self.awdmname = tempfile.mkstemp(suffix=".wdm")
         os.close(self.afd)
 
     def tearDown(self):
@@ -47,26 +48,22 @@ class TestDescribe(TestCase):
 
     def test_copy_to_self(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                base_year=1970, tsstep=15)
-        wdmtoolbox.csvtowdm(self.wdmname, 101,
-                            input_ts='tests/nwisiv_02246000.csv')
+        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2, base_year=1970, tsstep=15)
+        wdmtoolbox.csvtowdm(self.wdmname, 101, input_ts="tests/nwisiv_02246000.csv")
         ret1 = wdmtoolbox.extract(self.wdmname, 101)
-        ret2 = wdmtoolbox.extract('{0},101'.format(self.wdmname))
+        ret2 = wdmtoolbox.extract("{0},101".format(self.wdmname))
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
-        ret3 = tstoolbox.read('tests/nwisiv_02246000.csv').astype('float64')
+        ret3 = tstoolbox.read("tests/nwisiv_02246000.csv").astype("float64")
         ret3.index = ret3.index.tz_localize(None)
-        ret1.columns = ['02246000_iv_00060']
+        ret1.columns = ["02246000_iv_00060"]
         assert_frame_equal(ret1, ret3, check_index_type=False)
 
         wdmtoolbox.copydsn(self.wdmname, 101, self.wdmname, 1101)
 
     def test_listdsns(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2,
-                                base_year=1970, tsstep=15)
-        wdmtoolbox.csvtowdm(self.wdmname, 101,
-                            input_ts='tests/nwisiv_02246000.csv')
+        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2, base_year=1970, tsstep=15)
+        wdmtoolbox.csvtowdm(self.wdmname, 101, input_ts="tests/nwisiv_02246000.csv")
         wdmtoolbox.createnewwdm(self.awdmname, overwrite=True)
         wdmtoolbox.copydsn(self.wdmname, 101, self.awdmname, 1101)
