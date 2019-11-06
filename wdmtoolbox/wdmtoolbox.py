@@ -31,10 +31,61 @@ def _describedsn(wdmpath, dsn):
 
 
 def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
-    """Copy a DSN."""
-    WDM.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
+    """Copy a DSN label and data."""
+    _copy_dsn_label(inwdmpath, indsn, outwdmpath, outdsn)
     nts = WDM.read_dsn(inwdmpath, indsn)
     WDM.write_dsn(outwdmpath, int(outdsn), nts)
+
+
+def _copy_dsn_label(inwdmpath, indsn, outwdmpath, outdsn):
+    """Copy a DSN label."""
+    WDM.copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn)
+
+
+def _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, func, overwrite=False):
+    if overwrite is True:
+        deletedsn(outwdmpath, outdsn)
+    if inwdmpath == outwdmpath:
+        import tempfile
+
+        tempdir = tempfile.mkdtemp()
+        tmpwdmpath = os.path.join(tempdir, "temp.wdm")
+        createnewwdm(tmpwdmpath)
+        func(inwdmpath, indsn, tmpwdmpath, outdsn)
+        func(tmpwdmpath, outdsn, outwdmpath, outdsn)
+        os.remove(tmpwdmpath)
+        os.removedirs(tempdir)
+    else:
+        func(inwdmpath, indsn, outwdmpath, outdsn)
+
+
+@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@tsutils.doc(tsutils.docstrings)
+def copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
+    """Make a copy of a DSN label (no data).
+
+    Parameters
+    ----------
+    inwdmpath
+        Path to input WDM
+        file.
+    indsn
+        Source
+        DSN.
+    outwdmpath
+        Path to clean copy WDM
+        file.
+    outdsn
+        Target
+        DSN.
+    overwrite
+        Whether to overwrite the target DSN if it
+        exists.
+
+    """
+    _copydsn_core(
+        inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn_label, overwrite=False
+    )
 
 
 @mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
@@ -61,20 +112,7 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
         exists.
 
     """
-    if overwrite is True:
-        deletedsn(outwdmpath, outdsn)
-    if inwdmpath == outwdmpath:
-        import tempfile
-
-        tempdir = tempfile.mkdtemp()
-        tmpwdmpath = os.path.join(tempdir, "temp.wdm")
-        createnewwdm(tmpwdmpath)
-        _copy_dsn(inwdmpath, indsn, tmpwdmpath, outdsn)
-        _copy_dsn(tmpwdmpath, outdsn, outwdmpath, outdsn)
-        os.remove(tmpwdmpath)
-        os.removedirs(tempdir)
-    else:
-        _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn)
+    _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn, overwrite=False)
 
 
 @mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
@@ -97,11 +135,11 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
     """
     if inwdmpath == outwdmpath:
         raise ValueError(
-            """
-*
-*   The "inwdmpath" cannot be the same as "outwdmpath".
-*
+            tsutils.error_wrapper(
+                """
+The "inwdmpath" cannot be the same as "outwdmpath".
 """
+            )
         )
     createnewwdm(outwdmpath, overwrite=overwrite)
     activedsn = []
@@ -254,13 +292,13 @@ def extract(*wdmpath, **kwds):
         end_date = None
     if len(kwds) > 0:
         raise ValueError(
-            """
-*
-*   The only allowed keywords are start_date and end_date.  You
-*   have given {0}.
-*
+            tsutils.error_wrapper(
+                """
+The only allowed keywords are start_date and end_date.  You
+have given {0}.
 """.format(
-                kwds
+                    kwds
+                )
             )
         )
 
@@ -284,12 +322,12 @@ def extract(*wdmpath, **kwds):
                 result = result.join(nts, how="outer")
             except ValueError:
                 raise ValueError(
-                    """
-*
-*   The column {0} is duplicated.  Dataset names must be unique.
-*
+                    tsutils.error_wrapper(
+                        """
+The column {0} is duplicated.  Dataset names must be unique.
 """.format(
-                        nts.columns[0]
+                            nts.columns[0]
+                        )
                     )
                 )
     return result
@@ -381,12 +419,12 @@ def listdsns(wdmpath):
     """
     if not os.path.exists(wdmpath):
         raise ValueError(
-            """
-*
-*   File {0} does not exist.
-*
+            tsutils.error_wrapper(
+                """
+File {0} does not exist.
 """.format(
-                wdmpath
+                    wdmpath
+                )
             )
         )
 
@@ -631,13 +669,13 @@ def csvtowdm(
 
     if len(tsd.columns) > 1:
         raise ValueError(
-            """
-*
-*   The input data set must contain only 1 time series.
-*   You gave {0}.
-*
+            tsutils.error_wrapper(
+                """
+The input data set must contain only 1 time series.
+You gave {0}.
 """.format(
-                len(tsd.columns)
+                    len(tsd.columns)
+                )
             )
         )
 
@@ -701,25 +739,29 @@ def _writetodsn(wdmpath, dsn, data):
     dsntcode = desc_dsn["tcode"]
     if finterval != dsntcode:
         raise ValueError(
-            """
-*
-*   The DSN {2} has a tcode of {0} ({3}),
-*   but the data has a tcode of {1} ({4}).
-*
+            tsutils.error_wrapper(
+                """
+The DSN {2} has a tcode of {0} ({3}),
+but the data has a tcode of {1} ({4}).
 """.format(
-                dsntcode, finterval, dsn, invmapcode[dsntcode], invmapcode[finterval]
+                    dsntcode,
+                    finterval,
+                    dsn,
+                    invmapcode[dsntcode],
+                    invmapcode[finterval],
+                )
             )
         )
 
     dsntstep = desc_dsn["tstep"]
     if dsntstep != tstep:
         raise ValueError(
-            """
-*
-*   The DSN has a tstep of {0}, but the data has a tstep of {1}.
-*
+            tsutils.error_wrapper(
+                """
+The DSN has a tstep of {0}, but the data has a tstep of {1}.
 """.format(
-                dsntstep, tstep
+                    dsntstep, tstep
+                )
             )
         )
 

@@ -162,14 +162,14 @@ class WDM(object):
             if ronwfg == 1:
                 if not os.path.exists(wdname):
                     raise ValueError(
-                        """
-*
-*   Trying to open
-*   {0}
-*   in read-only mode and it cannot be found.
-*
-    """.format(
-                            wdname
+                        tsutils.error_wrapper(
+                            """
+Trying to open
+{0}
+in read-only mode and it cannot be found.
+""".format(
+                                wdname
+                            )
                         )
                     )
             retcode = self.wdbopn(wdmsfl, wdname, ronwfg)
@@ -574,13 +574,13 @@ class WDM(object):
                 saval = saval.strip()
                 if len(saval) > salen:
                     raise ValueError(
-                        """
-*
-*   String "{0}" is too long for {1}.  Must
-*   have a length equal or less than {2}.
-*
+                        tsutils.error_wrapper(
+                            """
+String "{0}" is too long for {1}.  Must
+have a length equal or less than {2}.
 """.format(
-                            saval, error_name, salen
+                                saval, error_name, salen
+                            )
                         )
                     )
 
@@ -624,13 +624,13 @@ class WDM(object):
         llsdat = self._tcode_date(tcode, dstart_date)
         if dsn_desc["base_year"] > llsdat[0]:
             raise ValueError(
-                """
-*
-*   The base year for this DSN is {0}.  All data to insert must be after the
-*   base year.  Instead the first year of the series is {1}.
-*
+                tsutils.error_wrapper(
+                    """
+The base year for this DSN is {0}.  All data to insert must be after the
+base year.  Instead the first year of the series is {1}.
 """.format(
-                    dsn_desc["base_year"], llsdat[0]
+                        dsn_desc["base_year"], llsdat[0]
+                    )
                 )
             )
 
@@ -648,12 +648,12 @@ class WDM(object):
         """Read from a DSN."""
         if not os.path.exists(wdmpath):
             raise ValueError(
-                """
-***
-*** {0} does not exist.
-***
+                tsutils.error_wrapper(
+                    """
+{0} does not exist.
 """.format(
-                    wdmpath
+                        wdmpath
+                    )
                 )
             )
 
@@ -675,13 +675,13 @@ class WDM(object):
             start_date = datetime.datetime(*start_date)
             if start_date > datetime.datetime(*lledat):
                 raise ValueError(
-                    """
-*
-*   The requested start date ({0}) is after the end date ({1})
-*   of the time series in the WDM file.
-*
+                    tsutils.error_wrapper(
+                        """
+The requested start date ({0}) is after the end date ({1})
+of the time series in the WDM file.
 """.format(
-                        start_date, datetime.datetime(*lledat)
+                            start_date, datetime.datetime(*lledat)
+                        )
                     )
                 )
 
@@ -690,13 +690,13 @@ class WDM(object):
             end_date = datetime.datetime(*end_date)
             if end_date < datetime.datetime(*llsdat):
                 raise ValueError(
-                    """
-*
-*   The requested end date ({0}) is before the start date ({1})
-*   of the time series in the WDM file.
-*
+                    tsutils.error_wrapper(
+                        """
+The requested end date ({0}) is before the start date ({1})
+of the time series in the WDM file.
 """.format(
-                        end_date, datetime.datetime(*llsdat)
+                            end_date, datetime.datetime(*llsdat)
+                        )
                     )
                 )
 
