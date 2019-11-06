@@ -4,18 +4,18 @@
 python module _wdm_lib ! in 
     interface  ! in :_wdm_lib
         subroutine timcvt(date) ! in :_wdm_lib:UTDATE.f
-            integer intent(inout), dimension(6) :: date
+            integer dimension(6) :: date
         end subroutine timcvt
         subroutine timdif(date1,date2,tcode,tstep,nvals) ! in :_wdm_lib:UTDATE.f
             integer dimension(6) :: date1
             integer dimension(6) :: date2
             integer :: tcode
             integer :: tstep
-            integer intent(out) :: nvals
+            integer :: nvals
         end subroutine timdif
         subroutine wdflcl(wdmsfl,retcod) ! in :_wdm_lib:UTWDMD.f
             integer :: wdmsfl
-            integer intent(out) :: retcod
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -47,9 +47,9 @@ python module _wdm_lib ! in
             integer :: dsn
             integer :: messfl
             integer :: saind
-            integer depend(saval) :: salen
+            integer, optional,check(len(saval)>=salen),depend(saval) :: salen=len(saval)
             character(len=1) dimension(salen) :: saval
-            integer intent(out) :: retcod
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -66,9 +66,9 @@ python module _wdm_lib ! in
             integer :: dsn
             integer :: messfl
             integer :: saind
-            integer depend(saval) :: salen
+            integer, optional,check(len(saval)>=salen),depend(saval) :: salen=len(saval)
             integer dimension(salen) :: saval
-            integer intent(out) :: retcod
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -85,9 +85,9 @@ python module _wdm_lib ! in
             integer :: dsn
             integer :: messfl
             integer :: saind
-            integer depend(saval) :: salen
+            integer, optional,check(len(saval)>=salen),depend(saval) :: salen=len(saval)
             real dimension(salen) :: saval
-            integer intent(out) :: retcod
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -103,9 +103,9 @@ python module _wdm_lib ! in
             integer :: wdmsfl
             integer :: dsn
             integer :: saind
-            integer intent(in) :: salen
-            character(len=1) intent(out), dimension(salen) :: saval
-            integer intent(out) :: retcod
+            integer, optional,check(len(saval)>=salen),depend(saval) :: salen=len(saval)
+            character(len=1) dimension(salen) :: saval
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -121,9 +121,9 @@ python module _wdm_lib ! in
             integer :: wdmsfl
             integer :: dsn
             integer :: saind
-            integer intent(in) :: salen
-            integer intent(out), dimension(salen) :: saval
-            integer intent(out) :: retcod
+            integer, optional,check(len(saval)>=salen),depend(saval) :: salen=len(saval)
+            integer dimension(salen) :: saval
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -139,9 +139,9 @@ python module _wdm_lib ! in
             integer :: wdmsfl
             integer :: dsn
             integer :: saind
-            integer intent(in) :: salen
-            real intent(out), dimension(salen) :: saval
-            integer intent(out) :: retcod
+            integer, optional,check(len(saval)>=salen),depend(saval) :: salen=len(saval)
+            real dimension(salen) :: saval
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -157,7 +157,7 @@ python module _wdm_lib ! in
             integer :: wdmsfl
             integer :: odsn
             integer :: ndsn
-            integer intent(out) :: retcod
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -181,7 +181,7 @@ python module _wdm_lib ! in
             integer :: nwdmfl
             integer :: ndsn
             integer :: ntype
-            integer intent(out) :: retcod
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -196,7 +196,7 @@ python module _wdm_lib ! in
         subroutine wddsdl(wdmsfl,dsn,retcod) ! in :_wdm_lib:WDMESS.f
             integer :: wdmsfl
             integer :: dsn
-            integer intent(out) :: retcod
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -217,7 +217,7 @@ python module _wdm_lib ! in
             integer :: nsa
             integer :: nsasp
             integer :: ndp
-            integer intent(out) :: psa
+            integer :: psa
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -233,19 +233,19 @@ python module _wdm_lib ! in
             integer :: wdmsfl
             character*(*) :: wdname
             integer :: ronwfg
-            integer intent(out) :: retcod
+            integer :: retcod
         end subroutine wdbopn
         subroutine wdtget(wdmsfl,dsn,delt,dates,nval,dtran,qualfg,tunits,rval,retcod) ! in :_wdm_lib:WDTMS1.f
             integer :: wdmsfl
             integer :: dsn
             integer :: delt
             integer dimension(6) :: dates
-            integer :: nval
+            integer, optional,check(len(rval)>=nval),depend(rval) :: nval=len(rval)
             integer :: dtran
             integer :: qualfg
             integer :: tunits
-            real intent(out), dimension(nval), depend(nval) :: rval
-            integer intent(out) :: retcod
+            real dimension(nval) :: rval
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -262,21 +262,21 @@ python module _wdm_lib ! in
             integer :: dsn
             integer :: delt
             integer dimension(6) :: dates
-            integer :: nval
+            integer, optional,check(len(rval)>=nval),depend(rval) :: nval=len(rval)
             integer :: dtovwr
             integer :: qualfg
             integer :: tunits
-            real dimension(nval), depend(nval) :: rval
-            integer intent(out) :: retcod
+            real dimension(nval) :: rval
+            integer :: retcod
         end subroutine wdtput
         subroutine wtfndt(wdmsfl,dsn,gpflg,tdsfrc,sdat,edat,retcod) ! in :_wdm_lib:WDTMS2.f
             integer :: wdmsfl
             integer :: dsn
             integer :: gpflg
-            integer intent(out) :: tdsfrc
-            integer intent(out), dimension(6) :: sdat
-            integer intent(out), dimension(6) :: edat
-            integer intent(out) :: retcod
+            integer :: tdsfrc
+            integer dimension(6) :: sdat
+            integer dimension(6) :: edat
+            integer :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
