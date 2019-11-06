@@ -650,7 +650,7 @@ base year.  Instead the first year of the series is {1}.
             raise ValueError(
                 tsutils.error_wrapper(
                     """
-{0} does not exist.
+File {0} does not exist.
 """.format(
                         wdmpath
                     )

@@ -16,6 +16,7 @@ from builtins import str
 from dateutil.parser import parse as dateparser
 import mando
 from mando.rst_text_formatter import RSTHelpFormatter
+import pandas as pd
 
 # Local imports
 # Load in WDM subroutines
@@ -311,25 +312,16 @@ have given {0}.
                 continue
             labels.append([wdmpath[0], lab])
 
-    for index, lab in enumerate(labels):
+    result = pd.DataFrame()
+    cnt = 0
+    for ind, lab in enumerate(labels):
         wdmpath = lab[0]
         dsn = lab[1]
         nts = WDM.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
-        if index == 0:
-            result = nts
-        else:
-            try:
-                result = result.join(nts, how="outer")
-            except ValueError:
-                raise ValueError(
-                    tsutils.error_wrapper(
-                        """
-The column {0} is duplicated.  Dataset names must be unique.
-""".format(
-                            nts.columns[0]
-                        )
-                    )
-                )
+        if nts.columns[0] in result.columns:
+            cnt = cnt + 1
+            nts.columns = ["{0}_{1}".format(nts.columns[0], cnt)]
+        result = result.join(nts, how="outer")
     return result
 
 
