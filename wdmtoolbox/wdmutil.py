@@ -710,6 +710,10 @@ of the time series in the WDM file.
             wdmfp, dsn, tstep, llsdat, iterm, dtran, qualfg, tcode
         )
         self._close(wdmpath)
+
+        if len(dataout) == 0:
+            return pd.DataFrame()
+
         self._retcode_check(
             retcode, additional_info="wdtget file={0} DSN={1}".format(wdmpath, dsn)
         )

@@ -35,7 +35,8 @@ def _copy_dsn(inwdmpath, indsn, outwdmpath, outdsn):
     """Copy a DSN label and data."""
     _copy_dsn_label(inwdmpath, indsn, outwdmpath, outdsn)
     nts = WDM.read_dsn(inwdmpath, indsn)
-    WDM.write_dsn(outwdmpath, int(outdsn), nts)
+    if len(nts) > 0:
+        WDM.write_dsn(outwdmpath, int(outdsn), nts)
 
 
 def _copy_dsn_label(inwdmpath, indsn, outwdmpath, outdsn):
