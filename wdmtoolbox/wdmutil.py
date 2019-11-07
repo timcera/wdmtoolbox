@@ -159,14 +159,12 @@ class WDM(object):
         """Private method to open WDM file."""
         wdname = wdname.strip()
         if wdname not in self.openfiles:
-            if ronwfg == 1:
+            if ronwfg in [0, 1]:
                 if not os.path.exists(wdname):
                     raise ValueError(
                         tsutils.error_wrapper(
                             """
-Trying to open
-{0}
-in read-only mode and it cannot be found.
+Trying to open file "{0}" and it cannot be found.
 """.format(
                                 wdname
                             )
