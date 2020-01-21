@@ -1,6 +1,7 @@
 import setuptools
 from numpy.distutils.core import Extension, setup
 import os
+import shutil
 import sys
 
 import distutils.command.build_ext  # imports distutils.core, too
@@ -38,6 +39,7 @@ if sys.argv[-1] == "publish":
     os.chdir("..")
 
     os.system("twine upload dist/{pkg_name}-{version}.tar.gz".format(**locals()))
+    os.system("twine upload dist/{pkg_name}-{version}*.whl".format(**locals()))
     sys.exit()
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -118,5 +120,5 @@ setup(
     install_requires=install_requires,
     ext_modules=[wdm_support],
     entry_points={"console_scripts": ["wdmtoolbox=wdmtoolbox.wdmtoolbox:main"]},
-    python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*",
+    python_requires=">=3.6",
 )
