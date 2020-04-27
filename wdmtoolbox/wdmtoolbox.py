@@ -16,6 +16,7 @@ from builtins import str
 from dateutil.parser import parse as dateparser
 import mando
 from mando.rst_text_formatter import RSTHelpFormatter
+import numpy as np
 import pandas as pd
 
 # Local imports
@@ -568,8 +569,8 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     dsn = int(dsn)
     if isinstance(input_ts, str):
         input_ts = open(input_ts, "r")
-    dates = pd.np.array([])
-    data = pd.np.array([])
+    dates = np.array([])
+    data = np.array([])
     for line in input_ts:
         words = line[8:]
         words = words.split()
@@ -579,15 +580,15 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
         ampmflag = int(words[3])
         if int(words[0]) == 99 and month == 12 and day == 31 and ampmflag == 2:
             start_century = start_century + 100
-        data = pd.np.append(data, [float(i) for i in words[4:16]])
+        data = np.append(data, [float(i) for i in words[4:16]])
         try:
             if ampmflag == 1:
-                dates = pd.np.append(
+                dates = np.append(
                     dates,
                     [datetime.datetime(year, month, day, i) for i in range(0, 12)],
                 )
             if ampmflag == 2:
-                dates = pd.np.append(
+                dates = np.append(
                     dates,
                     [datetime.datetime(year, month, day, i) for i in range(12, 24)],
                 )
