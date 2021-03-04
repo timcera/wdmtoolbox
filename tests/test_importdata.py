@@ -52,7 +52,7 @@ class TestDescribe(TestCase):
         ret2 = wdmtoolbox.extract("{0},101".format(self.wdmname))
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
-        ret3 = tstoolbox.read("tests/nwisiv_02246000.csv").astype("float64")
+        ret3 = tstoolbox.read("tests/nwisiv_02246000.csv")
         ret3.index = ret3.index.tz_localize(None)
         ret1.columns = ["02246000_iv_00060"]
         assert_frame_equal(ret1, ret3, check_index_type=False)
@@ -103,7 +103,7 @@ class TestDescribe(TestCase):
 
         ret3 = tstoolbox.read(
             "tests/nwisiv_02246000.csv", start_date="2014-02-21 16:00:00"
-        ).astype("float64")
+        )
         ret3.index = ret3.index.tz_localize(None)
         ret1.columns = ["02246000_iv_00060"]
         assert_frame_equal(ret1, ret3, check_index_type=False)
@@ -116,7 +116,7 @@ class TestDescribe(TestCase):
 
         ret3 = tstoolbox.read(
             "tests/nwisiv_02246000.csv", end_date="2014-02-22 11:00:00"
-        ).astype("float64")
+        )
         ret3.index = ret3.index.tz_localize(None)
         ret1.columns = ["02246000_iv_00060"]
         assert_frame_equal(ret1, ret3, check_index_type=False)
@@ -136,7 +136,7 @@ class TestDescribe(TestCase):
             "tests/nwisiv_02246000.csv",
             start_date="2014-02-21 16:00:00",
             end_date="2014-02-22 11:00:00",
-        ).astype("float64")
+        )
         ret3.index = ret3.index.tz_localize(None)
         ret1.columns = ["02246000_iv_00060"]
         assert_frame_equal(ret1, ret3, check_index_type=False)
