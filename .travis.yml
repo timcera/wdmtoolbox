@@ -37,7 +37,7 @@ install:
 
 script:
   - source activate $TRAVIS_PYTHON_VERSION
-  - pytest --cov wdmtoolbox --doctest-modules --ignore=docsrc --mpl
+  - pytest --cov wdmtoolbox --doctest-modules --ignore=docsrc --mpl tests/test_*.py
 
 after_success:
   - coveralls
