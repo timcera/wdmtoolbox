@@ -21,6 +21,7 @@ from unittest import TestCase
 from pandas.testing import assert_frame_equal
 
 from tstoolbox import tstoolbox
+from tstoolbox import tsutils
 from wdmtoolbox import wdmtoolbox
 
 
@@ -54,7 +55,7 @@ class TestDescribe(TestCase):
         ret2 = wdmtoolbox.extract("{0},101".format(self.wdmname))
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
-        ret3 = tstoolbox.read("tests/nwisiv_02246000.csv")
+        ret3 = tsutils.asbestfreq(tstoolbox.read("tests/nwisiv_02246000.csv"))
         ret3.index = ret3.index.tz_localize(None)
         ret1.columns = ["02246000_iv_00060"]
         assert_frame_equal(ret1, ret3, check_index_type=False)
