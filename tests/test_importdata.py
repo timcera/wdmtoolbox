@@ -64,7 +64,7 @@ class TestDescribe(TestCase):
         with self.assertRaisesRegex(ValueError, "The only allowed keywords are"):
             ret1 = wdmtoolbox.extract(self.wdmname, 101, ph=True)
 
-    def test_listdsns(self):
+    def test_listdsns_verify(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2, base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101, input_ts="tests/nwisiv_02246000.csv")
