@@ -4,6 +4,8 @@ C
       SUBROUTINE   WDDSDL
      I                    (WDMSFL,DSN,
      O                     RETCOD)
+Cf2py intent(in) WDMSFL,DSN
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     routine to delete a data set from the WDMSFL with no user interaction
@@ -468,6 +470,8 @@ C
       SUBROUTINE   WDLBAX
      I                    (WDMSFL,DSN,DSTYPE,NDN,NUP,NSA,NSASP,NDP,
      O                     PSA)
+Cf2py intent(in) WDMSFL,DSN,DSTYPE,NDN,NUP,NSA,NSASP,NDP
+Cf2py intent(out) PSA
 C
 C     + + + PURPOSE + + +
 C     add a new data-set label, but no search attributes or data.

@@ -4,6 +4,8 @@ C
       SUBROUTINE   WDBOPN
      I                    (WDMSFL,WDNAME,RONWFG,
      O                     RETCOD)
+Cf2py intent(in) WDMSFL,WDNAME,RONWFG
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     Open a WDM file.  File is opened as new or old, depending on

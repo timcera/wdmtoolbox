@@ -4,17 +4,17 @@
 python module _wdm_lib ! in 
     interface  ! in :_wdm_lib
         subroutine timcvt(date) ! in :_wdm_lib:UTDATE.f
-            integer intent(inout), dimension(6) :: date
+            integer dimension(6),intent(inout) :: date
         end subroutine timcvt
         subroutine timdif(date1,date2,tcode,tstep,nvals) ! in :_wdm_lib:UTDATE.f
-            integer dimension(6) :: date1
-            integer dimension(6) :: date2
-            integer :: tcode
-            integer :: tstep
+            integer dimension(6),intent(in) :: date1
+            integer dimension(6),intent(in) :: date2
+            integer intent(in) :: tcode
+            integer intent(in) :: tstep
             integer intent(out) :: nvals
         end subroutine timdif
         subroutine wdflcl(wdmsfl,retcod) ! in :_wdm_lib:UTWDMD.f
-            integer :: wdmsfl
+            integer intent(in) :: wdmsfl
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -28,8 +28,8 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdflcl
         function wdckdt(wdmsfl,dsn) ! in :_wdm_lib:UTWDMD.f
-            integer :: wdmsfl
-            integer :: dsn
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
             integer dimension(10) :: wdmfun
@@ -43,12 +43,12 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end function wdckdt
         subroutine wdbsac(wdmsfl,dsn,messfl,saind,salen,saval,retcod) ! in :_wdm_lib:WDATRB.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: messfl
-            integer :: saind
-            integer depend(saval) :: salen
-            character(len=1) dimension(salen) :: saval
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: messfl
+            integer intent(in) :: saind
+            integer intent(in) :: salen
+            character(len=1) dimension(salen),intent(in),depend(salen) :: saval
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -62,12 +62,12 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdbsac
         subroutine wdbsai(wdmsfl,dsn,messfl,saind,salen,saval,retcod) ! in :_wdm_lib:WDATRB.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: messfl
-            integer :: saind
-            integer depend(saval) :: salen
-            integer dimension(salen) :: saval
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: messfl
+            integer intent(in) :: saind
+            integer intent(in) :: salen
+            integer dimension(salen),intent(in),depend(salen) :: saval
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -81,12 +81,12 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdbsai
         subroutine wdbsar(wdmsfl,dsn,messfl,saind,salen,saval,retcod) ! in :_wdm_lib:WDATRB.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: messfl
-            integer :: saind
-            integer depend(saval) :: salen
-            real dimension(salen) :: saval
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: messfl
+            integer intent(in) :: saind
+            integer intent(in) :: salen
+            real dimension(salen),intent(in),depend(salen) :: saval
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -100,11 +100,11 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdbsar
         subroutine wdbsgc(wdmsfl,dsn,saind,salen,saval,retcod) ! in :_wdm_lib:WDBTCH.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: saind
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: saind
             integer intent(in) :: salen
-            character(len=1) intent(out), dimension(salen) :: saval
+            character(len=1) dimension(salen),intent(out),depend(salen) :: saval
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -118,11 +118,11 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdbsgc
         subroutine wdbsgi(wdmsfl,dsn,saind,salen,saval,retcod) ! in :_wdm_lib:WDBTCH.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: saind
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: saind
             integer intent(in) :: salen
-            integer intent(out), dimension(salen) :: saval
+            integer dimension(salen),intent(out),depend(salen) :: saval
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -136,11 +136,11 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdbsgi
         subroutine wdbsgr(wdmsfl,dsn,saind,salen,saval,retcod) ! in :_wdm_lib:WDBTCH.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: saind
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: saind
             integer intent(in) :: salen
-            real intent(out), dimension(salen) :: saval
+            real dimension(salen),intent(out),depend(salen) :: saval
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -154,9 +154,9 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdbsgr
         subroutine wddsrn(wdmsfl,odsn,ndsn,retcod) ! in :_wdm_lib:WDBTCH.f
-            integer :: wdmsfl
-            integer :: odsn
-            integer :: ndsn
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: odsn
+            integer intent(in) :: ndsn
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -176,11 +176,11 @@ python module _wdm_lib ! in
             common /cdrloc/ pfname,pmxrec,pfrrec,ptsnum,pdirpt
         end subroutine wddsrn
         subroutine wddscl(owdmfl,odsn,nwdmfl,ndsn,ntype,retcod) ! in :_wdm_lib:WDBTCH.f
-            integer :: owdmfl
-            integer :: odsn
-            integer :: nwdmfl
-            integer :: ndsn
-            integer :: ntype
+            integer intent(in) :: owdmfl
+            integer intent(in) :: odsn
+            integer intent(in) :: nwdmfl
+            integer intent(in) :: ndsn
+            integer intent(in) :: ntype
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -194,8 +194,8 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wddscl
         subroutine wddsdl(wdmsfl,dsn,retcod) ! in :_wdm_lib:WDMESS.f
-            integer :: wdmsfl
-            integer :: dsn
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -209,14 +209,14 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wddsdl
         subroutine wdlbax(wdmsfl,dsn,dstype,ndn,nup,nsa,nsasp,ndp,psa) ! in :_wdm_lib:WDMESS.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: dstype
-            integer :: ndn
-            integer :: nup
-            integer :: nsa
-            integer :: nsasp
-            integer :: ndp
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: dstype
+            integer intent(in) :: ndn
+            integer intent(in) :: nup
+            integer intent(in) :: nsa
+            integer intent(in) :: nsasp
+            integer intent(in) :: ndp
             integer intent(out) :: psa
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -230,21 +230,21 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdlbax
         subroutine wdbopn(wdmsfl,wdname,ronwfg,retcod) ! in :_wdm_lib:WDOP.f
-            integer :: wdmsfl
-            character*(*) :: wdname
-            integer :: ronwfg
+            integer intent(in) :: wdmsfl
+            character*(*) intent(in) :: wdname
+            integer intent(in) :: ronwfg
             integer intent(out) :: retcod
         end subroutine wdbopn
         subroutine wdtget(wdmsfl,dsn,delt,dates,nval,dtran,qualfg,tunits,rval,retcod) ! in :_wdm_lib:WDTMS1.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: delt
-            integer dimension(6) :: dates
-            integer :: nval
-            integer :: dtran
-            integer :: qualfg
-            integer :: tunits
-            real intent(out), dimension(nval), depend(nval) :: rval
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: delt
+            integer dimension(6),intent(in) :: dates
+            integer intent(in) :: nval
+            integer intent(in) :: dtran
+            integer intent(in) :: qualfg
+            integer intent(in) :: tunits
+            real dimension(nval),intent(out),depend(nval) :: rval
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno
@@ -258,24 +258,24 @@ python module _wdm_lib ! in
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdtget
         subroutine wdtput(wdmsfl,dsn,delt,dates,nval,dtovwr,qualfg,tunits,rval,retcod) ! in :_wdm_lib:WDTMS1.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: delt
-            integer dimension(6) :: dates
-            integer :: nval
-            integer :: dtovwr
-            integer :: qualfg
-            integer :: tunits
-            real dimension(nval), depend(nval) :: rval
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: delt
+            integer dimension(6),intent(in) :: dates
+            integer intent(in) :: nval
+            integer intent(in) :: dtovwr
+            integer intent(in) :: qualfg
+            integer intent(in) :: tunits
+            real dimension(nval),intent(in),depend(nval) :: rval
             integer intent(out) :: retcod
         end subroutine wdtput
         subroutine wtfndt(wdmsfl,dsn,gpflg,tdsfrc,sdat,edat,retcod) ! in :_wdm_lib:WDTMS2.f
-            integer :: wdmsfl
-            integer :: dsn
-            integer :: gpflg
+            integer intent(in) :: wdmsfl
+            integer intent(in) :: dsn
+            integer intent(in) :: gpflg
             integer intent(out) :: tdsfrc
-            integer intent(out), dimension(6) :: sdat
-            integer intent(out), dimension(6) :: edat
+            integer dimension(6),intent(out) :: sdat
+            integer dimension(6),intent(out) :: edat
             integer intent(out) :: retcod
             integer(kind=4) dimension(512,10) :: wibuff
             integer dimension(10) :: recno

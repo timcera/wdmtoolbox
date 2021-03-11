@@ -51,6 +51,9 @@ C
       SUBROUTINE   WDBSGC
      I                    (WDMSFL,DSN,SAIND,SALEN,
      O                     SAVAL,RETCOD)
+Cf2py intent(in) WDMSFL,DSN,SAIND,SALEN
+Cf2py intent(out) SAVAL,RETCOD
+Cf2py depend(SALEN) SAVAL
 C
 C     + + + PURPOSE + + +
 C     gets values of character search attribute for a dsn
@@ -126,6 +129,9 @@ C
       SUBROUTINE   WDBSGI
      I                    (WDMSFL,DSN,SAIND,SALEN,
      O                     SAVAL,RETCOD)
+Cf2py intent(in) WDMSFL,DSN,SAIND,SALEN
+Cf2py intent(out) SAVAL,RETCOD
+Cf2py depend(SALEN) SAVAL
 C
 C     + + + PURPOSE + + +
 C     gets the values of integer search attribute for a dsn
@@ -193,6 +199,9 @@ C
       SUBROUTINE   WDBSGR
      I                    (WDMSFL,DSN,SAIND,SALEN,
      O                     SAVAL,RETCOD)
+Cf2py intent(in) WDMSFL,DSN,SAIND,SALEN
+Cf2py intent(out) SAVAL,RETCOD
+Cf2py depend(SALEN) SAVAL
 C
 C     + + + PURPOSE + + +
 C     Get the values of real search attribute for a data set.
@@ -260,6 +269,8 @@ C
       SUBROUTINE   WDDSRN
      I                    (WDMSFL,ODSN,NDSN,
      O                     RETCOD)
+Cf2py intent(in) WDMSFL,ODSN,NDSN
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     routine to renumber data sets with no user interaction
@@ -361,6 +372,8 @@ C
       SUBROUTINE   WDDSCL
      I                     (OWDMFL,ODSN,NWDMFL,NDSN,NTYPE,
      O                      RETCOD)
+Cf2py intent(in) OWDMFL,ODSN,NWDMFL,NDSN,NTYPE
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     copies an old data-set label into a new data-set label

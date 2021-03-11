@@ -4,6 +4,8 @@ C
       SUBROUTINE   WTFNDT
      I                    (WDMSFL,DSN,GPFLG,
      O                     TDSFRC,SDAT,EDAT,RETCOD)
+Cf2py intent(in) WDMSFL,DSN,GPFLG
+Cf2py intent(out) TDSFRC,SDAT,EDAT,RETCOD
 C
 C     + + + PURPOSE + + +
 C     determine starting and ending dates of data in data set

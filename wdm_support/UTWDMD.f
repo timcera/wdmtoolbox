@@ -247,6 +247,8 @@ C
       SUBROUTINE   WDFLCL
      I                   (WDMSFL,
      O                    RETCOD)
+Cf2py intent(in) WDMSFL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     Remove a WDM file from the open WDM buffer and adjust
@@ -850,6 +852,7 @@ C
 C
       INTEGER   FUNCTION   WDCKDT
      I                           (WDMSFL,DSN)
+Cf2py intent(in) WDMSFL,DSN
 C
 C     + + + PURPOSE + + +
 C     Check data set for existance and type, returns:

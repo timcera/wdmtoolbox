@@ -1163,6 +1163,7 @@ C
 C
       SUBROUTINE   TIMCVT
      M                   (DATE)
+Cf2py intent(inout) DATE
 C
 C     + + + PURPOSE + + +
 C     Convert a date that uses the midnight convention of 24:00
@@ -1212,6 +1213,8 @@ C
       SUBROUTINE   TIMDIF
      I                    (DATE1,DATE2,TCODE,TSTEP,
      O                     NVALS)
+Cf2py intent(in) DATE1,DATE2,TCODE,TSTEP
+Cf2py intent(out) NVALS
 C
 C     + + + PURPOSE + + +
 C     Calculate the number of time steps between two dates.  Part
