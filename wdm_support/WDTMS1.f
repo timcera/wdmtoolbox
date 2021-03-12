@@ -5,10 +5,17 @@ C
      I                    (WDMSFL,DSN,DELT,DATES,NVAL,
      I                     DTRAN,QUALFG,TUNITS,
      O                     RVAL,RETCOD)
-Cf2py intent(in) WDMSFL,DSN,DELT,DATES,NVAL
-Cf2py intent(in) DTRAN,QUALFG,TUNITS
-Cf2py intent(out) RVAL,RETCOD
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) DELT
+Cf2py intent(in) DATES
+Cf2py intent(in) NVAL
+Cf2py intent(in) DTRAN
+Cf2py intent(in) QUALFG
+Cf2py intent(in) TUNITS
+Cf2py intent(out) RVAL
 Cf2py depend(NVAL) RVAL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     gets timeseries information from the WDMSFL
@@ -2228,10 +2235,17 @@ C
      I                    (WDMSFL,DSN,DELT,DATES,NVAL,
      I                     DTOVWR,QUALFG,TUNITS,RVAL,
      O                     RETCOD)
-Cf2py intent(in) WDMSFL,DSN,DELT,DATES,NVAL
-Cf2py intent(in) DTOVWR,QUALFG,TUNITS,RVAL
-Cf2py intent(out) RETCOD
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) DELT
+Cf2py intent(in) DATES
+Cf2py intent(in) NVAL
+Cf2py intent(in) DTOVWR
+Cf2py intent(in) QUALFG
+Cf2py intent(in) TUNITS
+Cf2py intent(in) RVAL
 Cf2py depend(NVAL) RVAL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     Puts time series data into a WDM file.  This routine traps the

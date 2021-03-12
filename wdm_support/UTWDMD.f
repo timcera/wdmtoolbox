@@ -852,7 +852,8 @@ C
 C
       INTEGER   FUNCTION   WDCKDT
      I                           (WDMSFL,DSN)
-Cf2py intent(in) WDMSFL,DSN
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
 C
 C     + + + PURPOSE + + +
 C     Check data set for existance and type, returns:

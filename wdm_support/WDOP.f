@@ -4,7 +4,9 @@ C
       SUBROUTINE   WDBOPN
      I                    (WDMSFL,WDNAME,RONWFG,
      O                     RETCOD)
-Cf2py intent(in) WDMSFL,WDNAME,RONWFG
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) WDNAME
+Cf2py intent(in) RONWFG
 Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +

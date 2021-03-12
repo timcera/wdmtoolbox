@@ -51,9 +51,13 @@ C
       SUBROUTINE   WDBSGC
      I                    (WDMSFL,DSN,SAIND,SALEN,
      O                     SAVAL,RETCOD)
-Cf2py intent(in) WDMSFL,DSN,SAIND,SALEN
-Cf2py intent(out) SAVAL,RETCOD
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) SAIND
+Cf2py intent(in) SALEN
+Cf2py intent(out) SAVAL
 Cf2py depend(SALEN) SAVAL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     gets values of character search attribute for a dsn
@@ -129,9 +133,13 @@ C
       SUBROUTINE   WDBSGI
      I                    (WDMSFL,DSN,SAIND,SALEN,
      O                     SAVAL,RETCOD)
-Cf2py intent(in) WDMSFL,DSN,SAIND,SALEN
-Cf2py intent(out) SAVAL,RETCOD
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) SAIND
+Cf2py intent(in) SALEN
+Cf2py intent(out) SAVAL
 Cf2py depend(SALEN) SAVAL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     gets the values of integer search attribute for a dsn
@@ -199,9 +207,13 @@ C
       SUBROUTINE   WDBSGR
      I                    (WDMSFL,DSN,SAIND,SALEN,
      O                     SAVAL,RETCOD)
-Cf2py intent(in) WDMSFL,DSN,SAIND,SALEN
-Cf2py intent(out) SAVAL,RETCOD
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) SAIND
+Cf2py intent(in) SALEN
+Cf2py intent(out) SAVAL
 Cf2py depend(SALEN) SAVAL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     Get the values of real search attribute for a data set.
@@ -269,7 +281,9 @@ C
       SUBROUTINE   WDDSRN
      I                    (WDMSFL,ODSN,NDSN,
      O                     RETCOD)
-Cf2py intent(in) WDMSFL,ODSN,NDSN
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) ODSN
+Cf2py intent(in) NDSN
 Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
@@ -372,7 +386,11 @@ C
       SUBROUTINE   WDDSCL
      I                     (OWDMFL,ODSN,NWDMFL,NDSN,NTYPE,
      O                      RETCOD)
-Cf2py intent(in) OWDMFL,ODSN,NWDMFL,NDSN,NTYPE
+Cf2py intent(in) OWDMFL
+Cf2py intent(in) ODSN
+Cf2py intent(in) NWDMFL
+Cf2py intent(in) NDSN
+Cf2py intent(in) NTYPE
 Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +

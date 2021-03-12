@@ -82,9 +82,14 @@ C
       SUBROUTINE   WDBSAC
      I                    (WDMSFL,DSN,MESSFL,SAIND,SALEN,SAVAL,
      O                     RETCOD)
-Cf2py intent(in) WDMSFL,DSN,MESSFL,SAIND,SALEN,SAVAL
-Cf2py intent(out) RETCOD
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) MESSFL
+Cf2py intent(in) SAIND
+Cf2py intent(in) SALEN
+Cf2py intent(in) SAVAL
 Cf2py depend(SALEN) SAVAL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     adds (or modifies) character search attribute on given dsn
@@ -199,9 +204,14 @@ C
       SUBROUTINE   WDBSAI
      I                    (WDMSFL,DSN,MESSFL,SAIND,SALEN,SAVAL,
      O                     RETCOD)
-Cf2py intent(in) WDMSFL,DSN,MESSFL,SAIND,SALEN,SAVAL
-Cf2py intent(out) RETCOD
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) MESSFL
+Cf2py intent(in) SAIND
+Cf2py intent(in) SALEN
+Cf2py intent(in) SAVAL
 Cf2py depend(SALEN) SAVAL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     adds (or modifies) integer search attribute on given dsn
@@ -303,9 +313,14 @@ C
       SUBROUTINE   WDBSAR
      I                    (WDMSFL,DSN,MESSFL,SAIND,SALEN,SAVAL,
      O                     RETCOD)
-Cf2py intent(in) WDMSFL,DSN,MESSFL,SAIND,SALEN,SAVAL
-Cf2py intent(out) RETCOD
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) MESSFL
+Cf2py intent(in) SAIND
+Cf2py intent(in) SALEN
+Cf2py intent(in) SAVAL
 Cf2py depend(SALEN) SAVAL
+Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
 C     adds (or modifies) real search attribute on given dsn

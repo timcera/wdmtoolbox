@@ -4,7 +4,8 @@ C
       SUBROUTINE   WDDSDL
      I                    (WDMSFL,DSN,
      O                     RETCOD)
-Cf2py intent(in) WDMSFL,DSN
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
 Cf2py intent(out) RETCOD
 C
 C     + + + PURPOSE + + +
@@ -470,7 +471,14 @@ C
       SUBROUTINE   WDLBAX
      I                    (WDMSFL,DSN,DSTYPE,NDN,NUP,NSA,NSASP,NDP,
      O                     PSA)
-Cf2py intent(in) WDMSFL,DSN,DSTYPE,NDN,NUP,NSA,NSASP,NDP
+Cf2py intent(in) WDMSFL
+Cf2py intent(in) DSN
+Cf2py intent(in) DSTYPE
+Cf2py intent(in) NDN
+Cf2py intent(in) NUP
+Cf2py intent(in) NSA
+Cf2py intent(in) NSASP
+Cf2py intent(in) NDP
 Cf2py intent(out) PSA
 C
 C     + + + PURPOSE + + +

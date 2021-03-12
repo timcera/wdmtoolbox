@@ -1213,7 +1213,10 @@ C
       SUBROUTINE   TIMDIF
      I                    (DATE1,DATE2,TCODE,TSTEP,
      O                     NVALS)
-Cf2py intent(in) DATE1,DATE2,TCODE,TSTEP
+Cf2py intent(in) DATE1
+Cf2py intent(in) DATE2
+Cf2py intent(in) TCODE
+Cf2py intent(in) TSTEP
 Cf2py intent(out) NVALS
 C
 C     + + + PURPOSE + + +

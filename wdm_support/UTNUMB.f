@@ -93,7 +93,7 @@ Chnb     2  .OR.  ((RVAL.LT.0.0) .AND. (RVAL.GT.RMIN/FACT)))
 Chnb     3        MINCHK= 1
       IF      ((ABS(RMIN+999.0).LT.(RP1MIN - 1.0))
      1  .OR.  ((RVAL.GE.0.0) .AND. (RVAL.GE.RMIN/FACT))
-     2  .OR.  ((RVAL.LT.0.0) .AND. (RVAL.GT.RMIN*FACT)))
+     2  .OR.  ((RVAL.LT.0.0) .AND. (RVAL.GE.RMIN*FACT)))
      3        MINCHK= 1
 C
       MAXCHK= 0
@@ -103,7 +103,7 @@ Chnb     2  .OR.  ((RVAL.LT.0.0) .AND. (RVAL.LT.RMAX/FACT)))
 Chnb     3        MAXCHK= 1
       IF      ((ABS(RMAX+999.0).LT.(RP1MIN - 1.0))
      1  .OR.  ((RVAL.GE.0.0) .AND. (RVAL.LE.RMAX*FACT))
-     2  .OR.  ((RVAL.LT.0.0) .AND. (RVAL.LT.RMAX/FACT)))
+     2  .OR.  ((RVAL.LT.0.0) .AND. (RVAL.LE.RMAX/FACT)))
      3        MAXCHK= 1
 C
       IF (MINCHK.EQ.1 .AND. MAXCHK.EQ.1)  RCHK= 1

@@ -269,7 +269,7 @@ Trying to open file "{0}" and it cannot be found.
                 )
             )
         if retcode != 0:
-            for fn in self.openfiles:
+            for fn in list(self.openfiles):
                 self._close(fn)
             raise WDMError(
                 """
