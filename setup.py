@@ -39,10 +39,6 @@ install_requires = [
 ]
 
 libraries = []
-rld = (b.library_dirs,)
-if sys.platform.startswith("win"):
-    libraries = ["quadmath"]
-    rld = None
 
 wdm_support = Extension(
     "_wdm_lib",
@@ -69,7 +65,6 @@ wdm_support = Extension(
     ],
     include_dirs=["wdm_support"],
     libraries=libraries,
-    runtime_library_dirs=rld,
 )
 
 setup(

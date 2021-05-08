@@ -1,11 +1,19 @@
+image:
+  - Visual Studio 2019
+
 environment:
+  # Tell msys2 to add mingw64 to the path
+  MSYSTEM: MINGW64
+  # Tell msys2 to inherit the current directory when starting the shell
+  CHERE_INVOKING: 1
+
   matrix:
-    - PYTHON_VERSION: "3.7"
-      CONDAPATH: 'C:\Miniconda37'
-    - PYTHON_VERSION: "3.8"
-      CONDAPATH: 'C:\Miniconda38'
-    - PYTHON_VERSION: "3.9"
-      CONDAPATH: 'C:\Miniconda39'
+    - PYTHON_VERSION: '3.7'
+      PYTHONPATH: 'C:\Python37'
+    - PYTHON_VERSION: '3.8'
+      PYTHONPATH: 'C:\Python38'
+    - PYTHON_VERSION: '3.9'
+      PYTHONPATH: 'C:\Python39'
 
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
@@ -19,29 +27,39 @@ matrix:
   fast_finish: false
 
 install:
-  - if "%PLATFORM%" == "x86" set PATH=%CONDPATH%\bin;%CONDAPATH%\Scripts;%PATH%
-  - if "%PLATFORM%" == "x64" set PATH=%CONDPATH%-x64\bin;%CONDAPATH%-x64\Scripts;%PATH%
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  - conda create -q --name python%PYTHON_VERSION%-%PLATFORM% python=%PYTHON_VERSION% 
-  - activate python%PYTHON_VERSION%-%PLATFORM%
-  - conda install -q setuptools matplotlib nose pandas wheel scipy sphinx lockfile pip libpython
-  - conda install -q -c msys2 m2w64-toolchain
-  - python.exe setup.py config_fc
-  - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - python.exe setup.py build
+  - if '%PLATFORM%' == 'x86' call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
+  - if '%PLATFORM%' == 'x86' set PATH=%PYTHONPATH%;%PYTHONPATH%\bin;%PYTHONPATH%\Scripts;C:\msys64\mingw32\bin;%PATH%
+  - if '%PLATFORM%' == 'x86' %PYTHONPATH%\python.exe -m pip install --upgrade pip
+  - if '%PLATFORM%' == 'x86' %PYTHONPATH%\python.exe -m pip install wheel
+  - if '%PLATFORM%' == 'x86' %PYTHONPATH%\python.exe -m pip install tstoolbox
+  - if '%PLATFORM%' == 'x86' %PYTHONPATH%\python.exe setup.py config_fc
+  - if '%PLATFORM%' == 'x86' %PYTHONPATH%\python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
+  - if '%PLATFORM%' == 'x86' %PYTHONPATH%\python.exe setup.py build
+
+  - if '%PLATFORM%' == 'x64' call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+  - if '%PLATFORM%' == 'x64' set PATH=%PYTHONPATH%-x64;%PYTHONPATH%-x64\bin;%PYTHONPATH%-x64\Scripts;C:\msys64\mingw64\bin;%PATH%
+  - if '%PLATFORM%' == 'x64' %PYTHONPATH%-x64\python.exe -m pip install --upgrade pip
+  - if '%PLATFORM%' == 'x64' %PYTHONPATH%-x64\python.exe -m pip install wheel
+  - if '%PLATFORM%' == 'x64' %PYTHONPATH%-x64\python.exe -m pip install tstoolbox
+  - if '%PLATFORM%' == 'x64' %PYTHONPATH%-x64\python.exe setup.py config_fc
+  - if '%PLATFORM%' == 'x64' %PYTHONPATH%-x64\python.exe setup.py config --compiler=mingw64 --fcompiler=gfortran
+  - if '%PLATFORM%' == 'x64' %PYTHONPATH%-x64\python.exe setup.py build
+
+  - echo %PATH%
+  - echo '%PYTHONPATH%\python.exe -m pip install --upgrade pip'
 
 build: off
 
 after_test:
   # This step builds your wheels.
-  - python.exe setup.py bdist_wheel
+  - if '%PLATFORM%' == 'x86' %PYTHONPATH%\python.exe setup.py bdist_wheel
+  - if '%PLATFORM%' == 'x64' %PYTHONPATH%-x64\python.exe setup.py bdist_wheel
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
   - path: dist\*.whl
 
-#on_success:
-#  You can use this step to upload your artifacts to a public website.
-#  See Appveyor's documentation for more details. Or you can simply
-#  access your wheels from the Appveyor "artifacts" tab for your build.
+# on_success:
+#   You can use this step to upload your artifacts to a public website.
+#   See Appveyor"s documentation for more details. Or you can simply
+#   access your wheels from the Appveyor "artifacts" tab for your build.
