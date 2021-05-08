@@ -324,7 +324,7 @@ have given {0}.
             cnt = cnt + 1
             nts.columns = ["{0}_{1}".format(nts.columns[0], cnt)]
         result = result.join(nts, how="outer")
-    return result
+    return tsutils.asbestfreq(result)
 
 
 @mando.command("extract", formatter_class=RSTHelpFormatter, doctype="numpy")
@@ -649,7 +649,7 @@ def csvtowdm(
 
     """
     tsd = tsutils.common_kwds(
-        tsutils.read_iso_ts(input_ts),
+        input_ts,
         start_date=start_date,
         end_date=end_date,
         pick=columns,

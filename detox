@@ -2,21 +2,20 @@
 
 program=wdmtoolbox
 
-pkgs=" \
-      setuptools \
-      atlas \
-      numpy \
-      scipy \
-      matplotlib \
-      dateutil \
-      pandas \
-      pip \
-      coverage \
-      flake8 \
-      pytest \
-      pytest-cov \
-      pytest-mpl \
-      "
+pkgs="\
+     coverage \
+     setuptools \
+     mando \
+     numpy \
+     scipy \
+     matplotlib \
+     pandas \
+     coverage \
+     flake8 \
+     pytest \
+     pytest-cov \
+     pytest-mpl \
+     "
 
 envs=`find ~/pythons -maxdepth 1 -mindepth 1 -type d`
 

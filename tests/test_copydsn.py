@@ -55,8 +55,9 @@ class TestDescribe(TestCase):
         ret2 = wdmtoolbox.extract("{0},101".format(self.wdmname))
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
-        ret3 = tsutils.asbestfreq(tstoolbox.read("tests/nwisiv_02246000.csv"))
+        ret3 = tstoolbox.read("tests/nwisiv_02246000.csv")
         ret3.index = ret3.index.tz_localize(None)
+        ret3 = tsutils.asbestfreq(ret3)
         ret1.columns = ["02246000_iv_00060"]
         assert_frame_equal(ret1, ret3, check_index_type=False)
 

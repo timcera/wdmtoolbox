@@ -732,8 +732,7 @@ of the time series in the WDM file.
             ),
             dtype=np.float64,
         )
-
-        tmpval = tsutils.common_kwds(tmpval, start_date=start_date, end_date=end_date)
+        tmpval = tsutils.common_kwds(input_tsd=tmpval, start_date=start_date, end_date=end_date)
         tmpval.replace(tsfill, np.nan, inplace=True)
         tmpval.index.name = "Datetime"
         return tmpval
