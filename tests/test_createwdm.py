@@ -1,10 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import subprocess
 import os
 import shlex
+import subprocess
 import tempfile
+
 from wdmtoolbox import wdmtoolbox
 
 

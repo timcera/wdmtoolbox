@@ -1156,10 +1156,10 @@ C
 C
 C
       SUBROUTINE   WDATIM
-     I                   ( WDMSFL, DSN, 
+     I                   ( WDMSFL, DSN,
      O                     STRT, STOP, TSTEP, TCODE,
      O                     RETCOD )
-C     
+C
 C     + + + PURPOSE + + +
 C     Gets the start and end dates of the data in a time series data set
 C     and the time step of the data.
@@ -1232,7 +1232,7 @@ C         time step not present
           TSTEP = 0
           FLAG = 1
         END IF
-C       get time units 
+C       get time units
         INDX = 17
         CALL WDBSGI ( WDMSFL, DSN, INDX, LEN,
      $                TMPTCODE, RETC )
@@ -1283,7 +1283,7 @@ C     ATRIBR - array of retrieved real attributes
 C              -999. returned if not present in data set
 C     RETCOD - return code
 C                  0 - all information successfully retrieved
-C                 -6 - no data in the data set 
+C                 -6 - no data in the data set
 C                -81 - data set does not exist
 C                -82 - data set is not a time-series data set
 C               -107 - one or more attributes not present in data set

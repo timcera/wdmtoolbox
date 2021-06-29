@@ -1236,9 +1236,9 @@ C
 C     + + + COMMON BLOCKS + + +
 C     numeric constants
       INCLUDE 'CONST.INC'
-C 
-C     + + + LOCAL VARIABLES + + + 
-      INTEGER      I0, I1, I2, I, J, K, L, M, PREC, EXPO, WHDIGS, 
+C
+C     + + + LOCAL VARIABLES + + +
+      INTEGER      I0, I1, I2, I, J, K, L, M, PREC, EXPO, WHDIGS,
      $             EXDIGS, FDIGS, NOCNT, KLEN
       REAL         R1, R2, R3, ARTMP, RSUB, MINFIX, MAXFIX, X
       CHARACTER(1) FMTBUF(12), BUF(79),  ZERO,  BLNK,  POINT,  STAR
@@ -1263,7 +1263,7 @@ C     + + + FUNCTIONS + + +
       LOGICAL      NONZER, NZFRAC
 C
 C     + + + INTRINSICS + + +
-      INTRINSIC    IABS, ABS, ALOG10, REAL, LEN, INDEX, 
+      INTRINSIC    IABS, ABS, ALOG10, REAL, LEN, INDEX,
      $             INT, AINT, ANINT, NINT
 C
 C     + + + EXTERNALS + + +
@@ -1283,7 +1283,7 @@ C     Non-Zero FRACtional part of a real number? - true or false
 C     number of Whole DIGitS - for X > 0;
 C     double precision needed in the following to ensure correct calc.
 C     of log for DG/UX
-Cmyg  WDIGS(X)  = IDINT(DLOG10(DBLE(X*RP1MIN))) + 1 
+Cmyg  WDIGS(X)  = IDINT(DLOG10(DBLE(X*RP1MIN))) + 1
 C     to keep Ryan/McFarland optimization honest
       RNOP(X) = X
 C
@@ -1351,7 +1351,7 @@ C           one digit to allow room for 0
             WHDIGS = 1
          END IF
 C
-         IF (ARTMP.LT.MINFIX .OR. ARTMP.GT.MAXFIX 
+         IF (ARTMP.LT.MINFIX .OR. ARTMP.GT.MAXFIX
      $       .OR. WHDIGS.GT.PREC) THEN
 C           use scientific notation
             FLOAT = .FALSE.
@@ -1435,7 +1435,7 @@ C                    sign (for which room has been given) won't be displayed,
 C                    but if the extra digit is non-zero, the negative sign
 C                    will be displayed and the zero before the decimal will
 C                    be lost.
-                     IF (NINT(R3).NE.0 .OR. 
+                     IF (NINT(R3).NE.0 .OR.
      $                  (NEG .AND. R1.LE.1.0E-20)) THEN
                            FDIGS  = FDIGS + 1
                      END IF
@@ -1710,7 +1710,7 @@ C     numeric constants
       INCLUDE 'CONST.INC'
 C
 C     + + + LOCAL VARIABLES + + +
-      INTEGER      I0, I1, I2, I, J, K, L, M, PREC, EXPO, WHDIGS, 
+      INTEGER      I0, I1, I2, I, J, K, L, M, PREC, EXPO, WHDIGS,
      $             EXDIGS, FDIGS, NOCNT, KLEN
       DOUBLE PRECISION  R1, R2, R3, ARTMP, RSUB, MINFIX, MAXFIX, X
       CHARACTER(1) FMTBUF(12), BUF(79),  ZERO,  BLNK,  POINT,  STAR
@@ -1735,7 +1735,7 @@ C     + + + FUNCTIONS + + +
       LOGICAL      NONZER, NZFRAC
 C
 C     + + + INTRINSICS + + +
-      INTRINSIC    IABS, DABS, DLOG10, DBLE, LEN, INDEX, 
+      INTRINSIC    IABS, DABS, DLOG10, DBLE, LEN, INDEX,
      $             IDINT, DINT, DNINT, IDNINT
 C
 C     + + + EXTERNALS + + +
@@ -1880,7 +1880,7 @@ C                    r1 gets the number that we had planned to display, but
 C                    raised to a power of 10 such that it is a whole number.
                      WRITE(99,*) 'ARTMP =',ARTMP
                      WRITE(99,*) 'LENGTH=',LENGTH
-                     WRITE(99,*) 'FDIGS =',FDIGS 
+                     WRITE(99,*) 'FDIGS =',FDIGS
                      WRITE(99,*) 'DBLE(10.0)**FDIGS =',DBLE(10.0)**FDIGS
                      WRITE(99,*) 'ARTMP*DBLE(10.0)**FDIGS =',
      $                            ARTMP*DBLE(10.0)**FDIGS
@@ -1908,7 +1908,7 @@ C                    sign (for which room has been given) won't be displayed,
 C                    but if the extra digit is non-zero, the negative sign
 C                    will be displayed and the zero before the decimal will
 C                    be lost.
-                     IF (IDNINT(R3).NE.0 .OR. 
+                     IF (IDNINT(R3).NE.0 .OR.
      .                  (NEG .AND. R1.LE.1.0D-20)) THEN
                            FDIGS  = FDIGS + 1
                      END IF
@@ -3187,7 +3187,7 @@ C       title not currently right justified
       END IF
 C
       RETURN
-      END   
+      END
 C
 C
 C
@@ -3209,24 +3209,24 @@ C     + + + ARGUMENT DEFINITIONS + + +
 C     LEN    - length of the string
 C     STR    - character string of a decimal number
 C
-C     + + + PARAMETERS + + + 
+C     + + + PARAMETERS + + +
       INTEGER   MAXTMP
       PARAMETER (MAXTMP=50)
-C 
-C     + + + LOCAL VARIABLES + + + 
+C
+C     + + + LOCAL VARIABLES + + +
       INTEGER   LOC,I1,NEG,SHFT,OLEN,I,IDIG,IOLD,INEW,JUST
       CHARACTER(1)TEMP(MAXTMP),DOT,MINUS,BLNK
 C
-C     + + + FUNCTIONS + + + 
+C     + + + FUNCTIONS + + +
       INTEGER  LENSTR, STRFND
 C
-C     + + + EXTERNAL + + + 
+C     + + + EXTERNAL + + +
       EXTERNAL  LENSTR, LFTSTR, RHTSTR, STRFND, ZIPC, COPYC
 C
-C     + + + DATA INITIALIZATIONS + + + 
+C     + + + DATA INITIALIZATIONS + + +
       DATA MINUS/'-'/,  DOT/'.'/,  BLNK/' '/, I1/1/
 C
-C     + + + END SPECIFICATIONS + + + 
+C     + + + END SPECIFICATIONS + + +
 C
 C     check if right of left justified
       IF (STR(LEN) .EQ. ' ') THEN
@@ -3240,19 +3240,19 @@ C     shift to left
 C     locate position of decimal point if any
       LOC = STRFND (LEN,STR,I1,DOT)
 C     check for minus sign
-      IF (STR(1) .EQ. MINUS) THEN               
+      IF (STR(1) .EQ. MINUS) THEN
         NEG = 1
       ELSE
         NEG = 0
       END IF
 C     determine length of string
-      OLEN = LENSTR (LEN,STR) 
+      OLEN = LENSTR (LEN,STR)
 C     reset LOC for cases of no decimal point
       IF (LOC .LE. 0) LOC = OLEN + 1
 C     determine number of commas needed, 10000 or greater
       SHFT = (LOC-2-NEG)/3
 C     blank out temp buffer
-      CALL ZIPC (MAXTMP,BLNK,TEMP)        
+      CALL ZIPC (MAXTMP,BLNK,TEMP)
 C
       IF (OLEN+SHFT .LE. LEN) THEN
 C       sufficient room for commas
@@ -3296,4 +3296,4 @@ C           so right justify
       END IF
 C
       RETURN
-      END                   
+      END

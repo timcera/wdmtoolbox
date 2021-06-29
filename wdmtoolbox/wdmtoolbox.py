@@ -1,27 +1,28 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """The component functions of the wdmtoolbox.
 
 Used to manipulate Watershed Data Management files for time-series.
 """
 from __future__ import print_function
 
-from collections import OrderedDict
 import datetime
 import os
 import sys
 
 # Third party imports
-from builtins import range
-from builtins import str
-from dateutil.parser import parse as dateparser
+from builtins import range, str
+from collections import OrderedDict
+
 import mando
-from mando.rst_text_formatter import RSTHelpFormatter
 import numpy as np
 import pandas as pd
+from dateutil.parser import parse as dateparser
+from mando.rst_text_formatter import RSTHelpFormatter
 
 # Local imports
 # Load in WDM subroutines
 from tstoolbox import tsutils
+
 from . import wdmutil
 
 WDM = wdmutil.WDM()
@@ -409,8 +410,7 @@ def listdsns_cli(wdmpath):
 
 
 def listdsns(wdmpath):
-    """Print out a table describing all DSNs in the WDM.
-    """
+    """Print out a table describing all DSNs in the WDM."""
     if not os.path.exists(wdmpath):
         raise ValueError(
             tsutils.error_wrapper(

@@ -32,7 +32,7 @@ C     + + + LOCAL VARIABLES + + +
       INTEGER   IND,RIND,PIND,NIND,XIND,I,CWDM,DONFG
       CHARACTER(255)STR
       CHARACTER(255)WDNAME
-      LOGICAL       OPEN           
+      LOGICAL       OPEN
 C
 C     + + + INTRINSICS + + +
       INTRINSIC IABS
@@ -358,7 +358,7 @@ C         unusable
           WDMFUN(I)= 0
           RECNO(I) = 0
         END IF
- 30   CONTINUE      
+ 30   CONTINUE
 C
       RETURN
       END
@@ -1306,7 +1306,7 @@ C
 C     + + + PURPOSE + + +
 C     Calls WDDSNP to search for the next data set greater than
 C     or equal to DSN.
-C 
+C
 C     + + + DUMMY ARGUMENTS + + +
       INTEGER   WDMSFL,DSN
 C
@@ -1360,10 +1360,10 @@ C
 C
 C     + + + PURPOSE + + +
 C     Checks the wdm file directory records for existing data sets.
-C     Beginning with data set DSN, and incrementing or decrementing by 
-C     INCR, the directory records are checked for an existing data set. 
-C     The first existing data set is returned in DSN.  If no data set 
-C     greater than or equal to (or less than or equal to) the input DSN 
+C     Beginning with data set DSN, and incrementing or decrementing by
+C     INCR, the directory records are checked for an existing data set.
+C     The first existing data set is returned in DSN.  If no data set
+C     greater than or equal to (or less than or equal to) the input DSN
 C     is found, a value of -1 is returned for DSN.
 C
 C     + + + DUMMY ARGUMENTS + + +

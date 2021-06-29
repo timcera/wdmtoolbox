@@ -1508,7 +1508,7 @@ C       no common time period
 C
       RETURN
       END
-C              
+C
 C
 C
       SUBROUTINE   DATCMN
@@ -1957,7 +1957,7 @@ C       start date does not begin at 00:00:00
         DATE(6) = 0
         CALL TIMBAK ( TCODE, DATE )
       END IF
-C       
+C
       RETURN
       END
 C

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 """Utilities to work with WDM files.
 
 The WDM class supplies a series of utilities for working with WDM files
@@ -12,14 +12,13 @@ import datetime
 import os
 import os.path
 import re
+from builtins import object, str
 
-from builtins import object
-from builtins import str
-from filelock import SoftFileLock
 import numpy as np
 import pandas as pd
-
+from filelock import SoftFileLock
 from tstoolbox import tsutils
+
 import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
@@ -732,7 +731,9 @@ of the time series in the WDM file.
             ),
             dtype=np.float64,
         )
-        tmpval = tsutils.common_kwds(input_tsd=tmpval, start_date=start_date, end_date=end_date)
+        tmpval = tsutils.common_kwds(
+            input_tsd=tmpval, start_date=start_date, end_date=end_date
+        )
         tmpval.replace(tsfill, np.nan, inplace=True)
         tmpval.index.name = "Datetime"
         return tmpval

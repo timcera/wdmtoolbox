@@ -19,39 +19,39 @@ The wdmtoolbox
 The `wdmtoolbox` is a Python script and library to read/write/manage Watershed
 Data Management (WDM) files used for time-series in hydrology and hydrological
 simulation.  WDM files are used in the Hydrological Simulation Program -
-FORTRAN (HSPF) and the Better Assessment of Science Integrating point and Non-point Sources (BASINS).  HSPF is a part of the BASINS system.
+FORTRAN (HSPF) and the Better Assessment of Science Integrating point and
+Non-point Sources (BASINS).  HSPF is a part of the BASINS system.
 
-EPA BASINS - (http://water.epa.gov/scitech/datait/models/basins/)
+BASINS, HSPF, and various utilities are available at
+https://github.com/respec/BASINS/releases
 
-Aqua Terra, BASINS download - (http://ftp.hspf.com/)
+For HSPF I also have developed:
 
-Requirements
-============
-If these requirements are not locally available, 'pip' or 'easy_install' will
-attempt to download and install.
-
-* pandas - on Windows this is part of the Python(x,y) distribution
-  (http://code.google.com/p/pythonxy/) or Anaconda
-  (https://store.continuum.io/cshop/anaconda/)
-
-* baker - command line parser
-
-* python-dateutil - used for parsing date/time strings
-
-* tstoolbox - a command line utility companion to `wdmtoolbox`.
-
-If you use the source distribution you have to have a FORTRAN compiler
-installed and configured for your environment.
+* hspfbintoolbox to extract data from the HSPF binary output file
+  https://timcera.bitbucket.io/hspfbintoolbox/docsrc/index.html
+  install with `pip install hspfbintoolbox`
+* hspf_utils to create water balance tables of the entire model, or particular
+  years, and to create a CSV file useful to join to a GIS layer to map model
+  results.
+  https://timcera.bitbucket.io/hspf_utils/docsrc/index.html
+  install with `pip install hspf_utils`
 
 Installation for the Impatient
 ==============================
+::
+
+    pip install wdmtoolbox
+
+For Windows should use the `conda` environment and install as many of the
+required libraries with `conda install ...` before using `pip`..
 
 Compile From Source
 -------------------
-Aside from using pre-compiled binaries on Windows, the following command needs
-gcc, gfortran, and probably want the Python science stack already installed.  
-::
+To compile from source you need a "C" compiler (gcc on Linux, Visual Studio
+2019 for Windows), a FORTRAN compiler (gfortran on Linux, MSYS2/MINGW gfortran
+on Windows), Python 3.7, 3.8, or 3.9 with "numpy" installed to be able to access
+`f2py`.
 
-        pip install wdmtoolbox
-
-
+Additional Software
+===================
+https://timcera.bitbucket.io/index.html

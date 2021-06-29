@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -7,8 +6,8 @@ test_createnewdsn
 Tests for `wdmtoolbox` module.
 """
 
-import sys
 import os
+import sys
 import tempfile
 
 try:

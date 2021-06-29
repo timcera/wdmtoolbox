@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -8,8 +7,8 @@ test_createnewdsn
 Tests for `tstoolbox` module.
 """
 
-import sys
 import os
+import sys
 import tempfile
 
 try:
@@ -18,10 +17,10 @@ except:
     from io import StringIO
 
 from unittest import TestCase
-from pandas.testing import assert_frame_equal
 
-from tstoolbox import tstoolbox
-from tstoolbox import tsutils
+from pandas.testing import assert_frame_equal
+from tstoolbox import tstoolbox, tsutils
+
 from wdmtoolbox import wdmtoolbox
 from wdmtoolbox.wdmutil import WDMError
 
@@ -104,8 +103,8 @@ class TestDescribe(TestCase):
         ret1 = wdmtoolbox.extract(self.wdmname, 101, start_date="2014-02-21 16:00:00")
 
         ret3 = tstoolbox.read(
-                "tests/nwisiv_02246000.csv", start_date="2014-02-21 16:00:00"
-            )
+            "tests/nwisiv_02246000.csv", start_date="2014-02-21 16:00:00"
+        )
         ret3.index = ret3.index.tz_localize(None)
         ret3 = tsutils.asbestfreq(ret3)
         ret1.columns = ["02246000_iv_00060"]
@@ -117,7 +116,9 @@ class TestDescribe(TestCase):
         wdmtoolbox.csvtowdm(self.wdmname, 101, input_ts="tests/nwisiv_02246000.csv")
         ret1 = wdmtoolbox.extract(self.wdmname, 101, end_date="2014-02-22 11:00:00")
 
-        ret3 = tstoolbox.read("tests/nwisiv_02246000.csv", end_date="2014-02-22 11:00:00")
+        ret3 = tstoolbox.read(
+            "tests/nwisiv_02246000.csv", end_date="2014-02-22 11:00:00"
+        )
         ret3.index = ret3.index.tz_localize(None)
         ret3 = tsutils.asbestfreq(ret3)
         ret1.columns = ["02246000_iv_00060"]
@@ -135,10 +136,10 @@ class TestDescribe(TestCase):
         )
 
         ret3 = tstoolbox.read(
-                "tests/nwisiv_02246000.csv",
-                start_date="2014-02-21 16:00:00",
-                end_date="2014-02-22 11:00:00",
-            )
+            "tests/nwisiv_02246000.csv",
+            start_date="2014-02-21 16:00:00",
+            end_date="2014-02-22 11:00:00",
+        )
         ret3.index = ret3.index.tz_localize(None)
         ret3 = tsutils.asbestfreq(ret3)
         ret1.columns = ["02246000_iv_00060"]

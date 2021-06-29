@@ -3,7 +3,7 @@ Contributing
 ============
 
 Contributions are welcome, and they are greatly appreciated! Every
-little bit helps, and credit will always be given. 
+little bit helps, and credit will always be given.
 
 You can contribute in many ways:
 
@@ -36,7 +36,7 @@ is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-wdmtoolbox could always use more documentation, whether as part of the 
+wdmtoolbox could always use more documentation, whether as part of the
 official wdmtoolbox docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 

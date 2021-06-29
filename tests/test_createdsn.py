@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -8,8 +7,8 @@ test_createnewdsn
 Tests for `tstoolbox` module.
 """
 
-import sys
 import os
+import sys
 import tempfile
 
 try:
@@ -18,9 +17,10 @@ except:
     from io import StringIO
 
 from unittest import TestCase
-from pandas.testing import assert_frame_equal
 
+from pandas.testing import assert_frame_equal
 from tstoolbox import tstoolbox
+
 from wdmtoolbox import wdmtoolbox
 from wdmtoolbox.wdmutil import DSNExistsError
 

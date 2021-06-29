@@ -8,7 +8,7 @@ Just run 'wdmtoolbox' to get a list of subcommands
 The default for all of the subcommands that accept time-series data is to pull
 from stdin (typically a pipe or redirection).  If a subcommand accepts an input file for an
 argument, you can use "... --input_ts=input_file_name.csv ...", or redirection
-"... < input_file_name.csv".  
+"... < input_file_name.csv".
 
 A WDM file stores time-series asociated with a Data Set Number (DSN).  A DSN is
 a number between 1 and 32000, though HSPF can only use for input and output
@@ -33,7 +33,7 @@ on-line sources.  Look at the "tsgettoolbox" documentation at
 :ref:`tsgettoolbox_documentation` for particulars on installation, but it may
 be as easy as "pip install tsgettoolbox".
 
-"tsgettoolbox" examples::   
+"tsgettoolbox" examples::
 
     # Make a new wdm.
     wdmtoolbox createnewwdm obs.wdm
@@ -111,7 +111,7 @@ wdmtoswmm5rdii
 Usage - API
 ===========
 You can use all of the command line subcommands as functions.  The function
-signature is identical to the command line subcommands.  
+signature is identical to the command line subcommands.
 
 Returns:
 

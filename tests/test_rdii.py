@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -8,8 +7,8 @@ test_rdii.py
 Tests for `wdmtoolbox` module.
 """
 
-import sys
 import os
+import sys
 import tempfile
 
 try:

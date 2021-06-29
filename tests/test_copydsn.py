@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -8,8 +7,8 @@ test_copydsn
 Tests for `tstoolbox` module.
 """
 
-import sys
 import os
+import sys
 import tempfile
 
 try:
@@ -18,10 +17,10 @@ except:
     from io import StringIO
 
 from unittest import TestCase
-from pandas.testing import assert_frame_equal
 
-from tstoolbox import tstoolbox
-from tstoolbox import tsutils
+from pandas.testing import assert_frame_equal
+from tstoolbox import tstoolbox, tsutils
+
 from wdmtoolbox import wdmtoolbox
 
 

@@ -1,10 +1,10 @@
-import setuptools
-from numpy.distutils.core import Extension, setup
+# -*- coding: utf-8 -*-
+import distutils.command.build_ext  # imports distutils.core, too
 import os
-import shutil
 import sys
 
-import distutils.command.build_ext  # imports distutils.core, too
+import setuptools
+from numpy.distutils.core import Extension, setup
 
 d = distutils.core.Distribution()
 b = distutils.command.build_ext.build_ext(
@@ -25,6 +25,7 @@ version = open("VERSION").readline().strip()
 if sys.argv[-1] == "publish":
     os.system("python setup.py sdist")
     os.system("twine upload dist/{pkg_name}-{version}.tar.gz".format(**locals()))
+    os.system("twine upload dist/{pkg_name}-{version}*.whl".format(**locals()))
     sys.exit()
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -34,7 +35,7 @@ install_requires = [
     # List your project dependencies here.
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
-    "tstoolbox >= 102",
+    "tstoolbox >= 103",
     "filelock",
 ]
 

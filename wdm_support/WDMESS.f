@@ -577,8 +577,8 @@ C
       END
 C
 C
-C 
-      SUBROUTINE   WDGTAT 
+C
+      SUBROUTINE   WDGTAT
      I                   (WDMSFL,DSN,SAPOS,
      O                    SAIND,SAVAL)
 C
@@ -600,7 +600,7 @@ C     + + + COMMON BLOCKS + + +
 C
 C     + + + LOCAL VARIABLES + + +
       INTEGER   RREC,RETCOD,RIND,PSA,PSASTR,PSAPOS,SALEN,SACNT,I,J
-C    
+C
 C     + + + FUNCTIONS + + +
       INTEGER   WDRCGO
 C
@@ -620,7 +620,7 @@ C       what dsn type?
           SALEN= WIBUFF(PSAPOS+3,RIND)- WIBUFF(PSAPOS+1,RIND)
         ELSE IF (SAPOS .EQ. SACNT) THEN
           SALEN= WIBUFF(11,RIND)- WIBUFF(PSAPOS+1,RIND)
-        ELSE        
+        ELSE
           SALEN= 0
         END IF
         IF (SAPOS .EQ. 1) THEN
@@ -630,11 +630,11 @@ C         WRITE(*,*) SACNT, PSASTR,PSAPOS
           SAIND = WIBUFF(PSAPOS,RIND)
           J= WIBUFF(PSAPOS+1,RIND) - 1
           DO 10 I = 1, SALEN
-            SAVAL(I)= WIBUFF(I+J,RIND)          
+            SAVAL(I)= WIBUFF(I+J,RIND)
             IF (I .EQ. 1) THEN
 C             WRITE(*,*) SAPOS,SALEN,SAIND,J,SAVAL(I)
             END IF
- 10       CONTINUE     
+ 10       CONTINUE
         ELSE
 C         done
           SAIND = 0
@@ -642,6 +642,6 @@ C         done
       ELSE
         SAIND = 0
       END IF
-C   
+C
       RETURN
-      END 
+      END

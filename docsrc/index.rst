@@ -1,6 +1,6 @@
 .. include:: ../BADGES.rst
 
-.. _wdmtoolbox_documentation:   
+.. _wdmtoolbox_documentation:
 
 wdmtoolbox
 ==========
@@ -35,4 +35,3 @@ API
 Other Projects
 --------------
 http://timcera.bitbucket.io
-
