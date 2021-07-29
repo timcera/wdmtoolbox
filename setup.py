@@ -23,13 +23,13 @@ pkg_name = "wdmtoolbox"
 version = open("VERSION").readline().strip()
 
 if sys.argv[-1] == "publish":
+    os.system("cleanpy .")
     os.system("python setup.py sdist")
     os.system("twine upload dist/{pkg_name}-{version}.tar.gz".format(**locals()))
     os.system("twine upload dist/{pkg_name}-{version}*.whl".format(**locals()))
     sys.exit()
 
-here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, "README.rst")).read()
+README = open("README.rst").read()
 
 install_requires = [
     # List your project dependencies here.
@@ -38,6 +38,20 @@ install_requires = [
     "tstoolbox >= 103",
     "filelock",
 ]
+
+extras_require = {
+    "dev": [
+        "black",
+        "cleanpy",
+        "twine",
+        "pytest",
+        "coverage",
+        "flake8",
+        "pytest-cov",
+        "pytest-mpl",
+        "pre-commit",
+    ]
+}
 
 libraries = []
 
@@ -69,7 +83,7 @@ wdm_support = Extension(
 )
 
 setup(
-    name="wdmtoolbox",
+    name=pkg_name,
     version=version,
     description="Read and write Watershed Data Management (WDM) files",
     long_description=README,
@@ -91,16 +105,20 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     keywords="WDM watershed data_management data hydrology hydrological simulation fortran HSPF",
-    author="Tim Cera, P.E.",
+    author="Tim Cera, PE",
     author_email="tim@cerazone.net",
-    url="http://timcera.bitbucket.io/wdmtoolbox/docsrc/index.html",
-    packages=["wdmtoolbox"],
-    package_dir={"wdmtoolbox": "wdmtoolbox"},
+    url="http://timcera.bitbucket.io/{pkg_name}/docsrc/index.html".format(**locals()),
+    license="BSD",
+    packages=setuptools.find_packages("src"),
+    package_dir={"": "src"},
     package_data={"wdmtoolbox": ["message.wdm"]},
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
+    extras_require=extras_require,
     ext_modules=[wdm_support],
-    entry_points={"console_scripts": ["wdmtoolbox=wdmtoolbox.wdmtoolbox:main"]},
+    entry_points={
+        "console_scripts": ["{pkg_name}={pkg_name}.{pkg_name}:main".format(**locals())]
+    },
     python_requires=">=3.7.1",
 )
