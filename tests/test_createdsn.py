@@ -49,7 +49,7 @@ class TestDescribe(TestCase):
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5, base_year=1870)
         wdmtoolbox.csvtowdm(self.wdmname, 101, input_ts="tests/sunspot_area.csv")
         ret1 = wdmtoolbox.extract(self.wdmname, 101).astype("f")
-        ret2 = wdmtoolbox.extract("{0},101".format(self.wdmname)).astype("f")
+        ret2 = wdmtoolbox.extract("{},101".format(self.wdmname)).astype("f")
         assert_frame_equal(ret1, ret2)
 
         ret3 = tstoolbox.read("tests/sunspot_area.csv").astype("f")

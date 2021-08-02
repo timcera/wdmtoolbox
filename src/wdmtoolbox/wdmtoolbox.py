@@ -251,20 +251,20 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     maptcode = {1: 1, 2: 60, 3: 3600, 4: 86400}
 
     print("SWMM5")
-    print("RDII dump of DSNS {0} from {1}".format(dsns, wdmpath))
+    print("RDII dump of DSNS {} from {}".format(dsns, wdmpath))
     print(maptcode[collect_tcodes] * collect_tsteps)
     print(1)
     print("FLOW CFS")
     print(len(dsns))
     for dsn, location in collect_keys:
-        print("{0}_{1}".format(dsn, location))
+        print("{}_{}".format(dsn, location))
     print("Node Year Mon Day Hr Min Sec Flow")
     # Can pick any time series because they should all have the same interval
     # and start and end dates.
     for dex, date in enumerate(tmp.index):
         for dsn, location in collect_keys:
             print(
-                "{0}_{1} {2} {3:02} {4:02} {5:02} {6:02} {7:02} {8}".format(
+                "{}_{} {} {:02} {:02} {:02} {:02} {:02} {}".format(
                     dsn,
                     location,
                     date.year,
@@ -299,7 +299,7 @@ def extract(*wdmpath, **kwds):
             tsutils.error_wrapper(
                 """
 The only allowed keywords are start_date and end_date.  You
-have given {0}.
+have given {}.
 """.format(
                     kwds
                 )
@@ -323,7 +323,7 @@ have given {0}.
         nts = WDM.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
         if nts.columns[0] in result.columns:
             cnt = cnt + 1
-            nts.columns = ["{0}_{1}".format(nts.columns[0], cnt)]
+            nts.columns = ["{}_{}".format(nts.columns[0], cnt)]
         result = result.join(nts, how="outer")
     return tsutils.asbestfreq(result)
 
@@ -345,7 +345,9 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
             `wdmpath` can be space separated sets of 'wdmpath,dsn'.
 
             'file.wdm,101 file2.wdm,104 file.wdm,227'
+
     {start_date}
+
     {end_date}
 
     """
@@ -415,7 +417,7 @@ def listdsns(wdmpath):
         raise ValueError(
             tsutils.error_wrapper(
                 """
-File {0} does not exist.
+File {} does not exist.
 """.format(
                     wdmpath
                 )
@@ -474,52 +476,63 @@ def createnewdsn(
         Path and WDM filename.  HSPF is limited to a path
         and WDM file name of 64 characters.  'wdmtoolbox' is
         only limited by the command line limits.
+
     dsn
         The Data Set Number in the WDM file.  This number
         must be greater or equal to 1 and less than or equal
         to 32000.  HSPF can only use for input or output
         DSNs of 1 to 9999, inclusive.
+
     tstype
         Time series type.  Can be any 4 character string, but if not
         specified defaults to first 4 characters of 'constituent'.  Must
         match what is used in HSPF UCI file.
 
         Limited to 4 characters.
+
     base_year
         Base year of time series, defaults to 1900.  The DSN will not
         accept any time-stamps before this date.
+
     tcode
         Time series code, (1=second, 2=minute, 3=hour, 4=day, 5=month,
         6=year) defaults to 4=daily.
+
     tsstep
         Time series steps, defaults (and almost always is)
         1.
+
     statid
         The station name, defaults to
         ''.
 
         Limited to 16 characters.
+
     scenario
         The name of the scenario, defaults to ''.  Can be anything, but
         typically, 'OBSERVED' for calibration and input time-series and
         'SIMULATE' for HSPF results.
 
         Limited to 8 characters.
+
     location
         The location, defaults to
         ''.
 
         Limited to 8 characters.
+
     description
         Descriptive text, defaults to
         ''.
 
         Limited to 48 characters.
+
     constituent
         The constituent that the time series represents, defaults to
         ''.
 
         Limited to 8 characters.
+
     tsfill
         The value used as placeholder for missing
         values.
@@ -666,7 +679,7 @@ def csvtowdm(
             tsutils.error_wrapper(
                 """
 The input data set must contain only 1 time series.
-You gave {0}.
+You gave {}.
 """.format(
                     len(tsd.columns)
                 )
@@ -717,7 +730,7 @@ def _writetodsn(wdmpath, dsn, data):
 *   'A', 'AS', 'A-DEC' for annual,
 *   'M', 'MS' for monthly,
 *   'D', 'H', 'T', 'S' for day, hour, minute, and second.
-*   wdmtoolbox thinks this series is {0}.
+*   wdmtoolbox thinks this series is {}.
 *
 """.format(
                 pandacode
@@ -752,7 +765,7 @@ but the data has a tcode of {1} ({4}).
         raise ValueError(
             tsutils.error_wrapper(
                 """
-The DSN has a tstep of {0}, but the data has a tstep of {1}.
+The DSN has a tstep of {}, but the data has a tstep of {}.
 """.format(
                     dsntstep, tstep
                 )

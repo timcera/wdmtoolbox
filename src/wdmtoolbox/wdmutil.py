@@ -14,12 +14,11 @@ import os.path
 import re
 from builtins import object, str
 
+import _wdm_lib
 import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
 from tstoolbox import tsutils
-
-import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
 MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
@@ -46,7 +45,7 @@ class DSNDoesNotExist(Exception):
             return """
 *
 *   The DSN number must be >= 1 and <= 32000.
-*   You supplied {0}.
+*   You supplied {}.
 *
 """.format(
                 self.dsn
@@ -54,7 +53,7 @@ class DSNDoesNotExist(Exception):
 
         return """
 *
-*   The DSN {0} does not exist in the dataset.
+*   The DSN {} does not exist in the dataset.
 *
 """.format(
             self.dsn
@@ -72,7 +71,7 @@ class WDMFileExists(Exception):
         """Return detailed error message."""
         return """
 *
-*   File {0} exists.
+*   File {} exists.
 *
 """.format(
             self.filename
@@ -90,7 +89,7 @@ class DSNExistsError(Exception):
         """Return detailed error message."""
         return """
 *
-*   DSN {0} exists.
+*   DSN {} exists.
 *
 """.format(
             self.dsn
@@ -164,7 +163,7 @@ class WDM(object):
                     raise ValueError(
                         tsutils.error_wrapper(
                             """
-Trying to open file "{0}" and it cannot be found.
+Trying to open file "{}" and it cannot be found.
 """.format(
                                 wdname
                             )
@@ -172,7 +171,7 @@ Trying to open file "{0}" and it cannot be found.
                     )
             retcode = self.wdbopn(wdmsfl, wdname, ronwfg)
             self._retcode_check(
-                retcode, additional_info="wdbopn file={0} DSN={1}".format(wdname, "NA")
+                retcode, additional_info="wdbopn file={} DSN={}".format(wdname, "NA")
             )
             self.openfiles[wdname] = wdmsfl
         return wdmsfl
@@ -260,8 +259,8 @@ Trying to open file "{0}" and it cannot be found.
             raise WDMError(
                 """
 *
-*   WDM library function returned error code {0}. {1}
-*   WDM error: {2}
+*   WDM library function returned error code {}. {}
+*   WDM error: {}
 *
 """.format(
                     retcode, additional_info, retcode_dict[retcode]
@@ -273,7 +272,7 @@ Trying to open file "{0}" and it cannot be found.
             raise WDMError(
                 """
 *
-*   WDM library function returned error code {0}. {1}
+*   WDM library function returned error code {}. {}
 *
 """.format(
                     retcode, additional_info
@@ -291,7 +290,7 @@ Trying to open file "{0}" and it cannot be found.
             retcode = self.wddsrn(wdmfp, odsn, ndsn)
             self._close(wdmpath)
         self._retcode_check(
-            retcode, additional_info="wddsrn file={0} DSN={1}".format(wdmpath, odsn)
+            retcode, additional_info="wddsrn file={} DSN={}".format(wdmpath, odsn)
         )
 
     def delete_dsn(self, wdmpath, dsn):
@@ -309,7 +308,7 @@ Trying to open file "{0}" and it cannot be found.
                 self._close(wdmpath)
                 self._retcode_check(
                     retcode,
-                    additional_info="wddsdl file={0} DSN={1}".format(wdmpath, dsn),
+                    additional_info="wddsdl file={} DSN={}".format(wdmpath, dsn),
                 )
             self._close(wdmpath)
 
@@ -327,7 +326,7 @@ Trying to open file "{0}" and it cannot be found.
             self._close(outwdmpath)
         self._close(inwdmpath)
         self._retcode_check(
-            retcode, additional_info="wddscl file={0} DSN={1}".format(inwdmpath, indsn)
+            retcode, additional_info="wddscl file={} DSN={}".format(inwdmpath, indsn)
         )
 
     def describe_dsn(self, wdmpath, dsn):
@@ -342,7 +341,7 @@ Trying to open file "{0}" and it cannot be found.
         if retcode == -6:
             retcode = 0
         self._retcode_check(
-            retcode, additional_info="wtfndt file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wtfndt file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -351,7 +350,7 @@ Trying to open file "{0}" and it cannot be found.
         )  # salen
         self._close(wdmpath)
         self._retcode_check(
-            retcode, additional_info="wdbsgi file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgi file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -360,7 +359,7 @@ Trying to open file "{0}" and it cannot be found.
         )  # salen
         self._close(wdmpath)
         self._retcode_check(
-            retcode, additional_info="wdbsgi file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgi file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -376,7 +375,7 @@ Trying to open file "{0}" and it cannot be found.
         else:
             tsfill = tsfill[0]
         self._retcode_check(
-            retcode, additional_info="wdbsgr file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgr file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -388,7 +387,7 @@ Trying to open file "{0}" and it cannot be found.
             ostr = ""
             retcode = 0
         self._retcode_check(
-            retcode, additional_info="wdbsgr file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgr file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -400,7 +399,7 @@ Trying to open file "{0}" and it cannot be found.
             scen_ostr = ""
             retcode = 0
         self._retcode_check(
-            retcode, additional_info="wdbsgr file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgr file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -412,7 +411,7 @@ Trying to open file "{0}" and it cannot be found.
             con_ostr = ""
             retcode = 0
         self._retcode_check(
-            retcode, additional_info="wdbsgr file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgr file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -421,7 +420,7 @@ Trying to open file "{0}" and it cannot be found.
         )  # salen
         self._close(wdmpath)
         self._retcode_check(
-            retcode, additional_info="wdbsgi file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgi file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -433,7 +432,7 @@ Trying to open file "{0}" and it cannot be found.
             desc_ostr = ""
             retcode = 0
         self._retcode_check(
-            retcode, additional_info="wdbsgc file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgc file={} DSN={}".format(wdmpath, dsn)
         )
 
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
@@ -443,7 +442,7 @@ Trying to open file "{0}" and it cannot be found.
             tstype = ""
             retcode = 0
         self._retcode_check(
-            retcode, additional_info="wdbsgc file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdbsgc file={} DSN={}".format(wdmpath, dsn)
         )
 
         self.timcvt(llsdat)
@@ -551,14 +550,14 @@ Trying to open file "{0}" and it cannot be found.
                 retcode = self.wdbsai(wdmfp, dsn, messfp, saind, salen, saval)
                 self._retcode_check(
                     retcode,
-                    additional_info="wdbsai file={0} DSN={1}".format(wdmpath, dsn),
+                    additional_info="wdbsai file={} DSN={}".format(wdmpath, dsn),
                 )
 
             for saind, salen, saval in [(32, 1, tsfill)]:  # tsfill
                 retcode = self.wdbsar(wdmfp, dsn, messfp, saind, salen, saval)
                 self._retcode_check(
                     retcode,
-                    additional_info="wdbsar file={0} DSN={1}".format(wdmpath, dsn),
+                    additional_info="wdbsar file={} DSN={}".format(wdmpath, dsn),
                 )
 
             for saind, salen, saval, error_name in [
@@ -574,8 +573,8 @@ Trying to open file "{0}" and it cannot be found.
                     raise ValueError(
                         tsutils.error_wrapper(
                             """
-String "{0}" is too long for {1}.  Must
-have a length equal or less than {2}.
+String "{}" is too long for {}.  Must
+have a length equal or less than {}.
 """.format(
                                 saval, error_name, salen
                             )
@@ -587,7 +586,7 @@ have a length equal or less than {2}.
                 retcode = self.wdbsac(wdmfp, dsn, messfp, saind, salen, saval)
                 self._retcode_check(
                     retcode,
-                    additional_info="wdbsac file={0} DSN={1}".format(wdmpath, dsn),
+                    additional_info="wdbsac file={} DSN={}".format(wdmpath, dsn),
                 )
             self._close(wdmpath)
 
@@ -624,8 +623,8 @@ have a length equal or less than {2}.
             raise ValueError(
                 tsutils.error_wrapper(
                     """
-The base year for this DSN is {0}.  All data to insert must be after the
-base year.  Instead the first year of the series is {1}.
+The base year for this DSN is {}.  All data to insert must be after the
+base year.  Instead the first year of the series is {}.
 """.format(
                         dsn_desc["base_year"], llsdat[0]
                     )
@@ -639,7 +638,7 @@ base year.  Instead the first year of the series is {1}.
             retcode = self.wdtput(wdmfp, dsn, tstep, llsdat, nval, 1, 0, tcode, data)
             self._close(wdmpath)
         self._retcode_check(
-            retcode, additional_info="wdtput file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdtput file={} DSN={}".format(wdmpath, dsn)
         )
 
     def read_dsn(self, wdmpath, dsn, start_date=None, end_date=None):
@@ -648,7 +647,7 @@ base year.  Instead the first year of the series is {1}.
             raise ValueError(
                 tsutils.error_wrapper(
                     """
-File {0} does not exist.
+File {} does not exist.
 """.format(
                         wdmpath
                     )
@@ -675,7 +674,7 @@ File {0} does not exist.
                 raise ValueError(
                     tsutils.error_wrapper(
                         """
-The requested start date ({0}) is after the end date ({1})
+The requested start date ({}) is after the end date ({})
 of the time series in the WDM file.
 """.format(
                             start_date, datetime.datetime(*lledat)
@@ -690,7 +689,7 @@ of the time series in the WDM file.
                 raise ValueError(
                     tsutils.error_wrapper(
                         """
-The requested end date ({0}) is before the start date ({1})
+The requested end date ({}) is before the start date ({})
 of the time series in the WDM file.
 """.format(
                             end_date, datetime.datetime(*llsdat)
@@ -713,13 +712,13 @@ of the time series in the WDM file.
             return pd.DataFrame()
 
         self._retcode_check(
-            retcode, additional_info="wdtget file={0} DSN={1}".format(wdmpath, dsn)
+            retcode, additional_info="wdtget file={} DSN={}".format(wdmpath, dsn)
         )
 
         index = pd.date_range(
             datetime.datetime(*llsdat),
             periods=iterm,
-            freq="{0:d}{1}".format(tstep, MAPTCODE[tcode]),
+            freq="{:d}{}".format(tstep, MAPTCODE[tcode]),
         )
 
         # Convert time series to pandas DataFrame
@@ -727,7 +726,7 @@ of the time series in the WDM file.
             pd.Series(
                 dataout,
                 index=index,
-                name="{0}_DSN_{1}".format(os.path.basename(wdmpath), dsn),
+                name="{}_DSN_{}".format(os.path.basename(wdmpath), dsn),
             ),
             dtype=np.float64,
         )
@@ -748,7 +747,7 @@ of the time series in the WDM file.
         if wdmpath in self.openfiles:
             retcode = self.wdflcl(self.openfiles[wdmpath])
             self._retcode_check(
-                retcode, additional_info="wdflcl file={0} DSN={1}".format(wdmpath, "NA")
+                retcode, additional_info="wdflcl file={} DSN={}".format(wdmpath, "NA")
             )
             self.openfiles.pop(wdmpath)
 

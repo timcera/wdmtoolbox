@@ -9,7 +9,7 @@ from wdmtoolbox import wdmtoolbox
 
 
 def _createwdm(fname):
-    cmd = shlex.split("wdmtoolbox createnewwdm --overwrite {0}".format(fname))
+    cmd = shlex.split("wdmtoolbox createnewwdm --overwrite {}".format(fname))
     return subprocess.call(cmd)
 
 
@@ -27,7 +27,7 @@ def test_createnewdsn_checkdefaults():
     fd, fname = tempfile.mkstemp(suffix=".wdm")
     os.close(fd)
     assert _createwdm(fname) == 0
-    cmd = shlex.split("wdmtoolbox createnewdsn {0} 101".format(fname))
+    cmd = shlex.split("wdmtoolbox createnewdsn {} 101".format(fname))
     retcode = subprocess.call(cmd)
     assert retcode == 0
     # tstr = [' DSN  SCENARIO LOCATION CONSTITUENT TSTYPE START_DATE          END_DATE            TCODE TSTEP',

@@ -49,7 +49,7 @@ class TestDescribe(TestCase):
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2, base_year=1970, tsstep=15)
         wdmtoolbox.csvtowdm(self.wdmname, 101, input_ts="tests/nwisiv_02246000.csv")
         ret1 = wdmtoolbox.extract(self.wdmname, 101)
-        ret2 = wdmtoolbox.extract("{0},101".format(self.wdmname))
+        ret2 = wdmtoolbox.extract("{},101".format(self.wdmname))
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
         ret3 = tstoolbox.read("tests/nwisiv_02246000.csv")

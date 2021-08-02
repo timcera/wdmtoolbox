@@ -50,6 +50,13 @@ extras_require = {
         "pytest-cov",
         "pytest-mpl",
         "pre-commit",
+        "black-nbconvert",
+        "blacken-docs",
+        "velin",
+        "isort",
+        "pyroma",
+        "pyupgrade",
+        "commitizen",
     ]
 }
 
@@ -100,6 +107,7 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Scientific/Engineering",
         "Topic :: Software Development :: Libraries :: Python Modules",
@@ -120,5 +128,6 @@ setup(
     entry_points={
         "console_scripts": ["{pkg_name}={pkg_name}.{pkg_name}:main".format(**locals())]
     },
+    test_suite="tests",
     python_requires=">=3.7.1",
 )
