@@ -1,7 +1,14 @@
+[project]
+dependencies = [
+    "tstoolbox >= 103",
+    "filelock",
+]
+
 
 [tool.check-manifest]
 ignore = [".travis.yml",
           "docs/_function_autosummary/*"]
+
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -9,3 +16,11 @@ version = "12.7.2"
 tag_format = "v$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
+
+
+[build-system]
+requires = [
+    "setuptools",
+    "oldest-supported-numpy",
+]
+build-backend = "setuptools.build_meta"

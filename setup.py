@@ -58,6 +58,7 @@ libraries = []
 wdm_support = Extension(
     "_wdm_lib",
     [
+        "wdm_support/wdm.pyf",
         "wdm_support/DTTM90.f",
         "wdm_support/TSBUFR.f",
         "wdm_support/UTCHAR.f",

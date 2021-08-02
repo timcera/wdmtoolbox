@@ -1,0 +1,42 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        gcc_v: [9] # Version of GFortran we want to use.
+
+    env:
+      FC: gfortran-${{ matrix.gcc_v }}
+      GCC_V: ${{ matrix.gcc_v }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install GFortran macOS
+        if: contains(matrix.os, 'mac')
+        run: |
+          brew install gcc@${GCC_V} || brew upgrade gcc@${GCC_V} || true
+          sudo ln -s /usr/local/bin/gfortran-${GCC_V} /usr/local/bin/gfortran
+          sudo mkdir /usr/local/gfortran
+          sudo ln -s /usr/local/Cellar/gcc@${GCC_V}/*/lib/gcc/${GCC_V} /usr/local/gfortran/lib
+          gfortran --version
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.0.1
+        env:
+          CIBW_SKIP: "pp* *-win32"
+          CIBW_TEST_REQUIRES: pytest
+          CIBW_TEST_COMMAND: pytest {package}/tests
+          CIBW_BUILD_VERBOSITY_WINDOWS: 3
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
