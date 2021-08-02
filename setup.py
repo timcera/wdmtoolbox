@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
-import distutils.command.build_ext  # imports distutils.core, too
+#
 import os
 import sys
 
 import setuptools
 from numpy.distutils.core import Extension, setup
-
-d = distutils.core.Distribution()
-b = distutils.command.build_ext.build_ext(
-    d
-)  # or `d.get_command_class('build_ext')(d)',
-# then it's enough to import distutils.core
-b.finalize_options()
 
 # temporarily redirect config directory to prevent matplotlib importing
 # testing that for writeable directory which results in sandbox error in
@@ -65,7 +58,6 @@ libraries = []
 wdm_support = Extension(
     "_wdm_lib",
     [
-        "wdm_support/wdm.pyf",
         "wdm_support/DTTM90.f",
         "wdm_support/TSBUFR.f",
         "wdm_support/UTCHAR.f",

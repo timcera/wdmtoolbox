@@ -1,5 +1,5 @@
 
-f2py --overwrite-signature -m _wdm_lib -h wdm.pyf \
+f2py3 --overwrite-signature -m _wdm_lib -h wdm.pyf \
                    DTTM90.f TSBUFR.f UTCHAR.f UTCP90.f UTDATE.f UTNUMB.f \
                    UTWDMD.f UTWDMF.f UTWDT1.f WDATM1.f WDATM2.f WDATRB.f \
                    WDBTCH.f WDMESS.f WDMID.f WDOP.f WDTMS1.f WDTMS2.f    \

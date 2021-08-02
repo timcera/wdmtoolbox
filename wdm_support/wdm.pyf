@@ -291,5 +291,5 @@ python module _wdm_lib ! in
     end interface
 end python module _wdm_lib
 
-! This file was auto-generated with f2py (version:2).
+! This file was auto-generated with f2py (version:1.21.1).
 ! See http://cens.ioc.ee/projects/f2py2e/
