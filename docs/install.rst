@@ -1,11 +1,11 @@
 Installation for Mere Mortals
 =============================
 
-Windows
--------
-
 Pre-compiled
 ++++++++++++
+
+Windows
+-------
 I used the Appveyor service to compile "wdmtoolbox" on Windows for Python 3.7,
 3.8, and 3.9.  These versions are available via `pip`.
 
@@ -52,9 +52,9 @@ Compile From Source
 
 Windows
 -------
-I use http://appveyor.com to compile "wdmtoolbox" for Windows.  Getting the
-"appveyor.yml" configuration file right is a nightmare, but finally figured it
-out.
+I use http://appveyor.com to compile the 32-bit version and Github Actions to
+compile the 64-bit versions.  Getting the "appveyor.yml" and Github workflow
+configuration files right is a nightmare, but finally figured it out.
 
 You should be able to compile it in other ways if you know your way around
 Windows, Python, and FORTRAN development.  The minimal environment that

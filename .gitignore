@@ -30,3 +30,4 @@ __pycache__/*
 *.tmp*
 .tox
 .tox/*
+_function_autosummary

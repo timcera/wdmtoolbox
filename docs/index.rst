@@ -11,7 +11,7 @@ used to store input and output time-series data for the Hydrological
 Simulation Program - FORTRAN (HSPF) and Better Assessment Science Integrating
 point and Non-point Sources (BASINS).
 
-'wdmtoolbox' will work with Python 3.6+.
+'wdmtoolbox' will work with Python 3.7+.
 
 Table of Contents
 -----------------
@@ -21,16 +21,23 @@ Table of Contents
    readme
    install
    usage
-   function_summary
    contributing
    authors
    license
 
-API
----
+Python Library
+--------------
 .. toctree::
    :maxdepth: 2
 
+   function_summary
+
+Command Line
+------------
+.. toctree::
+   :maxdepth: 3
+
+   command_line
 
 Other Projects
 --------------

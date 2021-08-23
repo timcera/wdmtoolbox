@@ -108,7 +108,7 @@ setup(
     keywords="WDM watershed data_management data hydrology hydrological simulation fortran HSPF",
     author="Tim Cera, PE",
     author_email="tim@cerazone.net",
-    url="http://timcera.bitbucket.io/{pkg_name}/docsrc/index.html".format(**locals()),
+    url="http://timcera.bitbucket.io/{pkg_name}/docs/index.html".format(**locals()),
     license="BSD",
     packages=setuptools.find_packages("src"),
     package_dir={"": "src"},
