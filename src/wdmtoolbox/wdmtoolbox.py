@@ -212,8 +212,9 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     dsns
         The Data Set Numbers in the WDM
         file.
-    {start_date}
-    {end_date}
+    kwds
+        Current supported keywords are "start_date" and
+        "end_date".
 
     """
     start_date = kwds.setdefault("start_date", None)
@@ -346,9 +347,9 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
 
             'file.wdm,101 file2.wdm,104 file.wdm,227'
 
-    {start_date}
+    ${start_date}
 
-    {end_date}
+    ${end_date}
 
     """
     return tsutils._printiso(
@@ -611,7 +612,7 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     _writetodsn(wdmpath, dsn, data)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@mando.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(tsutils.docstrings)
 def stdtowdm(wdmpath, dsn, infile="-"):
     """DEPRECATED: Use 'csvtowdm'."""
@@ -649,17 +650,16 @@ def csvtowdm(
     dsn
         The Data Set Number in the WDM
         file.
-    {input_ts}
-    {start_date}
-    {end_date}
-    {columns}
-    {force_freq}
-    {groupby}
-    {round_index}
-    {clean}
-    {target_units}
-    {source_units}
-
+    ${input_ts}
+    ${start_date}
+    ${end_date}
+    ${columns}
+    ${force_freq}
+    ${groupby}
+    ${round_index}
+    ${clean}
+    ${target_units}
+    ${source_units}
     """
     tsd = tsutils.common_kwds(
         input_ts,
