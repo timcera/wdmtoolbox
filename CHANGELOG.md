@@ -1,3 +1,9 @@
+## v12.8.2 (2022-02-14)
+
+### Fix
+
+- fixed tstoolbox version dependency to use tz_localize or tz_convert on Timestamps as needed
+
 ## v12.8.1 (2022-02-14)
 
 ## v12.8.0 (2021-08-06)
