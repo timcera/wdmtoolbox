@@ -10,7 +10,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        # Remove ubuntu because so much easier to use "cibuildwheel --platform linux" on my local machine.
+        os: [windows-2019, macOS-10.15]
         gcc_v: [9] # Version of GFortran we want to use.
 
     env:
@@ -20,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install GFortran macOS
+      - name: Install GFortran on macOS
         if: contains(matrix.os, 'mac')
         run: |
           brew install gcc@${GCC_V} || brew upgrade gcc@${GCC_V} || true
@@ -28,14 +29,24 @@ jobs:
           sudo mkdir /usr/local/gfortran
           sudo ln -s /usr/local/Cellar/gcc@${GCC_V}/*/lib/gcc/${GCC_V} /usr/local/gfortran/lib
           gfortran --version
-
+      
+      - name: Install necessary packages on Ubuntu
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gcc g++ gfortran python3-dev libopenblas-dev liblapack-dev libjpeg-dev zlib1g-dev libpng-dev
+          
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.0.1
+        uses: pypa/cibuildwheel@v2.3.1
         env:
-          CIBW_SKIP: "pp* *-win32"
+          # github workflows have broken me - just skip cp310-manylinux_* for the time being
+          CIBW_SKIP: "pp* *-win32 cp36-manylinux_* cp36-musllinux_*"
           CIBW_TEST_REQUIRES: pytest
           CIBW_TEST_COMMAND: pytest {package}/tests
           CIBW_BUILD_VERBOSITY_WINDOWS: 3
+          BLAS: None
+          LAPACK: None
+          ATLAS: None
 
       - uses: actions/upload-artifact@v2
         with:

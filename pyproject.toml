@@ -4,6 +4,15 @@ dependencies = [
     "filelock",
 ]
 
+[tool.cibuildwheel]
+manylinux-x86_64-image = "manylinux2014"
+manylinux-i686-image = "manylinux2014"
+
+# Before Python 3.10, manylinux2010 is the most compatible
+[[tool.cibuildwheel.overrides]]
+select = "cp3?-*"
+manylinux-x86_64-image = "manylinux2010"
+manylinux-i686-image = "manylinux2010"
 
 [tool.check-manifest]
 ignore = [".travis.yml",
