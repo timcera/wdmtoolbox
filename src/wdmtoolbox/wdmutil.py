@@ -548,6 +548,8 @@ Trying to open file "{}" and it cannot be found.
                 (27, 1, int(base_year)),  # tsbyr
             ]:
                 retcode = self.wdbsai(wdmfp, dsn, messfp, saind, salen, saval)
+                if retcode != 0:
+                    self.delete_dsn(wdmfp, dsn)
                 self._retcode_check(
                     retcode,
                     additional_info="wdbsai file={} DSN={}".format(wdmpath, dsn),
@@ -555,6 +557,8 @@ Trying to open file "{}" and it cannot be found.
 
             for saind, salen, saval in [(32, 1, tsfill)]:  # tsfill
                 retcode = self.wdbsar(wdmfp, dsn, messfp, saind, salen, saval)
+                if retcode != 0:
+                    self.delete_dsn(wdmfp, dsn)
                 self._retcode_check(
                     retcode,
                     additional_info="wdbsar file={} DSN={}".format(wdmpath, dsn),
@@ -570,6 +574,7 @@ Trying to open file "{}" and it cannot be found.
             ]:
                 saval = saval.strip()
                 if len(saval) > salen:
+                    self.delete_dsn(wdmfp, dsn)
                     raise ValueError(
                         tsutils.error_wrapper(
                             """
@@ -584,6 +589,8 @@ have a length equal or less than {}.
                 saval = "{0: <{1}}".format(saval, salen)
 
                 retcode = self.wdbsac(wdmfp, dsn, messfp, saind, salen, saval)
+                if retcode != 0:
+                    self.delete_dsn(wdmfp, dsn)
                 self._retcode_check(
                     retcode,
                     additional_info="wdbsac file={} DSN={}".format(wdmpath, dsn),
