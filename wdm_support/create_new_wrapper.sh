@@ -6,7 +6,10 @@ f2py3 --overwrite-signature -m _wdm_lib -h wdm.pyf \
                    only: \
                    timcvt timdif wdbopn wdbsac wdbsai wdbsar wdbsgc wdbsgi \
                    wdbsgr wdckdt wdflcl wdlbax wdtget wdtput wtfndt wddsrn \
-                   wddsdl wddscl
+                   wddsdl wddscl wdsagy wdbsgx
+
+# Evidently what f2py puts in wdm.pyf is enough and I don't have to adjust.
+# The sed command is kept here for posterity.
 
 ## Need to tell f2py which subroutine arguments are actually output.
 #sed -i -e 's/integer :: retcod/integer intent(out) :: retcod/g' \

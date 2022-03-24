@@ -1,7 +1,7 @@
 !    -*- f90 -*-
 ! Note: the context of this file is case sensitive.
 
-python module _wdm_lib ! in
+python module _wdm_lib ! in 
     interface  ! in :_wdm_lib
         subroutine timcvt(date) ! in :_wdm_lib:UTDATE.f
             integer dimension(6),intent(inout) :: date
@@ -42,6 +42,16 @@ python module _wdm_lib ! in
             integer :: wdckdt
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end function wdckdt
+        subroutine wdsagy(messfl,saind,sanam,dptr,satyp,salen,sarqwd,saupfg) ! in :_wdm_lib:WDATRB.f
+            integer intent(in) :: messfl
+            integer intent(in) :: saind
+            character(len=1) dimension(6),intent(out) :: sanam
+            integer intent(out) :: dptr
+            integer intent(out) :: satyp
+            integer intent(out) :: salen
+            integer intent(out) :: sarqwd
+            integer intent(out) :: saupfg
+        end subroutine wdsagy
         subroutine wdbsac(wdmsfl,dsn,messfl,saind,salen,saval,retcod) ! in :_wdm_lib:WDATRB.f
             integer intent(in) :: wdmsfl
             integer intent(in) :: dsn
@@ -99,6 +109,13 @@ python module _wdm_lib ! in
             integer dimension(5) :: maxrec
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wdbsar
+        subroutine wdbsgx(messfl,sanam,saind,satyp,salen) ! in :_wdm_lib:WDATRB.f
+            integer intent(in) :: messfl
+            character(len=1) dimension(6),intent(in) :: sanam
+            integer intent(out) :: saind
+            integer intent(out) :: satyp
+            integer intent(out) :: salen
+        end subroutine wdbsgx
         subroutine wdbsgc(wdmsfl,dsn,saind,salen,saval,retcod) ! in :_wdm_lib:WDBTCH.f
             integer intent(in) :: wdmsfl
             integer intent(in) :: dsn
@@ -288,8 +305,9 @@ python module _wdm_lib ! in
             integer dimension(5) :: maxrec
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wtfndt
-    end interface
+    end interface 
 end python module _wdm_lib
 
-! This file was auto-generated with f2py (version:1.21.1).
-! See http://cens.ioc.ee/projects/f2py2e/
+! This file was auto-generated with f2py (version:1.22.3).
+! See:
+! https://web.archive.org/web/20140822061353/http://cens.ioc.ee/projects/f2py2e

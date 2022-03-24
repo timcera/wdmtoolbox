@@ -12,13 +12,13 @@ import datetime
 import os
 import os.path
 import re
-from builtins import object, str
 
-import _wdm_lib
 import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
 from tstoolbox import tsutils
+
+import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
 MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
@@ -104,9 +104,14 @@ class WDM(object):
         # timcvt: Convert times to account for 24 hour
         # timdif: Time difference
         # wdmopn: Open WDM file
+        # wdsagy: Get attribute metadata
         # wdbsac: Set string attribute
         # wdbsai: Set integer attribute
         # wdbsar: Set real attribute
+        # wdbsgc: Get string attribute
+        # wdbsgi: Get integer attribute
+        # wdbsgr: Get real attribute
+        # wdbsgx: Check attribute by name
         # wdbckt: Check if DSN exists
         # wdflcl: Close WDM file
         # wdlbax: Create label for new DSN
@@ -119,12 +124,14 @@ class WDM(object):
         self.timcvt = _wdm_lib.timcvt
         self.timdif = _wdm_lib.timdif
         self.wdbopn = _wdm_lib.wdbopn
+        self.wdsagy = _wdm_lib.wdsagy
         self.wdbsac = _wdm_lib.wdbsac
         self.wdbsai = _wdm_lib.wdbsai
         self.wdbsar = _wdm_lib.wdbsar
         self.wdbsgc = _wdm_lib.wdbsgc
         self.wdbsgi = _wdm_lib.wdbsgi
         self.wdbsgr = _wdm_lib.wdbsgr
+        self.wdbsgx = _wdm_lib.wdbsgx
         self.wdckdt = _wdm_lib.wdckdt
         self.wdflcl = _wdm_lib.wdflcl
         self.wdlbax = _wdm_lib.wdlbax
@@ -329,122 +336,22 @@ Trying to open file "{}" and it cannot be found.
             retcode, additional_info="wddscl file={} DSN={}".format(inwdmpath, indsn)
         )
 
-    def describe_dsn(self, wdmpath, dsn):
-        """Will collect some metadata about the DSN."""
+    def describe_dsn(self, wdmpath, dsn, attrs="default"):
+        """Will collect some metadata about the DSN, including attributes and time span of data."""
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         _, llsdat, lledat, retcode = self.wtfndt(
             wdmfp, dsn, 1
         )  # GPFLG  - get(1)/put(2) flag
         self._close(wdmpath)
         # Ignore retcode == -6 which means that the dsn doesn't have any data.
-        # It it is a new dsn, of course it doesn't have any data.
+        # If it is a new dsn, of course it doesn't have any data.
         if retcode == -6:
             retcode = 0
         self._retcode_check(
             retcode, additional_info="wtfndt file={} DSN={}".format(wdmpath, dsn)
         )
 
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        tstep, retcode = self.wdbsgi(
-            wdmfp, dsn, 33, 1  # saind = 33 for time step
-        )  # salen
-        self._close(wdmpath)
-        self._retcode_check(
-            retcode, additional_info="wdbsgi file={} DSN={}".format(wdmpath, dsn)
-        )
-
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        tcode, retcode = self.wdbsgi(
-            wdmfp, dsn, 17, 1  # saind = 17 for time code
-        )  # salen
-        self._close(wdmpath)
-        self._retcode_check(
-            retcode, additional_info="wdbsgi file={} DSN={}".format(wdmpath, dsn)
-        )
-
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        tsfill, retcode = self.wdbsgr(
-            wdmfp, dsn, 32, 1  # saind = 32 for tsfill
-        )  # salen
-        self._close(wdmpath)
-        # retcode = -107 if attribute not present
-        if retcode == -107:
-            # Since I use tsfill if not found will set to default.
-            tsfill = -999.0
-            retcode = 0
-        else:
-            tsfill = tsfill[0]
-        self._retcode_check(
-            retcode, additional_info="wdbsgr file={} DSN={}".format(wdmpath, dsn)
-        )
-
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        ostr, retcode = self.wdbsgc(
-            wdmfp, dsn, 290, 8  # saind = 290 for location
-        )  # salen
-        self._close(wdmpath)
-        if retcode == -107:
-            ostr = ""
-            retcode = 0
-        self._retcode_check(
-            retcode, additional_info="wdbsgr file={} DSN={}".format(wdmpath, dsn)
-        )
-
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        scen_ostr, retcode = self.wdbsgc(
-            wdmfp, dsn, 288, 8  # saind = 288 for scenario
-        )  # salen
-        self._close(wdmpath)
-        if retcode == -107:
-            scen_ostr = ""
-            retcode = 0
-        self._retcode_check(
-            retcode, additional_info="wdbsgr file={} DSN={}".format(wdmpath, dsn)
-        )
-
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        con_ostr, retcode = self.wdbsgc(
-            wdmfp, dsn, 289, 8  # saind = 289 for constitiuent
-        )  # salen
-        self._close(wdmpath)
-        if retcode == -107:
-            con_ostr = ""
-            retcode = 0
-        self._retcode_check(
-            retcode, additional_info="wdbsgr file={} DSN={}".format(wdmpath, dsn)
-        )
-
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        base_year, retcode = self.wdbsgi(
-            wdmfp, dsn, 27, 1  # saind = 27 for base_year
-        )  # salen
-        self._close(wdmpath)
-        self._retcode_check(
-            retcode, additional_info="wdbsgi file={} DSN={}".format(wdmpath, dsn)
-        )
-
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        desc_ostr, retcode = self.wdbsgc(
-            wdmfp, dsn, 45, 48  # saind = 45 for description
-        )  # salen
-        self._close(wdmpath)
-        if retcode == -107:
-            desc_ostr = ""
-            retcode = 0
-        self._retcode_check(
-            retcode, additional_info="wdbsgc file={} DSN={}".format(wdmpath, dsn)
-        )
-
-        wdmfp = self._open(wdmpath, 55, ronwfg=1)
-        tstype, retcode = self.wdbsgc(wdmfp, dsn, 1, 4)  # saind = 1 for tstype  # salen
-        self._close(wdmpath)
-        if retcode == -107:
-            tstype = ""
-            retcode = 0
-        self._retcode_check(
-            retcode, additional_info="wdbsgc file={} DSN={}".format(wdmpath, dsn)
-        )
-
+        # format start and end dates
         self.timcvt(llsdat)
         self.timcvt(lledat)
         try:
@@ -457,34 +364,92 @@ Trying to open file "{}" and it cannot be found.
             edate = None
 
         dateformat_dict = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
-
-        tstep = tstep[0]
-        tcode = tcode[0]
-        base_year = base_year[0]
-
-        ostr = b"".join(ostr).strip()
-        scen_ostr = b"".join(scen_ostr).strip()
-        con_ostr = b"".join(con_ostr).strip()
-        desc_ostr = b"".join(desc_ostr).strip()
-        tstype = b"".join(tstype).strip()
-
-        return {
-            "dsn": dsn,
-            "start_date": pd.Period(sdate, freq=dateformat_dict[tcode]),
-            "end_date": pd.Period(edate, freq=dateformat_dict[tcode]),
-            "llsdat": llsdat,
-            "lledat": lledat,
-            "tstep": tstep,
-            "tcode": tcode,
-            "tcode_name": MAPTCODE[tcode],
-            "location": ostr.strip(),
-            "scenario": scen_ostr.strip(),
-            "constituent": con_ostr.strip(),
-            "tsfill": tsfill,
-            "description": desc_ostr,
-            "base_year": base_year,
-            "tstype": tstype,
+        attrib_alias = {
+            "LOCATION": "IDLOCN",
+            "SCENARIO": "IDSCEN",
+            "CONSTITUENT": "IDCONS",
+            "TSTEP": "TSSTEP",
         }
+
+        messfp = self.wmsgop()
+        if attrs == "default":
+            attrib_list = [33, 17, 32, 290, 288, 289, 27, 45, 1]
+        elif attrs == "all":
+            attrib_list = list(range(1, 450, 1))
+        else:
+            attrib_name_list = tsutils.make_list(attrs)
+            attrib_list = []
+            for name in attrib_name_list:
+                name = attrib_alias.get(name.upper(), name)
+                if len(name) > 6:
+                    print(
+                        name
+                        + " is too long - attribute names are 6 characters or less."
+                    )
+                else:
+                    name = name[0:6].ljust(6).upper()
+                    attrib_index, attrib_type, attrib_len = self.wdbsgx(messfp, name)
+                    if attrib_index > 0:
+                        attrib_list.append(attrib_index)
+                    else:
+                        print(name + " is not a valid attribute name")
+        wdmfp = self._open(wdmpath, 55, ronwfg=1)
+        attrib_dict = {"DSN": dsn}
+        for index in attrib_list:
+            (
+                name,
+                dataptr,
+                attrib_type,
+                attrib_len,
+                attrib_usage,
+                attrib_update,
+            ) = self.wdsagy(messfp, index)
+            attrib_name = b"".join(name).strip().decode("ascii")
+            if not attrib_name:
+                continue
+            if attrib_type == 1:
+                attrib_ival, retcode = self.wdbsgi(
+                    wdmfp,
+                    dsn,
+                    index,
+                    attrib_len,
+                )
+                if retcode == 0:
+                    attrib_dict[attrib_name] = attrib_ival[0]
+            elif attrib_type == 2:
+                attrib_rval, retcode = self.wdbsgr(
+                    wdmfp,
+                    dsn,
+                    index,
+                    attrib_len,
+                )
+                if retcode == 0:
+                    attrib_dict[attrib_name] = attrib_rval[0]
+            elif attrib_type == 3:
+                attrib_cval, retcode = self.wdbsgc(
+                    wdmfp,
+                    dsn,
+                    index,
+                    attrib_len,
+                )
+                if retcode == 0:
+                    attrib_cval = b"".join(attrib_cval).strip().decode("ascii")
+                    attrib_dict[attrib_name] = attrib_cval
+            if retcode == -107 and attrs != "all":
+                attrib_dict[attrib_name] = "<Not present on dataset>"
+                retcode = 0
+        self._close(wdmpath)
+        # print(attrib_dict)
+        try:
+            tcode = attrib_dict["tcode"]
+            attrib_dict["tcode_name"] = (MAPTCODE[tcode],)
+            attrib_dict["start_date"] = pd.Period(sdate, freq=dateformat_dict[tcode])
+            attrib_dict["end_date"] = pd.Period(edate, freq=dateformat_dict[tcode])
+            attrib_dict["llsdat"] = llsdat
+            attrib_dict["lledat"] = lledat
+        except KeyError:
+            tcode = -999
+        return attrib_dict
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         """Create a new WDM fileronwfg."""
@@ -497,9 +462,34 @@ Trying to open file "{}" and it cannot be found.
         self._open(wdmpath, 56, ronwfg=ronwfg)
         self._close(wdmpath)
 
-    def set_dsn_attribute(self, wdmpath, dsn, attribute=None):
-        """Set DSN attributes."""
-        pass
+    def set_attribute(self, wdmpath, dsn, attrib_name, attrib_val):
+        # print(dsn,"|"+attrib_name+"|"+attrib_val+"|")
+        # print("attrib_name ",type(attrib_name))
+        # print("attrib_val ",type(attrib_val))
+        wdmfp = self._open(wdmpath, 60)
+        messfp = self.wmsgop()
+        name = attrib_name.ljust(6).upper()
+        attrib_index, attrib_type, attrib_len = self.wdbsgx(messfp, name)
+        # print(name, attrib_index, attrib_type, attrib_len)
+        if attrib_type == 0:
+            print("No attribute called " + attrib_name)
+        elif attrib_type == 1:
+            val = int(attrib_val)
+            # print(val)
+            retcode = self.wdbsai(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
+            # print('retcode ',retcode)
+        elif attrib_type == 2:
+            val = float(attrib_val)
+            # print(val)
+            retcode = self.wdbsar(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
+            # print('retcode ',retcode)
+        elif attrib_type == 3:
+            val = attrib_val.strip()
+            # print(val)
+            val = "{0: <{1}}".format(val, attrib_len)
+            retcode = self.wdbsac(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
+            # print('retcode ',retcode)
+        return
 
     def create_new_dsn(
         self,
