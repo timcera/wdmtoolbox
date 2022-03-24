@@ -29,24 +29,15 @@ jobs:
           sudo mkdir /usr/local/gfortran
           sudo ln -s /usr/local/Cellar/gcc@${GCC_V}/*/lib/gcc/${GCC_V} /usr/local/gfortran/lib
           gfortran --version
-      
-      - name: Install necessary packages on Ubuntu
-        if: contains(matrix.os, 'ubuntu')
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y gcc g++ gfortran python3-dev libopenblas-dev liblapack-dev libjpeg-dev zlib1g-dev libpng-dev
-          
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
         env:
           # github workflows have broken me - just skip cp310-manylinux_* for the time being
-          CIBW_SKIP: "pp* *-win32 cp36-manylinux_* cp36-musllinux_*"
+          CIBW_SKIP: "pp* cp36-* *win32"
           CIBW_TEST_REQUIRES: pytest
           CIBW_TEST_COMMAND: pytest {package}/tests
           CIBW_BUILD_VERBOSITY_WINDOWS: 3
-          BLAS: None
-          LAPACK: None
-          ATLAS: None
 
       - uses: actions/upload-artifact@v2
         with:
