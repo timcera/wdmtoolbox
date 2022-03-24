@@ -21,9 +21,10 @@ from tstoolbox import tsutils
 import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
-MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
-
-MAPFREQ = {"S": 1, "T": 2, "H": 3, "D": 4, "M": 5, "A": 6}
+# Somewhere in the distant past, these slightly diverged - don't remember the
+# reason.
+_MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
+_MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
 
 
 class WDMError(Exception):
@@ -201,7 +202,7 @@ Trying to open file "{}" and it cannot be found.
             -15: """time units and time step must match label exactly with
     VBTIME = 1""",
             -20: """problem with one or more of
-    GPGLG, DXX, NVAL, QUALVL, LTSTEP, LTUNIT""",
+    GPGLG, DXX, NVAL, QUALVL, Ltsstep, LTUNIT""",
             -21: "data from WDM does not match expected date",
             -23: "not a valid table",
             -24: "not a valid associated table",
@@ -363,7 +364,7 @@ Trying to open file "{}" and it cannot be found.
         except ValueError:
             edate = None
 
-        dateformat_dict = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
+        _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
         attrib_alias = {
             "LOCATION": "IDLOCN",
             "SCENARIO": "IDSCEN",
@@ -439,12 +440,12 @@ Trying to open file "{}" and it cannot be found.
                 attrib_dict[attrib_name] = "<Not present on dataset>"
                 retcode = 0
         self._close(wdmpath)
-        # print(attrib_dict)
+
         try:
-            tcode = attrib_dict["tcode"]
-            attrib_dict["tcode_name"] = (MAPTCODE[tcode],)
-            attrib_dict["start_date"] = pd.Period(sdate, freq=dateformat_dict[tcode])
-            attrib_dict["end_date"] = pd.Period(edate, freq=dateformat_dict[tcode])
+            tcode = attrib_dict["TCODE"]
+            attrib_dict["tcode_name"] = _MAPTCODE[tcode]
+            attrib_dict["start_date"] = pd.Period(sdate, freq=_MAPECODE[tcode])
+            attrib_dict["end_date"] = pd.Period(edate, freq=_MAPECODE[tcode])
             attrib_dict["llsdat"] = llsdat
             attrib_dict["lledat"] = lledat
         except KeyError:
@@ -606,24 +607,27 @@ have a length equal or less than {}.
 
     def write_dsn(self, wdmpath, dsn, data):
         """Write to self.wdmfp/dsn the time-series data."""
-        dsn_desc = self.describe_dsn(wdmpath, dsn)
-        tcode = dsn_desc["tcode"]
-        tstep = dsn_desc["tstep"]
-        tsfill = dsn_desc["tsfill"]
+        desc_dsn = self.describe_dsn(
+            wdmpath, dsn, attrs=["TCODE", "TSSTEP", "TSFILL", "TSBYR"]
+        )
+        tcode = desc_dsn["TCODE"]
+        tsstep = desc_dsn["TSSTEP"]
+        tsfill = desc_dsn["TSFILL"]
+        tsbyr = desc_dsn["TSBYR"]
 
         data.fillna(tsfill, inplace=True)
         start_date = data.index[0]
 
         dstart_date = start_date.timetuple()[:6]
         llsdat = self._tcode_date(tcode, dstart_date)
-        if dsn_desc["base_year"] > llsdat[0]:
+        if tsbyr > llsdat[0]:
             raise ValueError(
                 tsutils.error_wrapper(
                     """
 The base year for this DSN is {}.  All data to insert must be after the
 base year.  Instead the first year of the series is {}.
 """.format(
-                        dsn_desc["base_year"], llsdat[0]
+                        tsbyr, llsdat[0]
                     )
                 )
             )
@@ -632,7 +636,7 @@ base year.  Instead the first year of the series is {}.
         lock = SoftFileLock(wdmpath + ".lock", timeout=30)
         with lock:
             wdmfp = self._open(wdmpath, 58)
-            retcode = self.wdtput(wdmfp, dsn, tstep, llsdat, nval, 1, 0, tcode, data)
+            retcode = self.wdtput(wdmfp, dsn, tsstep, llsdat, nval, 1, 0, tcode, data)
             self._close(wdmpath)
         self._retcode_check(
             retcode, additional_info="wdtput file={} DSN={}".format(wdmpath, dsn)
@@ -651,14 +655,16 @@ File {} does not exist.
                 )
             )
 
-        # Call wdatim_ to get LLSDAT, LLEDAT, TSTEP, TCODE
-        desc_dsn = self.describe_dsn(wdmpath, dsn)
+        # Call wdatim_ to get llsdat, lledat, TSSTEP, TCODE, TSFILL
+        desc_dsn = self.describe_dsn(
+            wdmpath, dsn, attrs=["llsdat", "lledat", "TCODE", "TSSTEP", "TSFILL"]
+        )
 
         llsdat = desc_dsn["llsdat"]
         lledat = desc_dsn["lledat"]
-        tcode = desc_dsn["tcode"]
-        tstep = desc_dsn["tstep"]
-        tsfill = desc_dsn["tsfill"]
+        tcode = desc_dsn["TCODE"]
+        tsstep = desc_dsn["TSSTEP"]
+        tsfill = desc_dsn["TSFILL"]
 
         # These calls convert 24 to midnight of the next day
         self.timcvt(llsdat)
@@ -694,14 +700,14 @@ of the time series in the WDM file.
                     )
                 )
 
-        iterm = self.timdif(llsdat, lledat, tcode, tstep)
+        iterm = self.timdif(llsdat, lledat, tcode, tsstep)
 
         dtran = 0
         qualfg = 30
         # Get the data and put it into dictionary
         wdmfp = self._open(wdmpath, 59, ronwfg=1)
         dataout, retcode = self.wdtget(
-            wdmfp, dsn, tstep, llsdat, iterm, dtran, qualfg, tcode
+            wdmfp, dsn, tsstep, llsdat, iterm, dtran, qualfg, tcode
         )
         self._close(wdmpath)
 
@@ -715,7 +721,7 @@ of the time series in the WDM file.
         index = pd.date_range(
             datetime.datetime(*llsdat),
             periods=iterm,
-            freq="{:d}{}".format(tstep, MAPTCODE[tcode]),
+            freq="{:d}{}".format(tsstep, _MAPTCODE[tcode]),
         )
 
         # Convert time series to pandas DataFrame

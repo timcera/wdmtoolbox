@@ -236,7 +236,7 @@ The "inwdmpath" cannot be the same as "outwdmpath".
     activedsn = []
     for i in range(1, 32000):
         try:
-            activedsn.append(_describedsn(inwdmpath, i)["dsn"])
+            activedsn.append(_describedsn(inwdmpath, i, attrs=["DSN"])["DSN"])
         except wdmutil.WDMError:
             continue
     # Copy labels (which copies DSN metadata and data)
@@ -300,22 +300,24 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     # Need to make sure that all DSNs are the same interval and all are
     # within start and end dates.
     collect_tcodes = {}
-    collect_tsteps = {}
+    collect_tssteps = {}
     collect_keys = []
     for dsn in dsns:
-        dsn_desc = _describedsn(wdmpath, dsn)
-        collect_tcodes[dsn_desc["tcode"]] = 1
-        collect_tsteps[dsn_desc["tstep"]] = 1
+        desc_dsn = _describedsn(
+            wdmpath, dsn, attrs=["TCODE", "TSSTEP", "DSN", "IDLOCN"]
+        )
+        collect_tcodes[desc_dsn["TCODE"]] = 1
+        collect_tssteps[desc_dsn["TSSTEP"]] = 1
         if start_date:
-            assert dateparser(start_date) >= dateparser(dsn_desc["start_date"])
+            assert dateparser(start_date) >= dateparser(desc_dsn["start_date"])
         if end_date:
-            assert dateparser(end_date) <= dateparser(dsn_desc["end_date"])
-        collect_keys.append((dsn_desc["dsn"], dsn_desc["location"]))
+            assert dateparser(end_date) <= dateparser(desc_dsn["end_date"])
+        collect_keys.append((desc_dsn["DSN"], desc_dsn["IDLOCN"]))
     assert len(collect_tcodes) == 1
-    assert len(collect_tsteps) == 1
+    assert len(collect_tssteps) == 1
 
     collect_tcodes = list(collect_tcodes.keys())[0]
-    collect_tsteps = list(collect_tsteps.keys())[0]
+    collect_tssteps = list(collect_tssteps.keys())[0]
 
     collected_start_dates = []
     collected_end_dates = []
@@ -330,7 +332,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
 
     print("SWMM5")
     print("RDII dump of DSNS {} from {}".format(dsns, wdmpath))
-    print(maptcode[collect_tcodes] * collect_tsteps)
+    print(maptcode[collect_tcodes] * collect_tssteps)
     print(1)
     print("FLOW CFS")
     print(len(dsns))
@@ -487,7 +489,7 @@ def listdsns_cli(wdmpath):
             "START_DATE",
             "END_DATE",
             "TCODE",
-            "TSTEP",
+            "TSSTEP",
         ]:
             collect.setdefault(key, []).append(testv[key.lower()])
     return tsutils._printiso(collect, tablefmt="plain")
@@ -708,11 +710,11 @@ def _writetodsn(wdmpath, dsn, data):
     data = tsutils.asbestfreq(data)
     infer = data.index.freqstr
     pandacode = infer.lstrip("0123456789")
-    tstep = infer[: infer.find(pandacode)]
+    tsstep = infer[: infer.find(pandacode)]
     try:
-        tstep = int(tstep)
+        tsstep = int(tsstep)
     except ValueError:
-        tstep = 1
+        tsstep = 1
 
     invmapcode = {
         1: "second",
@@ -757,7 +759,7 @@ def _writetodsn(wdmpath, dsn, data):
     # Make sure that input data metadata matches target DSN
     desc_dsn = _describedsn(wdmpath, dsn)
 
-    dsntcode = desc_dsn["tcode"]
+    dsntcode = desc_dsn["TCODE"]
     if finterval != dsntcode:
         raise ValueError(
             tsutils.error_wrapper(
@@ -774,14 +776,14 @@ but the data has a tcode of {1} ({4}).
             )
         )
 
-    dsntstep = desc_dsn["tstep"]
-    if dsntstep != tstep:
+    dsntsstep = desc_dsn["TSSTEP"]
+    if dsntsstep != tsstep:
         raise ValueError(
             tsutils.error_wrapper(
                 """
-The DSN has a tstep of {}, but the data has a tstep of {}.
+The DSN has a tsstep of {}, but the data has a tsstep of {}.
 """.format(
-                    dsntstep, tstep
+                    dsntsstep, tsstep
                 )
             )
         )
