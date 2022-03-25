@@ -1,3 +1,14 @@
+## v12.9.0 (2022-03-25)
+
+### Fix
+
+- **describedsn**: uppercased required keywords to match what is returned by describedsn
+- deletes a half-built DSN
+
+### Feat
+
+- **attributes**: added ability to get and set DSN attributes
+
 ## v12.8.2 (2022-02-14)
 
 ### Fix
