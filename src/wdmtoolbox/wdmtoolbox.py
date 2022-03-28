@@ -482,16 +482,16 @@ def listdsns_cli(wdmpath):
     for _, testv in nvars.items():
         for key in [
             "DSN",
-            "SCENARIO",
-            "LOCATION",
-            "CONSTITUENT",
+            "IDSCEN",
+            "IDLOCN",
+            "IDCONS",
             "TSTYPE",
-            "START_DATE",
-            "END_DATE",
+            "start_date",
+            "end_date",
             "TCODE",
             "TSSTEP",
         ]:
-            collect.setdefault(key, []).append(testv[key.lower()])
+            collect.setdefault(key, []).append(testv[key])
     return tsutils._printiso(collect, tablefmt="plain")
 
 
