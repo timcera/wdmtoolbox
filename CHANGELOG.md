@@ -1,3 +1,10 @@
+## v12.9.1 (2022-03-28)
+
+### Fix
+
+- **describe_dsn**: removed pseudo attributes "llsdat", "lledat", "DSN", ...etc. from being requested from new describe_dsn attrs keyword
+- **listdsns**: attribute keys changed in listdsns to match what is created in describe_dsn
+
 ## v12.9.0 (2022-03-25)
 
 ### Fix
