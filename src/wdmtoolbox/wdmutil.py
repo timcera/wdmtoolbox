@@ -26,6 +26,15 @@ import _wdm_lib
 _MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
 _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
 
+_attrib_alias = {
+    "LOCATION": "IDLOCN",
+    "SCENARIO": "IDSCEN",
+    "CONSTITUENT": "IDCONS",
+    "TSTEP": "TSSTEP",
+    "START_DATE": "start_date",
+    "END_DATE": "end_date",
+}
+
 
 class WDMError(Exception):
     """The default Error class."""
@@ -338,14 +347,15 @@ Trying to open file "{}" and it cannot be found.
         )
 
     def describe_dsn(self, wdmpath, dsn, attrs="default"):
-        """Will collect some metadata about the DSN, including attributes and time span of data."""
+        """Will collect some metadata about the DSN, including attributes and
+        time span of data."""
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         _, llsdat, lledat, retcode = self.wtfndt(
             wdmfp, dsn, 1
         )  # GPFLG  - get(1)/put(2) flag
         self._close(wdmpath)
-        # Ignore retcode == -6 which means that the dsn doesn't have any data.
-        # If it is a new dsn, of course it doesn't have any data.
+        # Ignore retcode == -6 which means that the DSN doesn't have any data.
+        # If it is a new DSN, of course it doesn't have any data.
         if retcode == -6:
             retcode = 0
         self._retcode_check(
@@ -364,14 +374,6 @@ Trying to open file "{}" and it cannot be found.
         except ValueError:
             edate = None
 
-        _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
-        attrib_alias = {
-            "LOCATION": "IDLOCN",
-            "SCENARIO": "IDSCEN",
-            "CONSTITUENT": "IDCONS",
-            "TSTEP": "TSSTEP",
-        }
-
         messfp = self.wmsgop()
         if attrs == "default":
             attrib_list = [33, 17, 32, 290, 288, 289, 27, 45, 1]
@@ -381,19 +383,20 @@ Trying to open file "{}" and it cannot be found.
             attrib_name_list = tsutils.make_list(attrs)
             attrib_list = []
             for name in attrib_name_list:
-                name = attrib_alias.get(name.upper(), name)
+                name = _attrib_alias.get(name.upper(), name)
                 if len(name) > 6:
-                    print(
-                        name
-                        + " is too long - attribute names are 6 characters or less."
+                    raise ValueError(
+                        tsutils.error_wrapper(
+                            f"{name} is too long - attribute names are 6 characters or less."
+                        )
                     )
-                else:
-                    name = name[0:6].ljust(6).upper()
-                    attrib_index, attrib_type, attrib_len = self.wdbsgx(messfp, name)
-                    if attrib_index > 0:
-                        attrib_list.append(attrib_index)
-                    else:
-                        print(name + " is not a valid attribute name")
+                name = name[0:6].ljust(6).upper()
+                attrib_index, attrib_type, attrib_len = self.wdbsgx(messfp, name)
+                if attrib_index <= 0:
+                    raise ValueError(
+                        tsutils.error_wrapper(f"{name} is not a valid attribute name")
+                    )
+                attrib_list.append(attrib_index)
         wdmfp = self._open(wdmpath, 55, ronwfg=1)
         attrib_dict = {"DSN": dsn}
         for index in attrib_list:
@@ -464,32 +467,33 @@ Trying to open file "{}" and it cannot be found.
         self._close(wdmpath)
 
     def set_attribute(self, wdmpath, dsn, attrib_name, attrib_val):
-        # print(dsn,"|"+attrib_name+"|"+attrib_val+"|")
-        # print("attrib_name ",type(attrib_name))
-        # print("attrib_val ",type(attrib_val))
         wdmfp = self._open(wdmpath, 60)
         messfp = self.wmsgop()
+
         name = attrib_name.ljust(6).upper()
+        name = _attrib_alias.get(name, name)
         attrib_index, attrib_type, attrib_len = self.wdbsgx(messfp, name)
-        # print(name, attrib_index, attrib_type, attrib_len)
+
         if attrib_type == 0:
-            print("No attribute called " + attrib_name)
+            raise ValueError(
+                tsutils.error_wrapper(f"No attribute called {attrib_name}.")
+            )
         elif attrib_type == 1:
             val = int(attrib_val)
-            # print(val)
             retcode = self.wdbsai(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
-            # print('retcode ',retcode)
         elif attrib_type == 2:
             val = float(attrib_val)
-            # print(val)
             retcode = self.wdbsar(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
-            # print('retcode ',retcode)
         elif attrib_type == 3:
             val = attrib_val.strip()
-            # print(val)
             val = "{0: <{1}}".format(val, attrib_len)
             retcode = self.wdbsac(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
-            # print('retcode ',retcode)
+        self._retcode_check(
+            retcode,
+            additional_info="set_attributes file={} DSN={}, attribu_name={}".format(
+                wdmpath, dsn, attrib_name
+            ),
+        )
         return
 
     def create_new_dsn(
@@ -557,11 +561,11 @@ Trying to open file "{}" and it cannot be found.
 
             for saind, salen, saval, error_name in [
                 (2, 16, statid, "Station ID"),
-                (1, 4, tstype.upper(), "Time series type - tstype"),
-                (45, 48, description.upper(), "Description"),
-                (288, 8, scenario.upper(), "Scenario"),
-                (289, 8, constituent.upper(), "Constituent"),
-                (290, 8, location.upper(), "Location"),
+                (1, 4, tstype, "Time series type - tstype"),
+                (45, 48, description, "Description"),
+                (288, 8, scenario, "Scenario"),
+                (289, 8, constituent, "Constituent"),
+                (290, 8, location, "Location"),
             ]:
                 saval = saval.strip()
                 if len(saval) > salen:
@@ -655,10 +659,8 @@ File {} does not exist.
                 )
             )
 
-        # Call wdatim_ to get llsdat, lledat, TSSTEP, TCODE, TSFILL
-        desc_dsn = self.describe_dsn(
-            wdmpath, dsn, attrs=["llsdat", "lledat", "TCODE", "TSSTEP", "TSFILL"]
-        )
+        # Call wdatim_ to get TSSTEP, TCODE, TSFILL
+        desc_dsn = self.describe_dsn(wdmpath, dsn, attrs=["TCODE", "TSSTEP", "TSFILL"])
 
         llsdat = desc_dsn["llsdat"]
         lledat = desc_dsn["lledat"]

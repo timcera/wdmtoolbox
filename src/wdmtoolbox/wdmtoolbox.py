@@ -236,7 +236,7 @@ The "inwdmpath" cannot be the same as "outwdmpath".
     activedsn = []
     for i in range(1, 32000):
         try:
-            activedsn.append(_describedsn(inwdmpath, i, attrs=["DSN"])["DSN"])
+            activedsn.append(_describedsn(inwdmpath, i)["DSN"])
         except wdmutil.WDMError:
             continue
     # Copy labels (which copies DSN metadata and data)
@@ -303,9 +303,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     collect_tssteps = {}
     collect_keys = []
     for dsn in dsns:
-        desc_dsn = _describedsn(
-            wdmpath, dsn, attrs=["TCODE", "TSSTEP", "DSN", "IDLOCN"]
-        )
+        desc_dsn = _describedsn(wdmpath, dsn, attrs=["TCODE", "TSSTEP", "IDLOCN"])
         collect_tcodes[desc_dsn["TCODE"]] = 1
         collect_tssteps[desc_dsn["TSSTEP"]] = 1
         if start_date:
@@ -479,6 +477,7 @@ def listdsns_cli(wdmpath):
     """
     nvars = listdsns(wdmpath)
     collect = OrderedDict()
+    alias_attrib = {v: k for k, v in wdmutil._attrib_alias.items()}
     for _, testv in nvars.items():
         for key in [
             "DSN",
@@ -491,7 +490,8 @@ def listdsns_cli(wdmpath):
             "TCODE",
             "TSSTEP",
         ]:
-            collect.setdefault(key, []).append(testv[key])
+            nkey = alias_attrib.get(key, key)
+            collect.setdefault(nkey, []).append(testv[key])
     return tsutils._printiso(collect, tablefmt="plain")
 
 
