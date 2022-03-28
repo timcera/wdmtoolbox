@@ -1,19 +1,29 @@
 [project]
 name = "wdmtoolbox"
+version = "12.9.1"
+readme = "README.rst"
 dependencies = [
     "tstoolbox >= 103",
     "filelock",
 ]
 
+
 [tool.cibuildwheel]
+build = ["cp37-*", "cp38-*", "cp39-*", "cp310-*"]
+
+
+[[tool.cibuildwheel.overrides]]
+select = "cp310-*"
 manylinux-x86_64-image = "manylinux2014"
 manylinux-i686-image = "manylinux2014"
 
+
 # Before Python 3.10, manylinux2010 is the most compatible
 [[tool.cibuildwheel.overrides]]
-select = "cp3?-*"
+select = "cp3{7,8,9}-*"
 manylinux-x86_64-image = "manylinux2010"
 manylinux-i686-image = "manylinux2010"
+
 
 [tool.check-manifest]
 ignore = [".travis.yml",
