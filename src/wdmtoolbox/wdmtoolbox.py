@@ -141,7 +141,7 @@ _common_docs.update(tsutils.docstrings)
 WDM = wdmutil.WDM()
 
 
-def _describedsn(wdmpath, dsn, attrs="default"):
+def describedsn(wdmpath, dsn, attrs="default"):
     """Private function used by routines that need a description of DSN."""
     return WDM.describe_dsn(wdmpath, int(dsn), attrs)
 
@@ -236,7 +236,7 @@ The "inwdmpath" cannot be the same as "outwdmpath".
     activedsn = []
     for i in range(1, 32000):
         try:
-            activedsn.append(_describedsn(inwdmpath, i)["DSN"])
+            activedsn.append(describedsn(inwdmpath, i)["DSN"])
         except wdmutil.WDMError:
             continue
     # Copy labels (which copies DSN metadata and data)
@@ -303,7 +303,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     collect_tssteps = {}
     collect_keys = []
     for dsn in dsns:
-        desc_dsn = _describedsn(wdmpath, dsn, attrs=["TCODE", "TSSTEP", "IDLOCN"])
+        desc_dsn = describedsn(wdmpath, dsn, attrs=["TCODE", "TSSTEP", "IDLOCN"])
         collect_tcodes[desc_dsn["TCODE"]] = 1
         collect_tssteps[desc_dsn["TSSTEP"]] = 1
         if start_date:
@@ -452,7 +452,7 @@ def describedsn_cli(wdmpath, dsn, attrs="default", tablefmt="dict"):
 
     """
     if tablefmt != "dict":
-        attrib_dict = _describedsn(wdmpath, dsn, attrs)
+        attrib_dict = describedsn(wdmpath, dsn, attrs)
         attrib_df = pd.DataFrame.transpose(pd.DataFrame([attrib_dict]))
         attrib_table = tb(
             attrib_df,
@@ -462,7 +462,7 @@ def describedsn_cli(wdmpath, dsn, attrs="default", tablefmt="dict"):
         )
         print(attrib_table)
     else:
-        print(_describedsn(wdmpath, dsn, attrs))
+        print(describedsn(wdmpath, dsn, attrs))
 
 
 @mando.command("listdsns", formatter_class=RSTHelpFormatter, doctype="numpy")
@@ -511,7 +511,7 @@ File {} does not exist.
     collect = OrderedDict()
     for i in range(1, 32001):
         try:
-            testv = _describedsn(wdmpath, i)
+            testv = describedsn(wdmpath, i)
         except wdmutil.WDMError:
             continue
         collect[i] = testv
@@ -757,7 +757,7 @@ def _writetodsn(wdmpath, dsn, data):
     dsn = int(dsn)
 
     # Make sure that input data metadata matches target DSN
-    desc_dsn = _describedsn(wdmpath, dsn)
+    desc_dsn = describedsn(wdmpath, dsn)
 
     dsntcode = desc_dsn["TCODE"]
     if finterval != dsntcode:
@@ -809,6 +809,11 @@ def setattrib(wdmpath, dsn, attrib_name, attrib_val):
 
     """
     WDM.set_attribute(wdmpath, int(dsn), attrib_name, attrib_val)
+
+
+extract.__doc__ = extract_cli.__doc__
+describedsn.__doc__ = describedsn_cli.__doc__
+listdsns.__doc__ = listdsns_cli.__doc__
 
 
 def main():
