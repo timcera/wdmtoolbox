@@ -1,10 +1,9 @@
 [project]
 name = "wdmtoolbox"
-version = "12.9.1"
+version = "12.9.2"
 readme = "README.rst"
 dependencies = [
     "tstoolbox >= 103",
-    "filelock",
 ]
 
 
