@@ -1,3 +1,10 @@
+## v12.9.3 (2022-05-17)
+
+### Fix
+
+- **tsfill**: corrected to match previous behavoir where read_dsn defaulted tsfill to -999
+- pip_requirements.txt to reduce vulnerabilities
+
 ## v12.9.2 (2022-04-17)
 
 ## v12.9.1 (2022-03-28)
