@@ -25,6 +25,7 @@ import _wdm_lib
 # reason.
 _MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
 _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
+_NOTPRESENT = "<Not present on dataset>"
 
 _attrib_alias = {
     "LOCATION": "IDLOCN",
@@ -440,7 +441,7 @@ Trying to open file "{}" and it cannot be found.
                     attrib_cval = b"".join(attrib_cval).strip().decode("ascii")
                     attrib_dict[attrib_name] = attrib_cval
             if retcode == -107 and attrs != "all":
-                attrib_dict[attrib_name] = "<Not present on dataset>"
+                attrib_dict[attrib_name] = _NOTPRESENT
                 retcode = 0
         self._close(wdmpath)
 
@@ -667,6 +668,9 @@ File {} does not exist.
         tcode = desc_dsn["TCODE"]
         tsstep = desc_dsn["TSSTEP"]
         tsfill = desc_dsn["TSFILL"]
+
+        if tsfill == _NOTPRESENT:
+            tsfill = -999
 
         # These calls convert 24 to midnight of the next day
         self.timcvt(llsdat)
