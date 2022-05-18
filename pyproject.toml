@@ -4,6 +4,7 @@ version = "12.9.3"
 readme = "README.rst"
 dependencies = [
     "tstoolbox >= 103",
+    "filelock"
 ]
 
 
