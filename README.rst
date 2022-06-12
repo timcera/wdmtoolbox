@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/timcera/wdmtoolbox.svg?branch=master
-    :target: https://travis-ci.org/timcera/wdmtoolbox
+.. image:: https://github.com/timcera/wdmtoolbox/actions/workflows/python-package.yml/badge.svg
+    :target: https://github.com/timcera/wdmtoolbox/actions/workflows/python-package.yml
     :height: 20
 
 .. image:: https://coveralls.io/repos/timcera/wdmtoolbox/badge.png?branch=master
@@ -11,11 +11,15 @@
     :target: https://pypi.python.org/pypi/wdmtoolbox
 
 .. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
-    :alt: wdmtoolbox license
+    :alt: BSD-3 clause license
     :target: https://pypi.python.org/pypi/wdmtoolbox/
 
-The wdmtoolbox
-==============
+.. image:: http://img.shields.io/pypi/dd/wdmtoolbox.svg
+    :alt: wdmtoolbox downloads
+    :target: https://pypi.python.org/pypi/wdmtoolbox/
+
+wdmtoolbox
+==========
 The `wdmtoolbox` is a Python script and library to read/write/manage Watershed
 Data Management (WDM) files used for time-series in hydrology and hydrological
 simulation.  WDM files are used in the Hydrological Simulation Program -

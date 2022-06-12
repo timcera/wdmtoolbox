@@ -3,7 +3,6 @@
 
 Used to manipulate Watershed Data Management files for time-series.
 """
-from __future__ import print_function
 
 import datetime
 import os

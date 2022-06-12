@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/timcera/wdmtoolbox.svg?branch=master
-    :target: https://travis-ci.org/timcera/wdmtoolbox
+.. image:: https://github.com/timcera/wdmtoolbox/actions/workflows/python-package.yml/badge.svg
+    :target: https://github.com/timcera/wdmtoolbox/actions/workflows/python-package.yml
     :height: 20
 
 .. image:: https://coveralls.io/repos/timcera/wdmtoolbox/badge.png?branch=master

@@ -6,7 +6,6 @@ with Python.  The class uses f2py to wrap the minimally necessary WDM
 routines.
 """
 
-from __future__ import print_function
 
 import datetime
 import os
