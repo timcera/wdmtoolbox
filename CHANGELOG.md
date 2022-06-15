@@ -1,3 +1,13 @@
+## v12.9.4 (2022-06-15)
+
+### Refactor
+
+- remove __future__ and f strings
+
+### Fix
+
+- **pyproject.toml**: forgot to manually edit the version number again
+
 ## v12.9.3 (2022-05-17)
 
 ### Fix

@@ -1,6 +1,6 @@
 [project]
 name = "wdmtoolbox"
-version = "12.9.3"
+version = "12.9.4"
 readme = "README.rst"
 dependencies = [
     "tstoolbox >= 103",
@@ -32,7 +32,7 @@ ignore = [".travis.yml",
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "12.9.3"
+version = "12.9.4"
 tag_format = "v$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
