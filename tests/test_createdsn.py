@@ -52,7 +52,7 @@ class TestDescribe(TestCase):
             self.wdmname, 101, input_ts=os.path.join(self.test_dir, "sunspot_area.csv")
         )
         ret1 = wdmtoolbox.extract(self.wdmname, 101).astype("f")
-        ret2 = wdmtoolbox.extract("{},101".format(self.wdmname)).astype("f")
+        ret2 = wdmtoolbox.extract(f"{self.wdmname},101").astype("f")
         assert_frame_equal(ret1, ret2)
 
         ret3 = tstoolbox.read(os.path.join(self.test_dir, "sunspot_area.csv")).astype(

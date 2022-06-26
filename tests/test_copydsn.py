@@ -56,7 +56,7 @@ class TestDescribe(TestCase):
             input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
         )
         ret1 = wdmtoolbox.extract(self.wdmname, 101)
-        ret2 = wdmtoolbox.extract("{},101".format(self.wdmname))
+        ret2 = wdmtoolbox.extract(f"{self.wdmname},101")
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
         ret3 = tstoolbox.read(os.path.join(self.test_dir, "nwisiv_02246000.csv"))
