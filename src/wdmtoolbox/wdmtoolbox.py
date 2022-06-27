@@ -4,6 +4,7 @@
 Used to manipulate Watershed Data Management files for time-series.
 """
 
+
 import datetime
 import os
 import sys
@@ -135,7 +136,7 @@ _common_docs = {
         time-series.""",
 }
 
-_common_docs.update(tsutils.docstrings)
+_common_docs |= tsutils.docstrings
 
 WDM = wdmutil.WDM()
 
@@ -328,13 +329,13 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     maptcode = {1: 1, 2: 60, 3: 3600, 4: 86400}
 
     print("SWMM5")
-    print("RDII dump of DSNS {} from {}".format(dsns, wdmpath))
+    print(f"RDII dump of DSNS {dsns} from {wdmpath}")
     print(maptcode[collect_tcodes] * collect_tssteps)
     print(1)
     print("FLOW CFS")
     print(len(dsns))
     for dsn, location in collect_keys:
-        print("{}_{}".format(dsn, location))
+        print(f"{dsn}_{location}")
     print("Node Year Mon Day Hr Min Sec Flow")
     # Can pick any time series because they should all have the same interval
     # and start and end dates.
@@ -387,20 +388,18 @@ have given {}.
     for lab in wdmpath:
         if "," in str(lab):
             labels.append(lab.split(","))
-        else:
-            if lab == wdmpath[0]:
-                continue
+        elif lab != wdmpath[0]:
             labels.append([wdmpath[0], lab])
 
     result = pd.DataFrame()
     cnt = 0
-    for ind, lab in enumerate(labels):
+    for lab in labels:
         wdmpath = lab[0]
         dsn = lab[1]
         nts = WDM.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
         if nts.columns[0] in result.columns:
             cnt = cnt + 1
-            nts.columns = ["{}_{}".format(nts.columns[0], cnt)]
+            nts.columns = [f"{nts.columns[0]}_{cnt}"]
         result = result.join(nts, how="outer")
     return tsutils.asbestfreq(result)
 
@@ -619,9 +618,13 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
             if ampmflag == 1:
                 dates = np.append(
                     dates,
-                    [datetime.datetime(year, month, day, i) for i in range(0, 12)],
+                    [
+                        datetime.datetime(year, month, day, i)
+                        for i in range(12)
+                    ],
                 )
-            if ampmflag == 2:
+
+            elif ampmflag == 2:
                 dates = np.append(
                     dates,
                     [datetime.datetime(year, month, day, i) for i in range(12, 24)],
