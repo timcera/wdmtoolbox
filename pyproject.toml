@@ -7,16 +7,20 @@ dependencies = [
     "filelock"
 ]
 
+[build-system]
+requires = [
+    "setuptools",
+    "wheel",
+    "oldest-supported-numpy",
+]
 
 [tool.cibuildwheel]
 build = ["cp37-*", "cp38-*", "cp39-*", "cp310-*"]
-
 
 [[tool.cibuildwheel.overrides]]
 select = "cp310-*"
 manylinux-x86_64-image = "manylinux2014"
 manylinux-i686-image = "manylinux2014"
-
 
 # Before Python 3.10, manylinux2010 is the most compatible
 [[tool.cibuildwheel.overrides]]
@@ -24,11 +28,9 @@ select = "cp3{7,8,9}-*"
 manylinux-x86_64-image = "manylinux2010"
 manylinux-i686-image = "manylinux2010"
 
-
 [tool.check-manifest]
 ignore = [".travis.yml",
           "docs/_function_autosummary/*"]
-
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -37,10 +39,61 @@ tag_format = "v$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
 
+[tool.poetry]
+name = "wdmtoolbox"
+version = "12.9.4"
+description = "Read and write Watershed Data Management (WDM) files"
+license = "BSD"
+keywords = ["WDM",
+            "watershed",
+            "data_management",
+            "data",
+            "hydrology",
+            "hydrological",
+            "simulation",
+            "fortran",
+            "HSPF",
+            ]
+classifiers = ["Development Status :: 5 - Production/Stable",
+               "Intended Audience :: Science/Research",
+               "Intended Audience :: End Users/Desktop",
+               "Intended Audience :: Developers",
+               "Environment :: Console",
+               "License :: OSI Approved :: BSD License",
+               "Natural Language :: English",
+               "Operating System :: OS Independent",
+               "Programming Language :: Python :: 3.7",
+               "Programming Language :: Python :: 3.8",
+               "Programming Language :: Python :: 3.9",
+               "Topic :: Scientific/Engineering :: Information Analysis",
+               "Topic :: Scientific/Engineering",
+               "Topic :: Software Development :: Libraries :: Python Modules",
+               ]
+homepage = "http://timcera.bitbucket.io/wdmtoolbox/docs/index.html"
+authors = ["Tim Cera, PE <tim@cerazone.net>"]
+readme = "README.rst"
 
-[build-system]
-requires = [
-    "setuptools",
-    "oldest-supported-numpy",
-]
+[tool.poetry.dependencies]
+python = "*"
+filelock = "*"
+tstoolbox = ">=103"
+
+[tool.poetry.dev-dependencies]
+black = "*"
+black-nbconvert = "*"
+blacken-docs = "*"
+cleanpy = "*"
+commitizen = "*"
+coverage = "*"
+flake8 = "*"
+isort = "*"
+pre-commit = "*"
+pyroma = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-mpl = "*"
+pyupgrade = "*"
+twine = "*"
+velin = "*"
+
 build-backend = "setuptools.build_meta"

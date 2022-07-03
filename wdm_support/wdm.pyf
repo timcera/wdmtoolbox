@@ -1,7 +1,7 @@
 !    -*- f90 -*-
 ! Note: the context of this file is case sensitive.
 
-python module _wdm_lib ! in 
+python module _wdm_lib ! in
     interface  ! in :_wdm_lib
         subroutine timcvt(date) ! in :_wdm_lib:UTDATE.f
             integer dimension(6),intent(inout) :: date
@@ -305,7 +305,7 @@ python module _wdm_lib ! in
             integer dimension(5) :: maxrec
             common /cfbuff/ wibuff,recno,wdmfun,nxtpos,prepos,frepos,wdmcnt,wdmopn,maxrec
         end subroutine wtfndt
-    end interface 
+    end interface
 end python module _wdm_lib
 
 ! This file was auto-generated with f2py (version:1.22.3).
