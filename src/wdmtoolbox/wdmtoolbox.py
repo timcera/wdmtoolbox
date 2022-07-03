@@ -136,7 +136,7 @@ _common_docs = {
         time-series.""",
 }
 
-_common_docs |= tsutils.docstrings
+_common_docs.update(tsutils.docstrings)
 
 WDM = wdmutil.WDM()
 
@@ -618,10 +618,7 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
             if ampmflag == 1:
                 dates = np.append(
                     dates,
-                    [
-                        datetime.datetime(year, month, day, i)
-                        for i in range(12)
-                    ],
+                    [datetime.datetime(year, month, day, i) for i in range(12)],
                 )
 
             elif ampmflag == 2:
