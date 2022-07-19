@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 import os
+import shlex
+import subprocess
 import sys
 
 import setuptools
@@ -16,10 +18,14 @@ pkg_name = "wdmtoolbox"
 version = open("VERSION").readline().strip()
 
 if sys.argv[-1] == "publish":
-    os.system("cleanpy .")
-    os.system("python setup.py sdist")
-    os.system(f"twine upload dist/{pkg_name}-{version}.tar.gz")
-    os.system(f"twine upload dist/{pkg_name}-{version}*.whl")
+    subprocess.run(shlex.split("cleanpy ."), check=True)
+    subprocess.run(shlex.split("python setup.py sdist"), check=True)
+    subprocess.run(
+        shlex.split(f"twine upload dist/{pkg_name}-{version}.tar.gz"), check=True
+    )
+    subprocess.run(
+        shlex.split(f"twine upload dist/{pkg_name}-{version}*.whl"), check=True
+    )
     sys.exit()
 
 README = open("README.rst").read()
