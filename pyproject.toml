@@ -22,7 +22,7 @@ classifiers = [
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Scientific/Engineering",
         "Topic :: Software Development :: Libraries :: Python Modules",
@@ -53,6 +53,9 @@ include-package-data = true
 [tool.setuptools.dynamic]
 readme = {file = "README.rst"}
 version = {file = "VERSION"}
+
+[tool.setuptools.package-data]
+wdmtoolbox = ["message.wdm"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
