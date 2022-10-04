@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Package __init__.py.
 
 Taken from numpy that they use to import openblas.

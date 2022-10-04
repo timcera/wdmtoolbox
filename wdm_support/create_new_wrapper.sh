@@ -8,18 +8,24 @@ f2py3 --overwrite-signature -m _wdm_lib -h wdm.pyf \
                    wdbsgr wdckdt wdflcl wdlbax wdtget wdtput wtfndt wddsrn \
                    wddsdl wddscl wdsagy wdbsgx
 
-# Evidently what f2py puts in wdm.pyf is enough and I don't have to adjust.
-# The sed command is kept here for posterity.
 
-## Need to tell f2py which subroutine arguments are actually output.
-#sed -i -e 's/integer :: retcod/integer intent(out) :: retcod/g' \
-#       -e 's/integer :: psa/integer intent(out) :: psa/g' \
-#       -e 's/integer, optional,check(len(saval)>=salen),depend(saval) :: salen=len(saval)/integer depend(saval) :: salen/g' \
-#       -e 's/integer :: tdsfrc/integer intent(out) :: tdsfrc/g' \
-#       -e 's/integer dimension(6) :: sdat/integer intent(out), dimension(6) :: sdat/g' \
-#       -e 's/integer dimension(6) :: edat/integer intent(out), dimension(6) :: edat/g' \
-#       -e 's/integer :: nvals/integer intent(out) :: nvals/g' \
-#       -e 's/real dimension(nval) :: rval/real intent(out), dimension(nval), depend(nval) :: rval/g' \
-#       -e 's/integer depend(saval) :: salen/integer intent(in) :: salen/g' \
-#       -e 's/dimension(salen) :: saval/intent(in), dimension(salen) :: saval/g' \
-#       wdm.pyf
+# # Need to tell f2py which subroutine arguments are actually output.
+# sed -i -e 's/integer :: retcod/integer intent(out) :: retcod/g' \
+#        -e 's/integer :: psa/integer intent(out) :: psa/g' \
+#        -e 's/integer, optional,check(len(saval)>=salen),depend(saval) :: salen=len(saval)/integer depend(saval) :: salen/g' \
+#        -e 's/integer :: tdsfrc/integer intent(out) :: tdsfrc/g' \
+#        -e 's/integer dimension(6) :: sdat/integer intent(out), dimension(6) :: sdat/g' \
+#        -e 's/integer dimension(6) :: edat/integer intent(out), dimension(6) :: edat/g' \
+#        -e 's/integer :: nvals/integer intent(out) :: nvals/g' \
+#        -e 's/real dimension(nval) :: rval/real intent(out), dimension(nval), depend(nval) :: rval/g' \
+#        -e 's/integer depend(saval) :: salen/integer intent(in) :: salen/g' \
+#        -e 's/dimension(salen) :: saval/intent(in), dimension(salen) :: saval/g' \
+#        -e 's/:: messfl/intent(in) :: messfl/g' \
+#        -e 's/:: saind/intent(in) :: saind/g' \
+#        -e 's/:: sanam/,intent(out) :: sanam/g' \
+#        -e 's/:: dptr/intent(out) :: dptr/g' \
+#        -e 's/:: satyp/intent(out) :: satyp/g' \
+#        -e 's/:: salen/intent(out) :: salen/g' \
+#        -e 's/:: sarqwd/intent(out) :: sarqwd/g' \
+#        -e 's/:: saupfg/intent(out) :: saupfg/g' \
+#        wdm.pyf

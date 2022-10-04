@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Utilities to work with WDM files.
 
 The WDM class supplies a series of utilities for working with WDM files
@@ -15,7 +14,7 @@ import re
 import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
-from tstoolbox import tsutils
+from toolbox_utils import tsutils
 
 import _wdm_lib
 
@@ -106,7 +105,7 @@ class DSNExistsError(Exception):
         )
 
 
-class WDM(object):
+class WDM:
     """Class to open and read from WDM files."""
 
     def __init__(self):
@@ -355,10 +354,7 @@ Trying to open file "{}" and it cannot be found.
         # If it is a new DSN, of course it doesn't have any data.
         if retcode == -6:
             retcode = 0
-        self._retcode_check(
-            retcode, additional_info=f"wtfndt file={wdmpath} DSN={dsn}"
-        )
-
+        self._retcode_check(retcode, additional_info=f"wtfndt file={wdmpath} DSN={dsn}")
 
         # format start and end dates
         self.timcvt(llsdat)
@@ -546,7 +542,6 @@ Trying to open file "{}" and it cannot be found.
                     retcode, additional_info=f"wdbsai file={wdmpath} DSN={dsn}"
                 )
 
-
             for saind, salen, saval in [(32, 1, tsfill)]:  # tsfill
                 retcode = self.wdbsar(wdmfp, dsn, messfp, saind, salen, saval)
                 if retcode != 0:
@@ -554,7 +549,6 @@ Trying to open file "{}" and it cannot be found.
                 self._retcode_check(
                     retcode, additional_info=f"wdbsar file={wdmpath} DSN={dsn}"
                 )
-
 
             for saind, salen, saval, error_name in [
                 (2, 16, statid, "Station ID"),
@@ -639,9 +633,7 @@ base year.  Instead the first year of the series is {}.
             wdmfp = self._open(wdmpath, 58)
             retcode = self.wdtput(wdmfp, dsn, tsstep, llsdat, nval, 1, 0, tcode, data)
             self._close(wdmpath)
-        self._retcode_check(
-            retcode, additional_info=f"wdtput file={wdmpath} DSN={dsn}"
-        )
+        self._retcode_check(retcode, additional_info=f"wdtput file={wdmpath} DSN={dsn}")
 
     def read_dsn(self, wdmpath, dsn, start_date=None, end_date=None):
         """Read from a DSN."""
@@ -716,10 +708,7 @@ of the time series in the WDM file.
         if len(dataout) == 0:
             return pd.DataFrame()
 
-        self._retcode_check(
-            retcode, additional_info=f"wdtget file={wdmpath} DSN={dsn}"
-        )
-
+        self._retcode_check(retcode, additional_info=f"wdtget file={wdmpath} DSN={dsn}")
 
         index = pd.date_range(
             datetime.datetime(*llsdat),
@@ -751,7 +740,9 @@ of the time series in the WDM file.
         wdmpath = wdmpath.strip()
         if wdmpath in self.openfiles:
             retcode = self.wdflcl(self.openfiles[wdmpath])
-            self._retcode_check(retcode, additional_info=f"wdflcl file={wdmpath} DSN=NA")
+            self._retcode_check(
+                retcode, additional_info=f"wdflcl file={wdmpath} DSN=NA"
+            )
             self.openfiles.pop(wdmpath)
 
 

@@ -4,6 +4,14 @@ C
       SUBROUTINE   WDSAGY
      I                    (MESSFL,SAIND,
      O                     SANAM,DPTR,SATYP,SALEN,SARQWD,SAUPFG)
+Cf2py intent(in) MESSFL
+Cf2py intent(in) SAIND
+Cf2py intent(out) SANAM
+Cf2py intent(out) DPTR
+Cf2py intent(out) SATYP
+Cf2py intent(out) SALEN
+Cf2py intent(out) SARQWD
+Cf2py intent(out) SAUPFG
 C
 C     + + + PURPOSE + + +
 C     gets general detail information about specified attribute
@@ -800,6 +808,11 @@ C
      I                    (MESSFL,
      M                     SANAM,
      O                     SAIND,SATYP,SALEN)
+Cf2py intent(in) MESSFL
+Cf2py intent(in) SANAM
+Cf2py intent(out) SAIND
+Cf2py intent(out) SATYP
+Cf2py intent(out) SALEN
 C
 C     + + + PURPOSE + + +
 C     routine gets information about search attribute from

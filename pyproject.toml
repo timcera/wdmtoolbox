@@ -1,11 +1,62 @@
 [project]
 name = "wdmtoolbox"
-version = "12.9.4"
-readme = "README.rst"
+dynamic  = ["readme", "version"]
+description = "Read and write Watershed Data Management (WDM) files"
 dependencies = [
-    "tstoolbox >= 103",
+    "tstoolbox >= 103.17.1",
     "filelock"
 ]
+license = {text = "BSD-3-Clause"}
+authors = [
+    {name = "Tim Cera", email = "tim@cerazone.net"}
+    ]
+classifiers = [
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: End Users/Desktop",
+        "Intended Audience :: Developers",
+        "Environment :: Console",
+        "License :: OSI Approved :: BSD License",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        ]
+keywords = ["WDM",
+            "watershed",
+            "data_management",
+            "data",
+            "hydrology",
+            "hydrological",
+            "simulation",
+            "fortran",
+            "HSPF",
+            ]
+
+[project.scripts]
+wdmtoolbox = "wdmtoolbox.wdmtoolbox:main"
+
+[project_urls]
+documentation = "https://timcera.bitbucket.io/wdmtoolbox/docs/index.html"
+github = "https://github.com/timcera/wdmtoolbox"
+bitbucket = "https://bitbucket.org/timcera/wdmtoolbox/src/main/"
+
+[tool.setuptools]
+license-files = ["LICENSE.txt"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+readme = {file = "README.rst"}
+version = {file = "VERSION"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["examples*", "tools*", "docs*", "tstoolbox.tests*"]
 
 [build-system]
 requires = [
@@ -13,6 +64,7 @@ requires = [
     "wheel",
     "oldest-supported-numpy",
 ]
+build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
 build = ["cp37-*", "cp38-*", "cp39-*", "cp310-*"]
@@ -29,8 +81,7 @@ manylinux-x86_64-image = "manylinux2010"
 manylinux-i686-image = "manylinux2010"
 
 [tool.check-manifest]
-ignore = [".travis.yml",
-          "docs/_function_autosummary/*"]
+ignore = ["docs/_function_autosummary/*"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -38,62 +89,3 @@ version = "12.9.4"
 tag_format = "v$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
-
-[tool.poetry]
-name = "wdmtoolbox"
-version = "12.9.4"
-description = "Read and write Watershed Data Management (WDM) files"
-license = "BSD"
-keywords = ["WDM",
-            "watershed",
-            "data_management",
-            "data",
-            "hydrology",
-            "hydrological",
-            "simulation",
-            "fortran",
-            "HSPF",
-            ]
-classifiers = ["Development Status :: 5 - Production/Stable",
-               "Intended Audience :: Science/Research",
-               "Intended Audience :: End Users/Desktop",
-               "Intended Audience :: Developers",
-               "Environment :: Console",
-               "License :: OSI Approved :: BSD License",
-               "Natural Language :: English",
-               "Operating System :: OS Independent",
-               "Programming Language :: Python :: 3.7",
-               "Programming Language :: Python :: 3.8",
-               "Programming Language :: Python :: 3.9",
-               "Topic :: Scientific/Engineering :: Information Analysis",
-               "Topic :: Scientific/Engineering",
-               "Topic :: Software Development :: Libraries :: Python Modules",
-               ]
-homepage = "http://timcera.bitbucket.io/wdmtoolbox/docs/index.html"
-authors = ["Tim Cera, PE <tim@cerazone.net>"]
-readme = "README.rst"
-
-[tool.poetry.dependencies]
-python = "*"
-filelock = "*"
-tstoolbox = ">=103"
-
-[tool.poetry.dev-dependencies]
-black = "*"
-black-nbconvert = "*"
-blacken-docs = "*"
-cleanpy = "*"
-commitizen = "*"
-coverage = "*"
-flake8 = "*"
-isort = "*"
-pre-commit = "*"
-pyroma = "*"
-pytest = "*"
-pytest-cov = "*"
-pytest-mpl = "*"
-pyupgrade = "*"
-twine = "*"
-velin = "*"
-
-build-backend = "setuptools.build_meta"

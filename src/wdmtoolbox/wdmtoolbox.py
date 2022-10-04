@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The component functions of the wdmtoolbox.
 
 Used to manipulate Watershed Data Management files for time-series.
@@ -10,16 +9,18 @@ import os
 import sys
 from collections import OrderedDict
 
-import mando
 import numpy as np
 import pandas as pd
+from cltoolbox import Program
+from cltoolbox.rst_text_formatter import RSTHelpFormatter
 from dateutil.parser import parse as dateparser
-from mando.rst_text_formatter import RSTHelpFormatter
 from tabulate import tabulate as tb
-from tstoolbox import tsutils
+from toolbox_utils import tsutils
 
 # Load in WDM subroutines
 from . import wdmutil
+
+program = Program("wdmtoolbox", 0.0)
 
 _common_docs = {
     "wdmpath": r"""wdmpath: str
@@ -176,7 +177,7 @@ def _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, func, overwrite=False):
         func(inwdmpath, indsn, outwdmpath, outdsn)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     r"""Make a copy of a DSN label (no data).
@@ -195,7 +196,7 @@ def copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     )
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     """Make a copy of a DSN.
@@ -212,7 +213,7 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn, overwrite=False)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
     """Make a clean copy of a WDM file.
@@ -247,7 +248,7 @@ The "inwdmpath" cannot be the same as "outwdmpath".
             pass
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def renumberdsn(wdmpath, olddsn, newdsn):
     """Renumber olddsn to newdsn.
@@ -262,7 +263,7 @@ def renumberdsn(wdmpath, olddsn, newdsn):
     WDM.renumber_dsn(wdmpath, olddsn, newdsn)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def deletedsn(wdmpath, dsn):
     """Delete DSN.
@@ -278,7 +279,7 @@ def deletedsn(wdmpath, dsn):
     WDM.delete_dsn(wdmpath, dsn)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     """Print out DSN data to the screen in SWMM5 RDII format.
@@ -387,15 +388,17 @@ have given {}.
     labels = []
     for lab in wdmpath:
         if "," in str(lab):
-            labels.append(lab.split(","))
+            try:
+                labels.append(lab.split(","))
+            except AttributeError:
+                labels.append(lab)
         elif lab != wdmpath[0]:
             labels.append([wdmpath[0], lab])
 
     result = pd.DataFrame()
     cnt = 0
     for lab in labels:
-        wdmpath = lab[0]
-        dsn = lab[1]
+        wdmpath, dsn = lab
         nts = WDM.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
         if nts.columns[0] in result.columns:
             cnt = cnt + 1
@@ -404,7 +407,7 @@ have given {}.
     return tsutils.asbestfreq(result)
 
 
-@mando.command("extract", formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command("extract", formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def extract_cli(start_date=None, end_date=None, *wdmpath):
     """Print out DSN data to the screen with ISO-8601 dates.
@@ -430,13 +433,13 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
     )
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
     """DEPRECATED: New scripts use 'extract'. Will be removed in the future."""
     return extract(wdmpath, *dsns, **kwds)
 
 
-@mando.command("describedsn", formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command("describedsn", formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def describedsn_cli(wdmpath, dsn, attrs="default", tablefmt="dict"):
     """Print out attributes of a single DSN
@@ -463,7 +466,7 @@ def describedsn_cli(wdmpath, dsn, attrs="default", tablefmt="dict"):
         print(describedsn(wdmpath, dsn, attrs))
 
 
-@mando.command("listdsns", formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command("listdsns", formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def listdsns_cli(wdmpath):
     """Print out a table describing all DSNs in the WDM.
@@ -516,7 +519,7 @@ File {} does not exist.
     return collect
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def createnewwdm(wdmpath, overwrite=False):
     """Create a new WDM file, optional to overwrite.
@@ -530,7 +533,7 @@ def createnewwdm(wdmpath, overwrite=False):
     WDM.create_new_wdm(wdmpath, overwrite=overwrite)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def createnewdsn(
     wdmpath,
@@ -582,7 +585,7 @@ def createnewdsn(
     )
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     """Write HYDHR sequential file to a DSN.
@@ -601,7 +604,7 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
 
     dsn = int(dsn)
     if isinstance(input_ts, str):
-        input_ts = open(input_ts, "r")
+        input_ts = open(input_ts)
     dates = np.array([])
     data = np.array([])
     for line in input_ts:
@@ -632,13 +635,13 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     _writetodsn(wdmpath, dsn, data)
 
 
-@mando.command(formatter_class=RSTHelpFormatter)
+@program.command(formatter_class=RSTHelpFormatter)
 def stdtowdm(wdmpath, dsn, infile="-"):
     """DEPRECATED: Use 'csvtowdm'."""
     csvtowdm(wdmpath, dsn, input_ts=infile)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def csvtowdm(
     wdmpath,
@@ -790,7 +793,7 @@ The DSN has a tsstep of {}, but the data has a tsstep of {}.
     WDM.write_dsn(wdmpath, dsn, data)
 
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype="numpy")
+@program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def setattrib(wdmpath, dsn, attrib_name, attrib_val):
     """Set an attribute value for the DSN.  See WDM documentation for full list of possible attributes and valid values.
@@ -819,7 +822,7 @@ def main():
     """Run the main function."""
     if not os.path.exists("debug_wdmtoolbox"):
         sys.tracebacklimit = 0
-    mando.main()
+    program()
 
 
 if __name__ == "__main__":

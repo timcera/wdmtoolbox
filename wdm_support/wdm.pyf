@@ -308,6 +308,6 @@ python module _wdm_lib ! in
     end interface
 end python module _wdm_lib
 
-! This file was auto-generated with f2py (version:1.22.3).
+! This file was auto-generated with f2py (version:1.23.2).
 ! See:
 ! https://web.archive.org/web/20140822061353/http://cens.ioc.ee/projects/f2py2e
