@@ -2,6 +2,9 @@ name: Build
 
 on: [push, pull_request]
 
+env:
+  SETUPTOOLS_ENABLE_FEATURES: legacy-editable
+
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
