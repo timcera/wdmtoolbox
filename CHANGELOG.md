@@ -1,3 +1,10 @@
+## v12.9.5 (2022-10-04)
+
+### Fix
+
+- if using "x.wdm,1" would bring the time-series in twice
+- need to support python 3.7 onward
+
 ## v12.9.4 (2022-06-15)
 
 ### Refactor
