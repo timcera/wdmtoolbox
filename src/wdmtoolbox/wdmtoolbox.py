@@ -3,11 +3,11 @@
 Used to manipulate Watershed Data Management files for time-series.
 """
 
-
 import datetime
 import os
 import sys
 from collections import OrderedDict
+from contextlib import suppress
 
 import numpy as np
 import pandas as pd
@@ -191,9 +191,7 @@ def copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     ${overwrite}
 
     """
-    _copydsn_core(
-        inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn_label, overwrite=False
-    )
+    _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn_label)
 
 
 @program.command(formatter_class=RSTHelpFormatter)
@@ -210,7 +208,7 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     ${overwrite}
 
     """
-    _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn, overwrite=False)
+    _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn)
 
 
 @program.command(formatter_class=RSTHelpFormatter)
@@ -242,10 +240,8 @@ The "inwdmpath" cannot be the same as "outwdmpath".
             continue
     # Copy labels (which copies DSN metadata and data)
     for i in activedsn:
-        try:
+        with suppress(wdmutil.WDMError):
             _copy_dsn(inwdmpath, i, outwdmpath, i)
-        except wdmutil.WDMError:
-            pass
 
 
 @program.command(formatter_class=RSTHelpFormatter)
@@ -373,7 +369,7 @@ def extract(*wdmpath, **kwds):
         end_date = kwds.pop("end_date")
     except KeyError:
         end_date = None
-    if len(kwds) > 0:
+    if kwds:
         raise ValueError(
             tsutils.error_wrapper(
                 """
@@ -480,7 +476,7 @@ def listdsns_cli(wdmpath):
     collect = OrderedDict()
     alias_attrib = {v: k for k, v in wdmutil._attrib_alias.items()}
     for _, testv in nvars.items():
-        for key in [
+        for key in (
             "DSN",
             "IDSCEN",
             "IDLOCN",
@@ -490,7 +486,7 @@ def listdsns_cli(wdmpath):
             "end_date",
             "TCODE",
             "TSSTEP",
-        ]:
+        ):
             nkey = alias_attrib.get(key, key)
             collect.setdefault(nkey, []).append(testv[key])
     return tsutils._printiso(collect, tablefmt="plain")

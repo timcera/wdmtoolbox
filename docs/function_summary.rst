@@ -8,6 +8,7 @@ Python API Function Summary
 
     wdmtoolbox.wdmtoolbox.cleancopywdm
     wdmtoolbox.wdmtoolbox.copydsn
+    wdmtoolbox.wdmtoolbox.copydsnlabel
     wdmtoolbox.wdmtoolbox.createnewdsn
     wdmtoolbox.wdmtoolbox.createnewwdm
     wdmtoolbox.wdmtoolbox.csvtowdm
@@ -17,6 +18,7 @@ Python API Function Summary
     wdmtoolbox.wdmtoolbox.hydhrseqtowdm
     wdmtoolbox.wdmtoolbox.listdsns
     wdmtoolbox.wdmtoolbox.renumberdsn
+    wdmtoolbox.wdmtoolbox.setattrib
     wdmtoolbox.wdmtoolbox.stdtowdm
     wdmtoolbox.wdmtoolbox.wdmtostd
     wdmtoolbox.wdmtoolbox.wdmtoswmm5rdii

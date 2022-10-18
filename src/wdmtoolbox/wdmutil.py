@@ -11,12 +11,11 @@ import os
 import os.path
 import re
 
+import _wdm_lib
 import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
 from toolbox_utils import tsutils
-
-import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
 # Somewhere in the distant past, these slightly diverged - don't remember the
@@ -174,7 +173,7 @@ class WDM:
         """Private method to open WDM file."""
         wdname = wdname.strip()
         if wdname not in self.openfiles:
-            if ronwfg in [0, 1] and not os.path.exists(wdname):
+            if ronwfg in (0, 1) and not os.path.exists(wdname):
                 raise ValueError(
                     tsutils.error_wrapper(
                         """
@@ -487,8 +486,6 @@ Trying to open file "{}" and it cannot be found.
             additional_info=f"set_attributes file={wdmpath} DSN={dsn}, attribu_name={attrib_name}",
         )
 
-        return
-
     def create_new_dsn(
         self,
         wdmpath,
@@ -526,7 +523,7 @@ Trying to open file "{}" and it cannot be found.
                 300,  # NDP    - number of data pointers
             )  # PSA    - pointer to search attribute space
 
-            for saind, salen, saval in [
+            for saind, salen, saval in (
                 (34, 1, 6),  # tgroup
                 (83, 1, 1),  # compfg
                 (84, 1, 1),  # tsform
@@ -534,7 +531,7 @@ Trying to open file "{}" and it cannot be found.
                 (17, 1, int(tcode)),  # tcode
                 (33, 1, int(tsstep)),  # tsstep
                 (27, 1, int(base_year)),  # tsbyr
-            ]:
+            ):
                 retcode = self.wdbsai(wdmfp, dsn, messfp, saind, salen, saval)
                 if retcode != 0:
                     self.delete_dsn(wdmfp, dsn)
@@ -542,7 +539,7 @@ Trying to open file "{}" and it cannot be found.
                     retcode, additional_info=f"wdbsai file={wdmpath} DSN={dsn}"
                 )
 
-            for saind, salen, saval in [(32, 1, tsfill)]:  # tsfill
+            for saind, salen, saval in ((32, 1, tsfill),):  # tsfill
                 retcode = self.wdbsar(wdmfp, dsn, messfp, saind, salen, saval)
                 if retcode != 0:
                     self.delete_dsn(wdmfp, dsn)
@@ -550,14 +547,14 @@ Trying to open file "{}" and it cannot be found.
                     retcode, additional_info=f"wdbsar file={wdmpath} DSN={dsn}"
                 )
 
-            for saind, salen, saval, error_name in [
+            for saind, salen, saval, error_name in (
                 (2, 16, statid, "Station ID"),
                 (1, 4, tstype, "Time series type - tstype"),
                 (45, 48, description, "Description"),
                 (288, 8, scenario, "Scenario"),
                 (289, 8, constituent, "Constituent"),
                 (290, 8, location, "Location"),
-            ]:
+            ):
                 saval = saval.strip()
                 if len(saval) > salen:
                     self.delete_dsn(wdmfp, dsn)
@@ -733,7 +730,7 @@ of the time series in the WDM file.
 
     def read_dsn_por(self, wdmpath, dsn):
         """Read the period of record for a DSN."""
-        return self.read_dsn(wdmpath, dsn, start_date=None, end_date=None)
+        return self.read_dsn(wdmpath, dsn)
 
     def _close(self, wdmpath):
         """Close the WDM file."""
@@ -752,7 +749,7 @@ if __name__ == "__main__":
     wdm_obj.create_new_wdm(fname, overwrite=True)
     listonumbers = [34.2, 35.0, 36.9, 38.2, 40.2, 20.1, 18.4, 23.6]
     wdm_obj.create_new_dsn(
-        fname, 1003, tstype="EXAM", scenario="OBSERVED", tcode=4, location="EXAMPLE"
+        fname, 1003, tstype="EXAM", scenario="OBSERVED", location="EXAMPLE"
     )
     dr = pd.date_range(start="2000-01-01", freq="D", periods=len(listonumbers))
     df = pd.DataFrame(listonumbers, index=dr)

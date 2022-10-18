@@ -1,10 +1,19 @@
+[build-system]
+requires = [
+    "setuptools",
+    "wheel",
+    "oldest-supported-numpy",
+]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "wdmtoolbox"
-dynamic  = ["readme", "version"]
+dynamic = ["readme", "version"]
 description = "Read and write Watershed Data Management (WDM) files"
 dependencies = [
-    "tstoolbox >= 103.17.1",
-    "filelock"
+    "filelock",
+    "toolbox_utils >= 1.0.0, < 2.0.0",
+    "tstoolbox >= 104.0.0, < 105.0.0",
 ]
 license = {text = "BSD-3-Clause"}
 authors = [
@@ -41,10 +50,35 @@ keywords = ["WDM",
 [project.scripts]
 wdmtoolbox = "wdmtoolbox.wdmtoolbox:main"
 
-[project_urls]
+[project.urls]
 documentation = "https://timcera.bitbucket.io/wdmtoolbox/docs/index.html"
 github = "https://github.com/timcera/wdmtoolbox"
 bitbucket = "https://bitbucket.org/timcera/wdmtoolbox/src/main/"
+
+[tool]
+
+[tool.check-manifest]
+ignore = ["docs/_function_autosummary/*"]
+
+[tool.cibuildwheel]
+build = ["cp37-*", "cp38-*", "cp39-*", "cp310-*"]
+
+[[tool.cibuildwheel.overrides]]
+select = "cp310-*"
+manylinux-x86_64-image = "manylinux2014"
+manylinux-i686-image = "manylinux2014"
+
+[[tool.cibuildwheel.overrides]]
+select = "cp3{7,8,9}-*"
+manylinux-x86_64-image = "manylinux2010"
+manylinux-i686-image = "manylinux2010"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "12.9.5"
+tag_format = "v$version"
+version_files = ["VERSION"]
+update_changelog_on_bump = true
 
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
@@ -60,35 +94,3 @@ wdmtoolbox = ["message.wdm"]
 [tool.setuptools.packages.find]
 where = ["src"]
 exclude = ["examples*", "tools*", "docs*", "tstoolbox.tests*"]
-
-[build-system]
-requires = [
-    "setuptools",
-    "wheel",
-    "oldest-supported-numpy",
-]
-build-backend = "setuptools.build_meta"
-
-[tool.cibuildwheel]
-build = ["cp37-*", "cp38-*", "cp39-*", "cp310-*"]
-
-[[tool.cibuildwheel.overrides]]
-select = "cp310-*"
-manylinux-x86_64-image = "manylinux2014"
-manylinux-i686-image = "manylinux2014"
-
-# Before Python 3.10, manylinux2010 is the most compatible
-[[tool.cibuildwheel.overrides]]
-select = "cp3{7,8,9}-*"
-manylinux-x86_64-image = "manylinux2010"
-manylinux-i686-image = "manylinux2010"
-
-[tool.check-manifest]
-ignore = ["docs/_function_autosummary/*"]
-
-[tool.commitizen]
-name = "cz_conventional_commits"
-version = "12.9.5"
-tag_format = "v$version"
-version_files = ["VERSION"]
-update_changelog_on_bump = true

@@ -3,9 +3,13 @@
 Command Line
 ============
 
-copydsnlabel
+Help::
+
+    wdmtoolbox --help
+
+cleancopywdm
 ~~~~~~~~~~~~
-.. program-output:: wdmtoolbox copydsnlabel --help
+.. program-output:: wdmtoolbox cleancopywdm --help
    :prompt:
 
 copydsn
@@ -13,39 +17,9 @@ copydsn
 .. program-output:: wdmtoolbox copydsn --help
    :prompt:
 
-cleancopywdm
+copydsnlabel
 ~~~~~~~~~~~~
-.. program-output:: wdmtoolbox cleancopywdm --help
-   :prompt:
-
-deletedsn
-~~~~~~~~~
-.. program-output:: wdmtoolbox deletedsn --help
-   :prompt:
-
-wdmtoswmm5rdii
-~~~~~~~~~~~~~~
-.. program-output:: wdmtoolbox wdmtoswmm5rdii --help
-   :prompt:
-
-extract
-~~~~~~~
-.. program-output:: wdmtoolbox extract --help
-   :prompt:
-
-describedsn
-~~~~~~~~~~~
-.. program-output:: wdmtoolbox describedsn --help
-   :prompt:
-
-listdsns
-~~~~~~~~
-.. program-output:: wdmtoolbox listdsns --help
-   :prompt:
-
-createnewwdm
-~~~~~~~~~~~~
-.. program-output:: wdmtoolbox createnewwdm --help
+.. program-output:: wdmtoolbox copydsnlabel --help
    :prompt:
 
 createnewdsn
@@ -53,12 +27,62 @@ createnewdsn
 .. program-output:: wdmtoolbox createnewdsn --help
    :prompt:
 
-hydhrseqtowdm
-~~~~~~~~~~~~~
-.. program-output:: wdmtoolbox hydhrseqtowdm --help
+createnewwdm
+~~~~~~~~~~~~
+.. program-output:: wdmtoolbox createnewwdm --help
    :prompt:
 
 csvtowdm
 ~~~~~~~~
 .. program-output:: wdmtoolbox csvtowdm --help
+   :prompt:
+
+deletedsn
+~~~~~~~~~
+.. program-output:: wdmtoolbox deletedsn --help
+   :prompt:
+
+describedsn
+~~~~~~~~~~~
+.. program-output:: wdmtoolbox describedsn --help
+   :prompt:
+
+extract
+~~~~~~~
+.. program-output:: wdmtoolbox extract --help
+   :prompt:
+
+hydhrseqtowdm
+~~~~~~~~~~~~~
+.. program-output:: wdmtoolbox hydhrseqtowdm --help
+   :prompt:
+
+listdsns
+~~~~~~~~
+.. program-output:: wdmtoolbox listdsns --help
+   :prompt:
+
+renumberdsn
+~~~~~~~~~~~
+.. program-output:: wdmtoolbox renumberdsn --help
+   :prompt:
+
+setattrib
+~~~~~~~~~
+.. program-output:: wdmtoolbox setattrib --help
+   :prompt:
+
+stdtowdm
+~~~~~~~~
+.. program-output:: wdmtoolbox stdtowdm --help
+   :prompt:
+
+wdmtostd
+~~~~~~~~
+.. program-output:: wdmtoolbox wdmtostd --help
+   :prompt:
+
+wdmtoswmm5rdii
+~~~~~~~~~~~~~~
+.. program-output:: wdmtoolbox wdmtoswmm5rdii --help
    :prompt:

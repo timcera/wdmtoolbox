@@ -1,47 +1,53 @@
+---
 name: Build
 
+# yamllint disable-line rule:truthy
 on: [push, pull_request]
 
 env:
-  SETUPTOOLS_ENABLE_FEATURES: legacy-editable
+    SETUPTOOLS_ENABLE_FEATURES: legacy-editable
 
 jobs:
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    build_wheels:
+        name: Build wheels on ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
 
-    strategy:
-      fail-fast: false
-      matrix:
-        # Remove ubuntu because so much easier to use "cibuildwheel --platform linux" on my local machine.
-        os: [windows-2019, macOS-10.15]
-        gcc_v: [9] # Version of GFortran we want to use.
+        strategy:
+            fail-fast: false
+            matrix:
+                # Remove ubuntu because so much easier to use "cibuildwheel
+                # --platform linux" on my local machine.
+                os: [windows-2019, macOS-latest]
+                gcc_v: [9]  # Version of GFortran we want to use.
 
-    env:
-      FC: gfortran-${{ matrix.gcc_v }}
-      GCC_V: ${{ matrix.gcc_v }}
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install GFortran on macOS
-        if: contains(matrix.os, 'mac')
-        run: |
-          brew install gcc@${GCC_V} || brew upgrade gcc@${GCC_V} || true
-          sudo ln -s /usr/local/bin/gfortran-${GCC_V} /usr/local/bin/gfortran
-          sudo mkdir /usr/local/gfortran
-          sudo ln -s /usr/local/Cellar/gcc@${GCC_V}/*/lib/gcc/${GCC_V} /usr/local/gfortran/lib
-          gfortran --version
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.10.2
         env:
-          # github workflows have broken me - just skip cp310-manylinux_* for the time being
-          CIBW_SKIP: "pp* cp36-* *win32"
-          CIBW_TEST_REQUIRES: pytest
-          CIBW_TEST_COMMAND: pytest {package}/tests
-          CIBW_BUILD_VERBOSITY_WINDOWS: 3
+            FC: gfortran-${{ matrix.gcc_v }}
+            GCC_V: ${{ matrix.gcc_v }}
 
-      - uses: actions/upload-artifact@v2
-        with:
-          path: ./wheelhouse/*.whl
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Install GFortran on macOS
+              if: contains(matrix.os, 'mac')
+              run: |
+                  brew install gcc@${GCC_V} || brew upgrade gcc@${GCC_V} || true
+                  sudo ln -s /usr/local/bin/gfortran-${GCC_V} \
+                      /usr/local/bin/gfortran
+                  sudo mkdir /usr/local/gfortran
+                  sudo ln -s /usr/local/Cellar/gcc@${GCC_V}/*/lib/gcc/${GCC_V} \
+                      /usr/local/gfortran/lib
+                  gfortran --version
+
+            - name: Build wheels
+              uses: pypa/cibuildwheel@v2.11.1
+              env:
+                  # github workflows have broken me - just skip
+                  # cp310-manylinux_* for the time being
+                  CIBW_SKIP: pp* cp36-* *win32
+                  CIBW_TEST_REQUIRES: pytest
+                  CIBW_TEST_COMMAND: pytest {package}/tests
+                  CIBW_BUILD_VERBOSITY_WINDOWS: 3
+
+            - uses: actions/upload-artifact@v2
+              with:
+                  path: ./wheelhouse/*.whl
