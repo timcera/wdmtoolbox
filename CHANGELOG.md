@@ -1,3 +1,10 @@
+## v13.0.0 (2022-10-18)
+
+### Fix
+
+- moved to breaking change toolbox_utils where replaced typical with pydantic
+- hopefully this change will install message.wdm into the correct place on windows and mac
+
 ## v12.9.5 (2022-10-04)
 
 ### Fix
