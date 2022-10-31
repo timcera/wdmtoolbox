@@ -39,7 +39,7 @@ jobs:
                   gfortran --version
 
             - name: Build wheels
-              uses: pypa/cibuildwheel@v2.11.1
+              uses: pypa/cibuildwheel@v2.11.2
               env:
                   # github workflows have broken me - just skip
                   # cp310-manylinux_* for the time being
