@@ -91,9 +91,7 @@ class TestDescribe(TestCase):
             101,
             input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
         )
-        with self.assertRaisesRegex(
-            WDMError, "WDM error: data set number out of valid range"
-        ):
+        with self.assertRaisesRegex(WDMError, "WDM error: data set number out of"):
             ret1 = wdmtoolbox.extract(self.wdmname, 0)
 
     def test_out_of_bounds_dsn(self):
@@ -104,9 +102,7 @@ class TestDescribe(TestCase):
             101,
             input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
         )
-        with self.assertRaisesRegex(
-            WDMError, "WDM error: data set number out of valid range"
-        ):
+        with self.assertRaisesRegex(WDMError, "WDM error: data set number out of"):
             ret1 = wdmtoolbox.extract(self.wdmname, 32001)
 
     def test_dsn_not_in_wdm(self):
