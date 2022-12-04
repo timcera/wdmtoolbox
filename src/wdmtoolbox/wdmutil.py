@@ -37,8 +37,6 @@ _attrib_alias = {
 class WDMError(Exception):
     """The default Error class."""
 
-    pass
-
 
 class DSNDoesNotExist(Exception):
     """The Error class if DSN does no exist."""
@@ -50,22 +48,18 @@ class DSNDoesNotExist(Exception):
     def __str__(self):
         """Print detailed error message."""
         if self.dsn < 1 or self.dsn > 32000:
-            return """
+            return f"""
 *
 *   The DSN number must be >= 1 and <= 32000.
-*   You supplied {}.
+*   You supplied {self.dsn}.
 *
-""".format(
-                self.dsn
-            )
+"""
 
-        return """
+        return f"""
 *
-*   The DSN {} does not exist in the dataset.
+*   The DSN {self.dsn} does not exist in the dataset.
 *
-""".format(
-            self.dsn
-        )
+"""
 
 
 class WDMFileExists(Exception):
@@ -77,13 +71,11 @@ class WDMFileExists(Exception):
 
     def __str__(self):
         """Return detailed error message."""
-        return """
+        return f"""
 *
-*   File {} exists.
+*   File {self.filename} exists.
 *
-""".format(
-            self.filename
-        )
+"""
 
 
 class DSNExistsError(Exception):
@@ -95,13 +87,11 @@ class DSNExistsError(Exception):
 
     def __str__(self):
         """Return detailed error message."""
-        return """
+        return f"""
 *
-*   DSN {} exists.
+*   DSN {self.dsn} exists.
 *
-""".format(
-            self.dsn
-        )
+"""
 
 
 class WDM:
@@ -176,11 +166,9 @@ class WDM:
             if ronwfg in (0, 1) and not os.path.exists(wdname):
                 raise ValueError(
                     tsutils.error_wrapper(
+                        f"""
+                        Trying to open file "{wdname}" and it cannot be found.
                         """
-Trying to open file "{}" and it cannot be found.
-""".format(
-                            wdname
-                        )
                     )
                 )
             retcode = self.wdbopn(wdmsfl, wdname, ronwfg)
@@ -266,28 +254,25 @@ Trying to open file "{}" and it cannot be found.
 
         if retcode in retcode_dict:
             lopenfiles = self.openfiles.copy()
-            for fn in lopenfiles:
-                self._close(fn)
+            for ofn in lopenfiles:
+                self._close(ofn)
             raise WDMError(
-                """
-*
-*   WDM library function returned error code {}. {}
-*   WDM error: {}
-*
-""".format(
-                    retcode, additional_info, retcode_dict[retcode]
+                tsutils.error_wrapper(
+                    f"""
+                    WDM library function returned error code {retcode}.
+                    {additional_info} WDM error: {retcode_dict[retcode]}
+                    """
                 )
             )
         if retcode != 0:
-            for fn in list(self.openfiles):
-                self._close(fn)
+            for ofn in list(self.openfiles):
+                self._close(ofn)
             raise WDMError(
-                """
-*
-*   WDM library function returned error code {}. {}
-*
-""".format(
-                    retcode, additional_info
+                tsutils.error_wrapper(
+                    f"""
+                    WDM library function returned error code {retcode}.
+                    {additional_info}
+                    """
                 )
             )
 
@@ -380,7 +365,9 @@ Trying to open file "{}" and it cannot be found.
                 if len(name) > 6:
                     raise ValueError(
                         tsutils.error_wrapper(
-                            f"{name} is too long - attribute names are 6 characters or less."
+                            f"""{name} is too long - attribute names are
+                            6 characters or less.
+                            """
                         )
                     )
                 name = name[:6].ljust(6).upper()
@@ -395,11 +382,11 @@ Trying to open file "{}" and it cannot be found.
         for index in attrib_list:
             (
                 name,
-                dataptr,
+                _,  # data pointer
                 attrib_type,
                 attrib_len,
-                attrib_usage,
-                attrib_update,
+                _,  # attribute usage
+                _,  # attribute update
             ) = self.wdsagy(messfp, index)
             attrib_name = b"".join(name).strip().decode("ascii")
             if not attrib_name:
@@ -460,6 +447,7 @@ Trying to open file "{}" and it cannot be found.
         self._close(wdmpath)
 
     def set_attribute(self, wdmpath, dsn, attrib_name, attrib_val):
+        """Set attribute of the DSN."""
         wdmfp = self._open(wdmpath, 60)
         messfp = self.wmsgop()
 
@@ -471,7 +459,8 @@ Trying to open file "{}" and it cannot be found.
             raise ValueError(
                 tsutils.error_wrapper(f"No attribute called {attrib_name}.")
             )
-        elif attrib_type == 1:
+
+        if attrib_type == 1:
             val = int(attrib_val)
             retcode = self.wdbsai(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
         elif attrib_type == 2:
@@ -479,7 +468,7 @@ Trying to open file "{}" and it cannot be found.
             retcode = self.wdbsar(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
         elif attrib_type == 3:
             val = attrib_val.strip()
-            val = "{0: <{1}}".format(val, attrib_len)
+            val = f"{val: <{attrib_len}}"
             retcode = self.wdbsac(wdmfp, dsn, messfp, attrib_index, attrib_len, val)
         self._retcode_check(
             retcode,
@@ -560,16 +549,14 @@ Trying to open file "{}" and it cannot be found.
                     self.delete_dsn(wdmfp, dsn)
                     raise ValueError(
                         tsutils.error_wrapper(
+                            f"""
+                            String "{saval}" is too long for {error_name}.
+                            Must have a length equal or less than {salen}.
                             """
-String "{}" is too long for {}.  Must
-have a length equal or less than {}.
-""".format(
-                                saval, error_name, salen
-                            )
                         )
                     )
 
-                saval = "{0: <{1}}".format(saval, salen)
+                saval = f"{saval: <{salen}}"
 
                 retcode = self.wdbsac(wdmfp, dsn, messfp, saind, salen, saval)
                 if retcode != 0:
@@ -615,12 +602,11 @@ have a length equal or less than {}.
         if tsbyr > llsdat[0]:
             raise ValueError(
                 tsutils.error_wrapper(
+                    f"""
+                    The base year for this DSN is {tsbyr}.  All data to insert
+                    must be after the base year.  Instead the first year of the
+                    series is {llsdat[0]}.
                     """
-The base year for this DSN is {}.  All data to insert must be after the
-base year.  Instead the first year of the series is {}.
-""".format(
-                        tsbyr, llsdat[0]
-                    )
                 )
             )
 
@@ -637,11 +623,9 @@ base year.  Instead the first year of the series is {}.
         if not os.path.exists(wdmpath):
             raise ValueError(
                 tsutils.error_wrapper(
+                    f"""
+                    File {wdmpath} does not exist.
                     """
-File {} does not exist.
-""".format(
-                        wdmpath
-                    )
                 )
             )
 
@@ -667,12 +651,11 @@ File {} does not exist.
             if start_date > datetime.datetime(*lledat):
                 raise ValueError(
                     tsutils.error_wrapper(
+                        f"""
+                        The requested start date ({start_date}) is after the
+                        end date ({datetime.datetime(*lledat)}) of the time
+                        series in the WDM file.
                         """
-The requested start date ({}) is after the end date ({})
-of the time series in the WDM file.
-""".format(
-                            start_date, datetime.datetime(*lledat)
-                        )
                     )
                 )
 
@@ -682,12 +665,11 @@ of the time series in the WDM file.
             if end_date < datetime.datetime(*llsdat):
                 raise ValueError(
                     tsutils.error_wrapper(
+                        f"""
+                        The requested end date ({end_date}) is before the start
+                        date ({datetime.datetime(*llsdat)}) of the time series
+                        in the WDM file.
                         """
-The requested end date ({}) is before the start date ({})
-of the time series in the WDM file.
-""".format(
-                            end_date, datetime.datetime(*llsdat)
-                        )
                     )
                 )
 
@@ -710,7 +692,7 @@ of the time series in the WDM file.
         index = pd.date_range(
             datetime.datetime(*llsdat),
             periods=iterm,
-            freq="{:d}{}".format(tsstep, _MAPTCODE[tcode]),
+            freq=f"{tsstep:d}{_MAPTCODE[tcode]}",
         )
 
         # Convert time series to pandas DataFrame

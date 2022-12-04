@@ -6,6 +6,7 @@ Used to manipulate Watershed Data Management files for time-series.
 import datetime
 import os
 import sys
+import tempfile
 from collections import OrderedDict
 from contextlib import suppress
 
@@ -40,9 +41,6 @@ _common_docs = {
     "indsn": r"""indsn: int
         Source
         DSN.""",
-    "outwdmpath": r"""outwdmpath: str
-        Path to clean copy WDM
-        file.""",
     "outdsn": r"""outdsn: int
         Target
         DSN.""",
@@ -164,8 +162,6 @@ def _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, func, overwrite=False):
     if overwrite is True:
         deletedsn(outwdmpath, outdsn)
     if inwdmpath == outwdmpath:
-        import tempfile
-
         tempdir = tempfile.mkdtemp()
         tmpwdmpath = os.path.join(tempdir, "temp.wdm")
         createnewwdm(tmpwdmpath)
@@ -191,7 +187,9 @@ def copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     ${overwrite}
 
     """
-    _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn_label)
+    _copydsn_core(
+        inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn_label, overwrite=overwrite
+    )
 
 
 @program.command(formatter_class=RSTHelpFormatter)
@@ -208,7 +206,7 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
     ${overwrite}
 
     """
-    _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn)
+    _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, _copy_dsn, overwrite=overwrite)
 
 
 @program.command(formatter_class=RSTHelpFormatter)
@@ -227,8 +225,8 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
         raise ValueError(
             tsutils.error_wrapper(
                 """
-The "inwdmpath" cannot be the same as "outwdmpath".
-"""
+                The "inwdmpath" cannot be the same as "outwdmpath".
+                """
             )
         )
     createnewwdm(outwdmpath, overwrite=overwrite)
@@ -339,17 +337,7 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     for dex, date in enumerate(tmp.index):
         for dsn, location in collect_keys:
             print(
-                "{}_{} {} {:02} {:02} {:02} {:02} {:02} {}".format(
-                    dsn,
-                    location,
-                    date.year,
-                    date.month,
-                    date.day,
-                    date.hour,
-                    date.minute,
-                    date.second,
-                    collected_ts[(dsn, location)][dex],
-                )
+                f"{dsn}_{location} {date.year} {date.month:02} {date.day:02} {date.hour:02} {date.minute:02} {date.second:02} {collected_ts[(dsn, location)][dex]}"
             )
 
 
@@ -372,12 +360,10 @@ def extract(*wdmpath, **kwds):
     if kwds:
         raise ValueError(
             tsutils.error_wrapper(
+                f"""
+                The only allowed keywords are start_date and end_date.  You
+                have given {kwds}.
                 """
-The only allowed keywords are start_date and end_date.  You
-have given {}.
-""".format(
-                    kwds
-                )
             )
         )
 
@@ -424,9 +410,7 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
     ${end_date}
 
     """
-    return tsutils._printiso(
-        extract(*wdmpath, start_date=start_date, end_date=end_date)
-    )
+    return tsutils.printiso(extract(*wdmpath, start_date=start_date, end_date=end_date))
 
 
 @program.command(formatter_class=RSTHelpFormatter)
@@ -489,7 +473,7 @@ def listdsns_cli(wdmpath):
         ):
             nkey = alias_attrib.get(key, key)
             collect.setdefault(nkey, []).append(testv[key])
-    return tsutils._printiso(collect, tablefmt="plain")
+    return tsutils.printiso(collect, tablefmt="plain")
 
 
 def listdsns(wdmpath):
@@ -497,11 +481,9 @@ def listdsns(wdmpath):
     if not os.path.exists(wdmpath):
         raise ValueError(
             tsutils.error_wrapper(
+                f"""
+                File {wdmpath} does not exist.
                 """
-File {} does not exist.
-""".format(
-                    wdmpath
-                )
             )
         )
 
@@ -594,39 +576,35 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
     start_century
         Since 2 digit years are used, need century, defaults
         to 1900.
-
     """
-    import pandas as pd
-
     dsn = int(dsn)
-    if isinstance(input_ts, str):
-        input_ts = open(input_ts)
     dates = np.array([])
     data = np.array([])
-    for line in input_ts:
-        words = line[8:]
-        words = words.split()
-        year = int(words[0]) + start_century
-        month = int(words[1])
-        day = int(words[2])
-        ampmflag = int(words[3])
-        if int(words[0]) == 99 and month == 12 and day == 31 and ampmflag == 2:
-            start_century = start_century + 100
-        data = np.append(data, [float(i) for i in words[4:16]])
-        try:
-            if ampmflag == 1:
-                dates = np.append(
-                    dates,
-                    [datetime.datetime(year, month, day, i) for i in range(12)],
-                )
+    with open(input_ts, encoding="ascii") as hydhrfp:
+        for line in hydhrfp:
+            words = line[8:]
+            words = words.split()
+            year = int(words[0]) + start_century
+            month = int(words[1])
+            day = int(words[2])
+            ampmflag = int(words[3])
+            if int(words[0]) == 99 and month == 12 and day == 31 and ampmflag == 2:
+                start_century = start_century + 100
+            data = np.append(data, [float(i) for i in words[4:16]])
+            try:
+                if ampmflag == 1:
+                    dates = np.append(
+                        dates,
+                        [datetime.datetime(year, month, day, i) for i in range(12)],
+                    )
 
-            elif ampmflag == 2:
-                dates = np.append(
-                    dates,
-                    [datetime.datetime(year, month, day, i) for i in range(12, 24)],
-                )
-        except ValueError:
-            print(start_century, line)
+                elif ampmflag == 2:
+                    dates = np.append(
+                        dates,
+                        [datetime.datetime(year, month, day, i) for i in range(12, 24)],
+                    )
+            except ValueError:
+                print(start_century, line)
     data = pd.DataFrame(data, index=dates)
     _writetodsn(wdmpath, dsn, data)
 
@@ -691,12 +669,10 @@ def csvtowdm(
     if len(tsd.columns) > 1:
         raise ValueError(
             tsutils.error_wrapper(
+                f"""
+                The input data set must contain only 1 time series.  You gave
+                {len(tsd.columns)}.
                 """
-The input data set must contain only 1 time series.
-You gave {}.
-""".format(
-                    len(tsd.columns)
-                )
             )
         )
 
@@ -736,20 +712,17 @@ def _writetodsn(wdmpath, dsn, data):
     }
     try:
         finterval = mapcode[pandacode]
-    except KeyError:
+    except KeyError as exc:
         raise KeyError(
-            """
-*
-*   wdmtoolbox only understands PANDAS time intervals of :
-*   'A', 'AS', 'A-DEC' for annual,
-*   'M', 'MS' for monthly,
-*   'D', 'H', 'T', 'S' for day, hour, minute, and second.
-*   wdmtoolbox thinks this series is {}.
-*
-""".format(
-                pandacode
+            tsutils.error_wrapper(
+                f"""
+                wdmtoolbox only understands PANDAS time intervals of : 'A',
+                'AS', 'A-DEC' for annual, 'M', 'MS' for monthly, 'D', 'H', 'T',
+                'S' for day, hour, minute, and second.  wdmtoolbox thinks this
+                series is {pandacode}.
+                """
             )
-        )
+        ) from exc
 
     # Convert string to int
     dsn = int(dsn)
@@ -761,16 +734,11 @@ def _writetodsn(wdmpath, dsn, data):
     if finterval != dsntcode:
         raise ValueError(
             tsutils.error_wrapper(
+                f"""
+                The DSN {dsn} has a tcode of {dsntcode}
+                ({invmapcode[dsntcode]}), but the data has a tcode of
+                {finterval} ({invmapcode[finterval]}).
                 """
-The DSN {2} has a tcode of {0} ({3}),
-but the data has a tcode of {1} ({4}).
-""".format(
-                    dsntcode,
-                    finterval,
-                    dsn,
-                    invmapcode[dsntcode],
-                    invmapcode[finterval],
-                )
             )
         )
 
@@ -778,11 +746,10 @@ but the data has a tcode of {1} ({4}).
     if dsntsstep != tsstep:
         raise ValueError(
             tsutils.error_wrapper(
+                f"""
+                The DSN has a tsstep of {dsntsstep}, but the data has a tsstep
+                of {tsstep}.
                 """
-The DSN has a tsstep of {}, but the data has a tsstep of {}.
-""".format(
-                    dsntsstep, tsstep
-                )
             )
         )
 
@@ -792,7 +759,8 @@ The DSN has a tsstep of {}, but the data has a tsstep of {}.
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def setattrib(wdmpath, dsn, attrib_name, attrib_val):
-    """Set an attribute value for the DSN.  See WDM documentation for full list of possible attributes and valid values.
+    """Set an attribute value for the DSN.  See WDM documentation for full list
+       of possible attributes and valid values.
 
     Parameters
     ----------
