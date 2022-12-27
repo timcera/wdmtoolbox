@@ -92,7 +92,7 @@ class TestDescribe(TestCase):
             input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
         )
         with self.assertRaisesRegex(
-            WDMError, "(?s)WDM error: data set number.* out.* valid"
+            WDMError, "(?s)WDM.* error:.* data.* set.* number.* out.* valid"
         ):
             ret1 = wdmtoolbox.extract(self.wdmname, 0)
 
@@ -105,7 +105,7 @@ class TestDescribe(TestCase):
             input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
         )
         with self.assertRaisesRegex(
-            WDMError, "(?s)WDM error: data set number.* out.* valid"
+            WDMError, "(?s)WDM.* error:.* data.* set.* number.* out.* valid"
         ):
             ret1 = wdmtoolbox.extract(self.wdmname, 32001)
 
