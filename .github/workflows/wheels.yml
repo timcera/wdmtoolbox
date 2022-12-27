@@ -15,9 +15,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                # Remove ubuntu because so much easier to use "cibuildwheel
-                # --platform linux" on my local machine.
-                os: [windows-2019, macOS-latest]
+                os: [windows-2019, macOS-latest, ubuntu-latest]
                 gcc_v: [9]  # Version of GFortran we want to use.
 
         env:
@@ -41,13 +39,11 @@ jobs:
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.11.4
               env:
-                  # github workflows have broken me - just skip
-                  # cp310-manylinux_* for the time being
                   CIBW_SKIP: pp* cp36-* *win32
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: pytest {package}/tests
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
 
-            - uses: actions/upload-artifact@v2
+            - uses: actions/upload-artifact@v3
               with:
                   path: ./wheelhouse/*.whl
