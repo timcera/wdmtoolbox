@@ -36,6 +36,12 @@ jobs:
                       /usr/local/gfortran/lib
                   gfortran --version
 
+            - name: Install libjpeg-dev package on Linux
+              if: contains(matrix.os, 'linux')
+              run: |
+                  apt-get install -y libjpeg-dev libpng-dev libtiff-dev \
+                      libgif-dev libwebp-dev
+
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.11.4
               env:
