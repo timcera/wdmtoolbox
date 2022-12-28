@@ -45,7 +45,7 @@ jobs:
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
                   CIBW_BEFORE_BUILD_LINUX: |
                       pip install --upgrade Pillow \
-                      --global-option="build_ext" \
+                      --global-option="build_wheel" \
                       --global-option="--disable-jpeg"
 
             - uses: actions/upload-artifact@v3
