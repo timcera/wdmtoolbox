@@ -36,15 +36,6 @@ jobs:
                       /usr/local/gfortran/lib
                   gfortran --version
 
-            - name: Install libjpeg-dev package on Linux
-              if: contains(matrix.os, 'ubuntu')
-              run: |
-                  sudo apt-get install -y libtiff5-dev libjpeg8-dev \
-                      libopenjp2-7-dev zlib1g-dev libfreetype6-dev \
-                      liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev \
-                      python3-tk libharfbuzz-dev libfribidi-dev libxcb1-dev \
-                      python3-dev python3-setuptools
-
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.11.4
               env:
@@ -52,6 +43,9 @@ jobs:
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: pytest {package}/tests
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
+                  CIBW_BEFORE_BUILD_LINUX: |
+                      pip install --upgrade Pillow \
+                      --global-option="--disable-jpeg"
 
             - uses: actions/upload-artifact@v3
               with:
