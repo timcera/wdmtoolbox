@@ -39,7 +39,7 @@ jobs:
             - name: Install libjpeg-dev package on Linux
               if: contains(matrix.os, 'ubuntu')
               run: |
-                  apt-get install -y libjpeg-dev libpng-dev libtiff-dev \
+                  sudo apt-get install -y libjpeg-dev libpng-dev libtiff-dev \
                       libgif-dev libwebp-dev
 
             - name: Build wheels
