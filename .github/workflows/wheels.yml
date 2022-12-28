@@ -44,9 +44,7 @@ jobs:
                   CIBW_TEST_COMMAND: pytest {package}/tests
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
                   CIBW_BEFORE_BUILD_LINUX: |
-                      pip install --upgrade Pillow \
-                      --global-option="build_wheel" \
-                      --global-option="--disable-jpeg"
+                      pip install --upgrade Pillow build_ext --disable-jpeg
 
             - uses: actions/upload-artifact@v3
               with:
