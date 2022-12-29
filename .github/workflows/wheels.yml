@@ -46,7 +46,7 @@ jobs:
                   CIBW_BEFORE_BUILD_LINUX: |
                       pip install --upgrade Pillow --use-pep517 \
                       --no-binary=Pillow \
-                      --config-settings=build_ext="--disable-jpeg"
+                      --config-settings=global="--disable-jpeg"
 
             - uses: actions/upload-artifact@v3
               with:
