@@ -15,7 +15,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [windows-2019, macOS-latest, ubuntu-latest]
+                # ubuntu-latest fails because Pillow doesn't find jpeg headers.
+                os: [windows-2019, macOS-latest]  # , ubuntu-latest]
                 gcc_v: [9]  # Version of GFortran we want to use.
 
         env:
@@ -43,10 +44,10 @@ jobs:
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: pytest {package}/tests
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
-                  CIBW_BEFORE_BUILD_LINUX: |
-                      pip install --upgrade Pillow --use-pep517 \
-                      --no-binary=Pillow \
-                      --config-settings=global="--disable-jpeg"
+                  # CIBW_BEFORE_BUILD_LINUX: |
+                  #     pip install --upgrade Pillow --use-pep517 \
+                  #     --no-binary=Pillow \
+                  #     --config-settings=global="--disable-jpeg"
 
             - uses: actions/upload-artifact@v3
               with:
