@@ -2,7 +2,7 @@
 test_createnewdsn
 ----------------------------------
 
-Tests for `tstoolbox` module.
+Tests for `wdmtoolbox` module.
 """
 
 import os
@@ -17,7 +17,7 @@ except:
 from unittest import TestCase
 
 from pandas.testing import assert_frame_equal
-from tstoolbox import tstoolbox
+from toolbox_utils import tsutils
 
 from wdmtoolbox import wdmtoolbox
 from wdmtoolbox.wdmutil import DSNExistsError
@@ -53,13 +53,13 @@ class TestDescribe(TestCase):
         ret2 = wdmtoolbox.extract(f"{self.wdmname},101").astype("f")
         assert_frame_equal(ret1, ret2)
 
-        ret3 = tstoolbox.read(os.path.join(self.test_dir, "sunspot_area.csv")).astype(
-            "f"
-        )
+        ret3 = tsutils.common_kwds(
+            os.path.join(self.test_dir, "sunspot_area.csv")
+        ).astype("f")
         ret1.columns = ["Area"]
         assert_frame_equal(ret1, ret3)
 
-        ret4 = tstoolbox.read(
+        ret4 = tsutils.common_kwds(
             os.path.join(self.test_dir, "sunspot_area_with_missing.csv"), dropna="no"
         ).astype("f")
 

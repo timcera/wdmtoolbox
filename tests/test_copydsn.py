@@ -2,7 +2,7 @@
 test_copydsn
 ----------------------------------
 
-Tests for `tstoolbox` module.
+Tests for `wdmtoolbox` module.
 """
 
 import os
@@ -18,7 +18,6 @@ from unittest import TestCase
 
 from pandas.testing import assert_frame_equal
 from toolbox_utils import tsutils
-from tstoolbox import tstoolbox
 
 from wdmtoolbox import wdmtoolbox
 
@@ -58,7 +57,7 @@ class TestDescribe(TestCase):
         ret2 = wdmtoolbox.extract(f"{self.wdmname},101")
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
-        ret3 = tstoolbox.read(os.path.join(self.test_dir, "nwisiv_02246000.csv"))
+        ret3 = tsutils.common_kwds(os.path.join(self.test_dir, "nwisiv_02246000.csv"))
         ret3.index = ret3.index.tz_localize(None)
         ret3 = tsutils.asbestfreq(ret3)
         ret1.columns = ["02246000_iv_00060"]

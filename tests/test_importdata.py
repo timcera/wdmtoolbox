@@ -2,7 +2,7 @@
 test_createnewdsn
 ----------------------------------
 
-Tests for `tstoolbox` module.
+Tests for `wdmtoolbox` module.
 """
 
 import os
@@ -18,7 +18,6 @@ from unittest import TestCase
 
 from pandas.testing import assert_frame_equal
 from toolbox_utils import tsutils
-from tstoolbox import tstoolbox
 
 from wdmtoolbox import wdmtoolbox
 from wdmtoolbox.wdmutil import WDMError
@@ -56,7 +55,7 @@ class TestDescribe(TestCase):
         ret2 = wdmtoolbox.extract(f"{self.wdmname},101")
         assert_frame_equal(ret1, ret2, check_index_type=False)
 
-        ret3 = tstoolbox.read(os.path.join(self.test_dir, "nwisiv_02246000.csv"))
+        ret3 = tsutils.common_kwds(os.path.join(self.test_dir, "nwisiv_02246000.csv"))
         ret3.index = ret3.index.tz_localize(None)
         ret3 = tsutils.asbestfreq(ret3)
         ret1.columns = ["02246000_iv_00060"]
@@ -130,7 +129,7 @@ class TestDescribe(TestCase):
         )
         ret1 = wdmtoolbox.extract(self.wdmname, 101, start_date="2014-02-21 16:00:00")
 
-        ret3 = tstoolbox.read(
+        ret3 = tsutils.common_kwds(
             os.path.join(self.test_dir, "nwisiv_02246000.csv"),
             start_date="2014-02-21 16:00:00",
         )
@@ -149,7 +148,7 @@ class TestDescribe(TestCase):
         )
         ret1 = wdmtoolbox.extract(self.wdmname, 101, end_date="2014-02-22 11:00:00")
 
-        ret3 = tstoolbox.read(
+        ret3 = tsutils.common_kwds(
             os.path.join(self.test_dir, "nwisiv_02246000.csv"),
             end_date="2014-02-22 11:00:00",
         )
@@ -173,7 +172,7 @@ class TestDescribe(TestCase):
             end_date="2014-02-22 11:00:00",
         )
 
-        ret3 = tstoolbox.read(
+        ret3 = tsutils.common_kwds(
             os.path.join(self.test_dir, "nwisiv_02246000.csv"),
             start_date="2014-02-21 16:00:00",
             end_date="2014-02-22 11:00:00",
