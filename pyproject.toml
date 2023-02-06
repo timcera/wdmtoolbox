@@ -77,7 +77,7 @@ manylinux-i686-image = "manylinux2010"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "13.0.2"
+version = "14.0.0"
 tag_format = "v$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
