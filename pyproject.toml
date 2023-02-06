@@ -13,7 +13,8 @@ dynamic = ["readme", "version"]
 description = "Read and write Watershed Data Management (WDM) files"
 dependencies = [
     "filelock",
-    "toolbox_utils >= 2.0.0, < 3.0.0",
+    "cltoolbox >= 2.0.0, < 3.0.0",
+    "toolbox_utils >= 3.0.0, < 4.0.0",
 ]
 license = {text = "BSD-3-Clause"}
 authors = [
