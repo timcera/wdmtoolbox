@@ -1,11 +1,11 @@
 [build-system]
+build-backend = "setuptools.build_meta"
 requires = [
     "setuptools>=45",
     "setuptools_scm[toml]>=6.2",
     "wheel",
-    "oldest-supported-numpy",
+    "oldest-supported-numpy"
 ]
-build-backend = "setuptools.build_meta"
 
 [project]
 name = "wdmtoolbox"
@@ -14,40 +14,70 @@ description = "Read and write Watershed Data Management (WDM) files"
 dependencies = [
     "filelock",
     "cltoolbox >= 2.0.0, < 3.0.0",
-    "toolbox_utils >= 3.0.0, < 4.0.0",
+    "toolbox_utils >= 3.0.0, < 4.0.0"
 ]
-license = {text = "BSD-3-Clause"}
 authors = [
     {name = "Tim Cera", email = "tim@cerazone.net"}
-    ]
+]
 classifiers = [
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Science/Research",
-        "Intended Audience :: End Users/Desktop",
-        "Intended Audience :: Developers",
-        "Environment :: Console",
-        "License :: OSI Approved :: BSD License",
-        "Natural Language :: English",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Topic :: Scientific/Engineering :: Information Analysis",
-        "Topic :: Scientific/Engineering",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-        ]
-keywords = ["WDM",
-            "watershed",
-            "data_management",
-            "data",
-            "hydrology",
-            "hydrological",
-            "simulation",
-            "fortran",
-            "HSPF",
-            ]
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Environment :: Console",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+keywords = [
+    "WDM",
+    "watershed",
+    "data_management",
+    "data",
+    "hydrology",
+    "hydrological",
+    "simulation",
+    "fortran",
+    "HSPF"
+]
+license = {text = "BSD-3-Clause"}
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "bandit",
+    "black",
+    "blacken-docs",
+    "black-nbconvert",
+    "cleanpy",
+    "commitizen",
+    "coverage[toml]",
+    "isort",
+    "mypy",
+    "pre-commit",
+    "pyflakes",
+    "pylama",
+    "pyle",
+    "pylint",
+    "pyre",
+    "pyroma",
+    "pytest",
+    "pytest-cov",
+    "pytest-mpl",
+    "pyupgrade",
+    "twine",
+    "unimport",
+    "velin",
+    "vulture"
+]
 
 [project.scripts]
 wdmtoolbox = "wdmtoolbox.wdmtoolbox:main"
@@ -56,8 +86,6 @@ wdmtoolbox = "wdmtoolbox.wdmtoolbox:main"
 documentation = "https://timcera.bitbucket.io/wdmtoolbox/docs/index.html"
 github = "https://github.com/timcera/wdmtoolbox"
 bitbucket = "https://bitbucket.org/timcera/wdmtoolbox/src/main/"
-
-[tool]
 
 [tool.check-manifest]
 ignore = ["docs/_function_autosummary/*"]
@@ -77,10 +105,10 @@ manylinux-i686-image = "manylinux2010"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "14.0.0"
 tag_format = "v$version"
-version_files = ["VERSION"]
 update_changelog_on_bump = true
+version = "14.0.0"
+version_files = ["VERSION"]
 
 [tool.isort]
 profile = "black"
@@ -97,7 +125,7 @@ version = {file = "VERSION"}
 wdmtoolbox = ["message.wdm"]
 
 [tool.setuptools.packages.find]
-where = ["src"]
 exclude = ["examples*", "tools*", "docs*", "tstoolbox.tests*"]
+where = ["src"]
 
 [tool.setuptools_scm]
