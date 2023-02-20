@@ -44,13 +44,10 @@ jobs:
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: pytest {package}/tests
 
-                  CIBW_BEFORE_BUILD_ALL: |
-                      python -m pip install --prefer-binary --only-binary :all: scipy numpy pandas
-
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
 
                   CIBW_BEFORE_BUILD_LINUX: |
-                      apt-get install -y libhdf5-dev openblas-dev || yum install -y hdf5-devel openblas-devel
+                      apt-get install -y libhdf5-dev libopenblas-dev || yum install -y hdf5-devel openblas-devel
 
             - name: Build and upload
               env:
