@@ -50,7 +50,7 @@ jobs:
                       python -m pip install --upgrade twine
                       python -m pip install --upgrade numpy
                   CIBW_BEFORE_BUILD_LINUX: |
-                      sudo apt-get install libhdf5-dev
+                      apt-get install libhdf5-dev
 
             - name: Build and upload
               env:
