@@ -16,7 +16,7 @@ jobs:
             fail-fast: false
             matrix:
                 # ubuntu-latest fails because Pillow doesn't find jpeg headers.
-                os: [windows-2019, macOS-latest, ubuntu-latest]
+                os: [windows-latest, macOS-latest, ubuntu-latest]
 
         steps:
             - uses: actions/checkout@v3
@@ -44,10 +44,13 @@ jobs:
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: pytest {package}/tests
 
+                  CIBW_BEFORE_BUILD_ALL: |
+                      python -m pip install --prefer-binary scipy numpy pandas
+
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
 
                   CIBW_BEFORE_BUILD_LINUX: |
-                      apt-get install -y libhdf5-dev || yum install -y hdf5-devel
+                      apt-get install -y libhdf5-dev openblas-dev || yum install -y hdf5-devel openblas-devel
 
             - name: Build and upload
               env:
