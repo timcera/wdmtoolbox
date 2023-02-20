@@ -45,11 +45,6 @@ jobs:
                   CIBW_TEST_COMMAND: pytest {package}/tests
 
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
-                  # Use delvewheel on windows
-                  CIBW_BEFORE_BUILD_WINDOWS: |
-                      pip install delvewheel
-                  CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: |
-                      delvewheel repair -w {dest_dir} {wheel}
 
                   CIBW_BEFORE_BUILD_LINUX: |
                       apt-get install -y libhdf5-dev || yum install -y hdf5-devel
