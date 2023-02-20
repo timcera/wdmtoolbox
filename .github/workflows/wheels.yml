@@ -18,32 +18,17 @@ jobs:
                 # ubuntu-latest fails because Pillow doesn't find jpeg headers.
                 os: [windows-2019, macOS-latest, ubuntu-latest]
 
-        env:
-            FC: gfortran-${{ matrix.gcc_v }}
-            GCC_V: ${{ matrix.gcc_v }}
-
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-python@v2
 
-            - name: Install gfortran on macOS
-              if: contains(matrix.os, 'mac')
-              run: |
-                  brew install gcc@${GCC_V} || brew upgrade gcc@${GCC_V} || true
-                  sudo ln -s /usr/local/bin/gfortran-${GCC_V} \
-                      /usr/local/bin/gfortran
-                  sudo mkdir /usr/local/gfortran
-                  sudo ln -s /usr/local/Cellar/gcc@${GCC_V}/*/lib/gcc/${GCC_V} \
-                      /usr/local/gfortran/lib
-                  gfortran --version
-
-            - name: Install gfortran on Windows
-              if: contains(matrix.os, 'win')
-              uses: msys2/setup-msys2@v2
+            - name: Setup GNU Fortran
+              uses: modflowpy/install-gfortran-action@v1
 
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.12.0
               env:
+                  FC: gfortran
                   CIBW_SKIP: pp* cp36-* cp37-*
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: pytest {package}/tests
@@ -55,6 +40,8 @@ jobs:
                       python -m pip install --upgrade wheel
                       python -m pip install --upgrade twine
                       python -m pip install --upgrade numpy
+                  CIBW_BEFORE_BUILD_LINUX: |
+                      sudo apt install libhdf5-dev
 
             - name: Build and upload
               env:
