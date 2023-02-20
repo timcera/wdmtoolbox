@@ -45,7 +45,7 @@ jobs:
                   CIBW_TEST_COMMAND: pytest {package}/tests
 
                   CIBW_BEFORE_BUILD_ALL: |
-                      python -m pip install --prefer-binary scipy numpy pandas
+                      python -m pip install --prefer-binary --only-binary :all: scipy numpy pandas
 
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
 
