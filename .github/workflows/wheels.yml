@@ -28,7 +28,7 @@ jobs:
             - name: Linux
               if: contains(matrix.os, 'linux')
               run: |
-                  sudo apt-get install libhdf5-dev
+                  sudo apt-get install libhdf5-dev libopenblas-dev
 
             - name: Windows
               if: contains(matrix.os, 'win')
@@ -63,5 +63,5 @@ jobs:
                   python -m pip install --upgrade twine
                   python -m pip install --upgrade numpy
                   python setup.py sdist
-                  twine upload --verbose dist/*
-                  twine upload --verbose wheelhouse/*
+                  twine upload --verbose --skip-existing dist/*.whl
+                  twine upload --verbose --skip-existing wheelhouse/*.whl
