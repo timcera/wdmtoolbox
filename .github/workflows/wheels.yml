@@ -23,17 +23,16 @@ jobs:
             - uses: actions/setup-python@v2
 
             - name: Setup GNU Fortran
+              # This seems to work to correct all platform problems for getting
+              # to gfortran.  Excellent work!
               uses: modflowpy/install-gfortran-action@v1
 
             - name: Linux
+              # This is needed for cibuildwheel to install numpy in each Linux
+              # container.
               if: contains(matrix.os, 'linux')
               run: |
-                  sudo apt-get install libhdf5-dev libopenblas-dev
-
-            - name: Windows
-              if: contains(matrix.os, 'win')
-              run: |
-                  choco install hdf5
+                  sudo apt-get install libopenblas-dev
 
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.12.0
@@ -50,6 +49,8 @@ jobs:
                       python -m pip install --upgrade wheel
                       python -m pip install --upgrade twine
                       python -m pip install --upgrade numpy
+                  CIBW_BEFORE_BUILD_LINUX: |
+                      sudo apt-get install libhdf5-dev
 
             - name: Build and upload
               env:
@@ -63,5 +64,5 @@ jobs:
                   python -m pip install --upgrade twine
                   python -m pip install --upgrade numpy
                   python setup.py sdist
-                  twine upload --verbose --skip-existing dist/*.whl
+                  twine upload --verbose --skip-existing dist/*
                   twine upload --verbose --skip-existing wheelhouse/*.whl
