@@ -38,19 +38,21 @@ jobs:
               uses: pypa/cibuildwheel@v2.12.0
               env:
                   FC: gfortran
+
                   CIBW_SKIP: pp* cp36-* cp37-*
+
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: pytest {package}/tests
+
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
-                  CIBW_BEFORE_BUILD_ALL: |
-                      python -m pip install --upgrade pip
-                      python -m pip install --upgrade 'setuptools>=45'
-                      python -m pip install --upgrade 'setuptools-scm>=6.2'
-                      python -m pip install --upgrade wheel
-                      python -m pip install --upgrade twine
-                      python -m pip install --upgrade numpy
+                  # Use delvewheel on windows
+                  CIBW_BEFORE_BUILD_WINDOWS: |
+                      pip install delvewheel
+                  CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: |
+                      delvewheel repair -w {dest_dir} {wheel}
+
                   CIBW_BEFORE_BUILD_LINUX: |
-                      apt-get install libhdf5-dev
+                      apt-get install -y libhdf5-dev || yum install -y hdf5-devel
 
             - name: Build and upload
               env:
