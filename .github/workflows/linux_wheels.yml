@@ -27,8 +27,8 @@ jobs:
                   CIBW_SKIP: pp* cp36-* cp37-* *win32
 
                   CIBW_BEFORE_BUILD_LINUX: |
-                      yum upgrade -y || apt-get update -y ;
-                      yum upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev
+                      yum upgrade -y || apt-get update -y || apk update ;
+                      yum upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev || apk add --update hdf5-dev openblas-dev
 
             - name: Build and upload
               env:
