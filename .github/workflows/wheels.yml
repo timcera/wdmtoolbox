@@ -15,27 +15,15 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                # ubuntu-latest fails because Pillow doesn't find jpeg headers.
-                os: [windows-2019, macOS-latest, ubuntu-latest]
+                os: [windows-latest, macOS-latest, ubuntu-latest]
 
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-python@v2
 
-            - name: Setup GNU Fortran
-              # This seems to work to correct all platform problems for getting
-              # to gfortran.  Excellent work!
-              uses: modflowpy/install-gfortran-action@v1
-
-            - name: Linux
-              # This is needed for cibuildwheel to install numpy in each Linux
-              # container.
-              if: contains(matrix.os, 'linux')
-              run: |
-                  sudo apt-get install libopenblas-dev
-
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.12.0
+              uses: modflowpy/install-gfortran-action@v1
               env:
                   FC: gfortran
 
