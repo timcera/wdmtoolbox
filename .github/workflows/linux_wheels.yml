@@ -24,11 +24,11 @@ jobs:
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.12.0
               env:
-                  CIBW_SKIP: pp* cp36-* cp37-*
+                  CIBW_SKIP: pp* cp36-* cp37-* *win32
 
                   CIBW_BEFORE_BUILD_LINUX: |
-                      dnf upgrade -y || apt-get update -y ;
-                      dnf upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev
+                      yum upgrade -y || apt-get update -y ;
+                      yum upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev
 
             - name: Build and upload
               env:
