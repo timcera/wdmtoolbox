@@ -15,32 +15,16 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                # ubuntu-latest fails because Pillow doesn't find jpeg headers.
-                os: [windows-latest, macOS-latest, ubuntu-latest]
+                os: [macOS-latest]
 
         steps:
             - uses: actions/checkout@v3
-            - uses: actions/setup-python@v2
-
-            - name: Setup Fortran
-              uses: awvwgk/setup-fortran@main
-              id: setup-fortran
-              with:
-                  compiler: gcc
-                  version: 11
-              env:
-                  FC: ${{ steps.setup-fortran.outputs.fc }}
+            - uses: actions/setup-python@v4
 
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.12.0
               env:
                   CIBW_SKIP: pp* cp36-* cp37-*
-
-                  CIBW_BUILD_VERBOSITY_WINDOWS: 3
-
-                  CIBW_BEFORE_BUILD_LINUX: |
-                      apt-get update -y || yum update -y
-                      apt-get install -y libhdf5-dev libopenblas-dev || yum install -y hdf5-devel openblas-devel
 
             - name: Build and upload
               env:
@@ -52,7 +36,4 @@ jobs:
                   python -m pip install --upgrade 'setuptools-scm>=6.2'
                   python -m pip install --upgrade wheel
                   python -m pip install --upgrade twine
-                  python -m pip install --upgrade numpy
-                  python setup.py sdist
-                  twine upload --verbose --skip-existing dist/*
                   twine upload --verbose --skip-existing wheelhouse/*.whl
