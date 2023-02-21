@@ -1,5 +1,5 @@
 ---
-name: Build
+name: Build linux wheels
 
 # yamllint disable-line rule:truthy
 on: [push, pull_request]
@@ -27,17 +27,8 @@ jobs:
                   CIBW_SKIP: pp* cp36-* cp37-*
 
                   CIBW_BEFORE_BUILD_LINUX: |
-                      yum update -y || apt-get update -y ;
-                      yum install -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev
-
-            - name: Setup Fortran
-              uses: awvwgk/setup-fortran@main
-              id: setup-fortran
-              with:
-                  compiler: gcc
-                  version: 11
-              env:
-                  FC: ${{ steps.setup-fortran.outputs.fc }}
+                      dnf upgrade -y || apt-get update -y ;
+                      dnf upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev
 
             - name: Build and upload
               env:

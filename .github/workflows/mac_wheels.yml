@@ -1,5 +1,5 @@
 ---
-name: Build
+name: Build max wheels
 
 # yamllint disable-line rule:truthy
 on: [push, pull_request]
@@ -20,6 +20,15 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-python@v4
+
+            - name: Setup Fortran
+              uses: awvwgk/setup-fortran@main
+              id: setup-fortran
+              with:
+                  compiler: gcc
+                  version: 11
+              env:
+                  FC: ${{ steps.setup-fortran.outputs.fc }}
 
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.12.0
