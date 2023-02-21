@@ -22,12 +22,20 @@ jobs:
             - uses: actions/checkout@v3
             - uses: actions/setup-python@v2
 
+            - name: Setup Fortran
+              uses: awvwgk/setup-fortran@main
+              id: setup-fortran
+              with:
+                  compiler: gcc
+                  version: 11
+
+              run: ${{ env.FC }} --version
+              env:
+                  FC: ${{ steps.setup-fortran.outputs.fc }}
+
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.12.0
-              uses: modflowpy/install-gfortran-action@v1
               env:
-                  FC: gfortran
-
                   CIBW_SKIP: pp* cp36-* cp37-*
 
                   CIBW_TEST_REQUIRES: pytest
