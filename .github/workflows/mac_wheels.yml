@@ -33,6 +33,7 @@ jobs:
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.12.0
               env:
+                  CIBW_BUILD: cp38-* cp39-* cp310-* cp311-*
                   CIBW_SKIP: pp* cp36-* cp37-* *win32
 
             - name: Build and upload
@@ -41,8 +42,6 @@ jobs:
                   TWINE_PASSWORD: ${{ secrets.PYPI_WDMTOOLBOX_TOKEN }}
               run: |
                   python3 -m pip install --upgrade pip
-                  python3 -m pip install --upgrade 'setuptools>=45'
-                  python3 -m pip install --upgrade 'setuptools-scm>=6.2'
                   python3 -m pip install --upgrade wheel
                   python3 -m pip install --upgrade twine
                   twine upload --verbose --skip-existing wheelhouse/*.whl
