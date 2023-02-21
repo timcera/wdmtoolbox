@@ -28,8 +28,6 @@ jobs:
               with:
                   compiler: gcc
                   version: 11
-
-              run: ${{ env.FC }} --version
               env:
                   FC: ${{ steps.setup-fortran.outputs.fc }}
 
