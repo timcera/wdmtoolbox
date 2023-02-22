@@ -26,10 +26,11 @@ jobs:
               id: setup-fortran
               with:
                   compiler: gcc
-                  version: 10
+                  version: 9
             - run: ${{ env.FC }} --version
               env:
                   FC: ${{ steps.setup-fortran.outputs.fc }}
+                  CC: ${{ steps.setup-fortran.outputs.cc }}
 
             # - name: Provide gfortran on Windows
             #   uses: msys2/setup-msys2@v2
