@@ -47,8 +47,6 @@ jobs:
                   CIBW_SKIP: pp* cp36-* cp37-* *win32
 
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
-                  CIBW_BEFORE_BUILD_WINDOWS: |
-                    choco upgrade mingw
 
             - name: Build and upload
               env:
