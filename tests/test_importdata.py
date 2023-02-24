@@ -70,7 +70,7 @@ class TestDescribe(TestCase):
             input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
         )
         with self.assertRaisesRegex(ValueError, "The only allowed keywords are"):
-            ret1 = wdmtoolbox.extract(self.wdmname, 101, ph=True)
+            wdmtoolbox.extract(self.wdmname, 101, ph=True)
 
     def test_listdsns_verify(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
@@ -80,7 +80,7 @@ class TestDescribe(TestCase):
             101,
             input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
         )
-        ldsns = wdmtoolbox.listdsns(self.wdmname)
+        wdmtoolbox.listdsns(self.wdmname)
 
     def test_negative_dsn(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
@@ -93,7 +93,7 @@ class TestDescribe(TestCase):
         with self.assertRaisesRegex(
             WDMError, "(?s)WDM.* error:.* data.* set.* number.* out.* valid"
         ):
-            ret1 = wdmtoolbox.extract(self.wdmname, 0)
+            wdmtoolbox.extract(self.wdmname, 0)
 
     def test_out_of_bounds_dsn(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
@@ -106,7 +106,7 @@ class TestDescribe(TestCase):
         with self.assertRaisesRegex(
             WDMError, "(?s)WDM.* error:.* data.* set.* number.* out.* valid"
         ):
-            ret1 = wdmtoolbox.extract(self.wdmname, 32001)
+            wdmtoolbox.extract(self.wdmname, 32001)
 
     def test_dsn_not_in_wdm(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
@@ -117,7 +117,7 @@ class TestDescribe(TestCase):
             input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
         )
         with self.assertRaisesRegex(WDMError, "error code -81"):
-            ret1 = wdmtoolbox.extract(self.wdmname, 32000)
+            wdmtoolbox.extract(self.wdmname, 32000)
 
     def test_start_date(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)

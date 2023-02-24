@@ -10,7 +10,6 @@ subsequent DLL.
 
 import glob
 import os
-import sys
 import sysconfig
 
 if os.name == "nt":

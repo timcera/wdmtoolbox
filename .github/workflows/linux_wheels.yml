@@ -25,7 +25,7 @@ jobs:
               uses: pypa/cibuildwheel@v2.12.0
               env:
                   CIBW_BUILD: cp38-* cp39-* cp310-* cp311-*
-                  CIBW_SKIP: pp* cp36-* cp37-* *win32
+                  CIBW_SKIP: pp* cp36-* cp37-*
 
                   CIBW_BEFORE_BUILD_LINUX: |
                       yum upgrade -y || apt-get update -y || apk update ;

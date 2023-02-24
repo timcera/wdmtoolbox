@@ -11,11 +11,12 @@ import os
 import os.path
 import re
 
-import _wdm_lib
 import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
 from toolbox_utils import tsutils
+
+import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
 # Somewhere in the distant past, these slightly diverged - don't remember the

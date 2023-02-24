@@ -281,10 +281,10 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     Parameters
     ----------
     ${wdmpath}
-    dsns
+    *dsns
         The Data Set Numbers in the WDM
         file.
-    kwds
+    **kwds
         Current supported keywords are "start_date" and
         "end_date".
 
@@ -406,7 +406,9 @@ def extract_cli(start_date=None, end_date=None, *wdmpath):
             `wdmpath` can be space separated sets of 'wdmpath,dsn'.
 
             'file.wdm,101 file2.wdm,104 file.wdm,227'
+
     ${start_date}
+
     ${end_date}
 
     """
