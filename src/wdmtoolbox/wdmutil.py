@@ -49,18 +49,18 @@ class DSNDoesNotExist(Exception):
     def __str__(self):
         """Print detailed error message."""
         if self.dsn < 1 or self.dsn > 32000:
-            return f"""
-*
-*   The DSN number must be >= 1 and <= 32000.
-*   You supplied {self.dsn}.
-*
+            return tsutils.error_wrapper(
+                f"""
+The DSN number must be >= 1 and <= 32000.
+You supplied {self.dsn}.
 """
+            )
 
-        return f"""
-*
-*   The DSN {self.dsn} does not exist in the dataset.
-*
+        return tsutils.error_wrapper(
+            f"""
+The DSN {self.dsn} does not exist in the dataset.
 """
+        )
 
 
 class WDMFileExists(Exception):
@@ -72,11 +72,11 @@ class WDMFileExists(Exception):
 
     def __str__(self):
         """Return detailed error message."""
-        return f"""
-*
-*   File {self.filename} exists.
-*
+        return tsutils.error_wrapper(
+            f"""
+File {self.filename} exists.
 """
+        )
 
 
 class DSNExistsError(Exception):
@@ -88,11 +88,11 @@ class DSNExistsError(Exception):
 
     def __str__(self):
         """Return detailed error message."""
-        return f"""
-*
-*   DSN {self.dsn} exists.
-*
+        return tsutils.error_wrapper(
+            f"""
+DSN {self.dsn} exists.
 """
+        )
 
 
 class WDM:

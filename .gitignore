@@ -31,6 +31,7 @@ __pycache__/*
 .tox
 .tox/*
 _function_autosummary
-src/_wdm_lib.cpython-38-x86_64-linux-gnu.so
+src/*.so
 wdm_support/_wdm_lib-f2pywrappers.f
 wdm_support/_wdm_libmodule.c
+debug_*
