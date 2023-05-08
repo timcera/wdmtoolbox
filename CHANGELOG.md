@@ -1,3 +1,9 @@
+## v14.0.1 (2023-05-07)
+
+### Refactor
+
+- collection of small refactors
+
 ## v14.0.0 (2023-02-05)
 
 ## v13.0.2 (2023-01-16)

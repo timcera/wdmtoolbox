@@ -107,7 +107,7 @@ manylinux-i686-image = "manylinux2010"
 name = "cz_conventional_commits"
 tag_format = "v$version"
 update_changelog_on_bump = true
-version = "14.0.0"
+version = "14.0.1"
 version_files = ["VERSION"]
 
 [tool.isort]
