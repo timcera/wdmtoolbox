@@ -36,11 +36,8 @@ jobs:
                   CIBW_BUILD: cp38-* cp39-* cp310-* cp311-*
                   CIBW_SKIP: pp* cp36-* cp37-*
 
-            - name: Test with pytest
-              run: |
-                  python3 -m pip install wheelhouse/*.whl
-                  python3 -m pip install pytest pytest-mpl
-                  python3 -m pytest --mpl
+                  CIBW_TEST_REQUIRES: pytest
+                  CIBW_TEST_COMMAND: "cd {project}; pytest"
 
             - name: Upload
               env:

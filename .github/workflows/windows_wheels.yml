@@ -40,11 +40,8 @@ jobs:
 
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
 
-            - name: Test with pytest
-              run: |
-                  python3 -m pip install wheelhouse/*.whl
-                  python3 -m pip install pytest pytest-mpl
-                  python3 -m pytest --mpl
+                  CIBW_TEST_REQUIRES: pytest
+                  CIBW_TEST_COMMAND: "cd {project}; pytest"
 
             - name: Upload
               env:

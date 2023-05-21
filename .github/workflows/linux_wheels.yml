@@ -31,6 +31,9 @@ jobs:
                       yum upgrade -y || apt-get update -y || apk update ;
                       yum upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev || apk add --update hdf5-dev openblas-dev
 
+                  CIBW_TEST_REQUIRES: pytest
+                  CIBW_TEST_COMMAND: "cd {project}; pytest"
+
             - name: Build source distribution
               run: |
                   python3 -m pip install --upgrade pip
@@ -39,12 +42,6 @@ jobs:
                   python3 -m pip install --upgrade wheel
                   python3 -m pip install --upgrade numpy
                   python3 setup.py sdist
-
-            - name: Test with pytest
-              run: |
-                  python3 -m pip install wheelhouse/*.whl
-                  python3 -m pip install pytest pytest-mpl
-                  python3 -m pytest --mpl
 
             - name: Upload
               env:

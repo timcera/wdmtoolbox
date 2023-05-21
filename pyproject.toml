@@ -90,19 +90,6 @@ bitbucket = "https://bitbucket.org/timcera/wdmtoolbox/src/main/"
 [tool.check-manifest]
 ignore = ["docs/_function_autosummary/*"]
 
-[tool.cibuildwheel]
-build = ["cp37-*", "cp38-*", "cp39-*", "cp310-*"]
-
-[[tool.cibuildwheel.overrides]]
-select = "cp310-*"
-manylinux-x86_64-image = "manylinux2014"
-manylinux-i686-image = "manylinux2014"
-
-[[tool.cibuildwheel.overrides]]
-select = "cp3{7,8,9}-*"
-manylinux-x86_64-image = "manylinux2010"
-manylinux-i686-image = "manylinux2010"
-
 [tool.commitizen]
 name = "cz_conventional_commits"
 tag_format = "v$version"
