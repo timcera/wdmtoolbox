@@ -31,7 +31,7 @@ jobs:
                       yum upgrade -y || apt-get update -y || apk update ;
                       yum upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev || apk add --update hdf5-dev openblas-dev
 
-            - name: Build and upload
+            - name: Build source distribution
               run: |
                   python3 -m pip install --upgrade pip
                   python3 -m pip install --upgrade 'setuptools>=45'
@@ -42,6 +42,7 @@ jobs:
 
             - name: Test with pytest
               run: |
+                  python3 -m pip install wheelhouse/*.whl
                   python3 -m pip install pytest pytest-mpl
                   python3 -m pytest --mpl
 

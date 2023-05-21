@@ -38,6 +38,7 @@ jobs:
 
             - name: Test with pytest
               run: |
+                  python3 -m pip install wheelhouse/*.whl
                   python3 -m pip install pytest pytest-mpl
                   python3 -m pytest --mpl
 
