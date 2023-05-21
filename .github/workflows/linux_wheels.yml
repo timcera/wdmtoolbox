@@ -32,16 +32,24 @@ jobs:
                       yum upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev || apk add --update hdf5-dev openblas-dev
 
             - name: Build and upload
-              env:
-                  TWINE_USERNAME: __token__
-                  TWINE_PASSWORD: ${{ secrets.PYPI_WDMTOOLBOX_TOKEN }}
               run: |
                   python3 -m pip install --upgrade pip
                   python3 -m pip install --upgrade 'setuptools>=45'
                   python3 -m pip install --upgrade 'setuptools-scm>=6.2'
                   python3 -m pip install --upgrade wheel
-                  python3 -m pip install --upgrade twine
                   python3 -m pip install --upgrade numpy
                   python3 setup.py sdist
+
+            - name: Test with pytest
+              run: |
+                  python3 -m pip install pytest pytest-mpl
+                  python3 -m pytest --mpl
+
+            - name: Upload
+              env:
+                  TWINE_USERNAME: __token__
+                  TWINE_PASSWORD: ${{ secrets.PYPI_WDMTOOLBOX_TOKEN }}
+              run:
+                  python3 -m pip install --upgrade twine
                   twine upload --verbose --skip-existing dist/*
                   twine upload --verbose --skip-existing wheelhouse/*.whl
