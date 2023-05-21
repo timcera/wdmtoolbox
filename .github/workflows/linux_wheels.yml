@@ -25,14 +25,16 @@ jobs:
               uses: pypa/cibuildwheel@v2.12.3
               env:
                   CIBW_BUILD: cp38-* cp39-* cp310-* cp311-*
-                  CIBW_SKIP: pp* cp36-* cp37-*
+                  CIBW_SKIP: pp* cp36-* cp37-* *_i686
 
                   CIBW_BEFORE_BUILD_LINUX: |
                       yum upgrade -y || apt-get update -y || apk update ;
                       yum upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev || apk add --update hdf5-dev openblas-dev
 
                   CIBW_TEST_REQUIRES: pytest
-                  CIBW_TEST_COMMAND: "cd {project}; pytest"
+                  CIBW_TEST_COMMAND: |
+                      cd {project}
+                      pytest
 
             - name: Build source distribution
               run: |
@@ -47,7 +49,7 @@ jobs:
               env:
                   TWINE_USERNAME: __token__
                   TWINE_PASSWORD: ${{ secrets.PYPI_WDMTOOLBOX_TOKEN }}
-              run:
+              run: |
                   python3 -m pip install --upgrade twine
                   twine upload --verbose --skip-existing dist/*
                   twine upload --verbose --skip-existing wheelhouse/*.whl
