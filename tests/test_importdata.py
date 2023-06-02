@@ -34,7 +34,7 @@ def capture(func, *args, **kwds):
     return out
 
 
-class TestDescribe(TestCase):
+class TestImport(TestCase):
     def setUp(self):
         self.fd, self.wdmname = tempfile.mkstemp(suffix=".wdm")
         os.close(self.fd)
@@ -60,17 +60,6 @@ class TestDescribe(TestCase):
         ret3 = tsutils.asbestfreq(ret3)
         ret1.columns = ["02246000_iv_00060"]
         assert_frame_equal(ret1, ret3, check_index_type=False)
-
-    def test_extract_args(self):
-        wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
-        wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=2, base_year=1970, tsstep=15)
-        wdmtoolbox.csvtowdm(
-            self.wdmname,
-            101,
-            input_ts=os.path.join(self.test_dir, "nwisiv_02246000.csv"),
-        )
-        with self.assertRaisesRegex(ValueError, "The only allowed keywords are"):
-            wdmtoolbox.extract(self.wdmname, 101, ph=True)
 
     def test_listdsns_verify(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)

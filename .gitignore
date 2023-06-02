@@ -27,6 +27,7 @@ __pycache__
 __pycache__/*
 *.pyo
 .svn
+*.so
 *.tmp*
 .tox
 .tox/*

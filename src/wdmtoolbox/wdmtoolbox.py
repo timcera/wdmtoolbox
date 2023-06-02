@@ -346,9 +346,6 @@ def extract(*wdmpath, **kwds):
 
     This is the API version also used by 'extract_cli'
     """
-    # Adapt to both forms of presenting wdm files and DSNs
-    # Old form '... file.wdm 101 102 103 ...'
-    # New form '... file.wdm,101 adifferentfile.wdm,101 ...
     try:
         start_date = kwds.pop("start_date")
     except KeyError:
@@ -367,20 +364,39 @@ def extract(*wdmpath, **kwds):
             )
         )
 
-    labels = []
+    # Adapt to both forms of presenting wdm files and DSNs
+    # Old form '... file.wdm 101 102 103 ...'
+    # New form '... file.wdm,101 adifferentfile.wdm,101 ...
+    # the processing results in a list of lists
+    # Old form above becomes
+    # [[file.wdm, 101], [file.wdm, 102], [file.wdm, 103], ...]
+    # New form above becomes
+    # [[file.wdm, 101], [adifferentfile.wdm, 101], ...]
+    nlabels = []
     for lab in wdmpath:
         if "," in str(lab):
             try:
-                labels.append(lab.split(","))
+                nlabels.append(lab.split(","))
             except AttributeError:
-                labels.append(lab)
+                nlabels.append(lab)
         elif lab != wdmpath[0]:
-            labels.append([wdmpath[0], lab])
+            nlabels.append([wdmpath[0], lab])
+
+    # allows form '[[file.wdm, 101:103], [file.wdm, 150:152] ...'
+    # to become:
+    # [[file.wdm, 101], [file.wdm, 102], [file.wdm, 103], [file.wdm, 150], [file.wdm, 151], [file.wdm, 152], ...]
+    labels = []
+    for wdmpath, dsn in nlabels:
+        rng = tsutils.range_to_numlist(dsn)
+        if isinstance(rng, list):
+            for dsn in rng:
+                labels.append([wdmpath, dsn])
+        else:
+            labels.append([wdmpath, rng])
 
     result = pd.DataFrame()
     cnt = 0
-    for lab in labels:
-        wdmpath, dsn = lab
+    for wdmpath, dsn in labels:
         nts = WDM.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
         if nts.columns[0] in result.columns:
             cnt = cnt + 1
