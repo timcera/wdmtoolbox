@@ -1,3 +1,9 @@
+## v14.1.0 (2023-06-02)
+
+### Feat
+
+- added 101:105+107:111 style DSN specification plus tests
+
 ## v14.0.1 (2023-05-07)
 
 ### Refactor
