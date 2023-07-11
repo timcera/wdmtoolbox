@@ -43,21 +43,24 @@ For HSPF I also have developed:
 
 * hspfbintoolbox to extract data from the HSPF binary output file
   https://timcera.bitbucket.io/hspfbintoolbox/docs/index.html
-  install with `pip install hspfbintoolbox`
 * hspf_utils to create water balance tables of the entire model, or particular
   years, and to create a CSV file useful to join to a GIS layer to map model
   results.
   https://timcera.bitbucket.io/hspf_utils/docs/index.html
-  install with `pip install hspf_utils`
 
 Installation for the Impatient
 ==============================
-::
+pip
+~~~
+.. code-block:: bash
 
     pip install wdmtoolbox
 
-For Windows should use the `conda` environment and install as many of the
-required libraries with `conda install ...` before using `pip`..
+conda
+~~~~~
+.. code-block:: bash
+
+    conda install -c conda-forge wdmtoolbox
 
 Compile From Source
 -------------------

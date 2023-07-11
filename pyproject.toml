@@ -1,15 +1,14 @@
 [build-system]
-build-backend = "setuptools.build_meta"
+build-backend = "mesonpy"
 requires = [
-    "setuptools>=45,<62.1.0",
-    "setuptools_scm[toml]>=6.2",
+    "meson-python",
     "wheel",
     "oldest-supported-numpy; python_version>='3.8'"
 ]
 
 [project]
 name = "wdmtoolbox"
-dynamic = ["readme", "version"]
+dynamic = ["version"]
 description = "Read and write Watershed Data Management (WDM) files"
 dependencies = [
     "filelock",
@@ -105,14 +104,12 @@ license-files = ["LICENSE.txt"]
 include-package-data = true
 
 [tool.setuptools.dynamic]
-readme = {file = "README.rst"}
 version = {file = "VERSION"}
 
 [tool.setuptools.package-data]
 wdmtoolbox = ["message.wdm"]
 
 [tool.setuptools.packages.find]
-exclude = ["examples*", "tools*", "docs*", "tstoolbox.tests*"]
 where = ["src"]
 
 [tool.setuptools_scm]

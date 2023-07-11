@@ -23,7 +23,7 @@ repos:
             exclude: notebooks/tstoolbox_plot_bash.sh
 
     - repo: https://github.com/pappasam/toml-sort
-      rev: v0.23.0
+      rev: v0.23.1
       hooks:
           - id: toml-sort-fix
             args: [--in-place, --spaces-indent-inline-array, '4']
@@ -57,6 +57,7 @@ repos:
       rev: 23.3.0
       hooks:
           - id: black
+          - id: black-jupyter
 
     - repo: https://github.com/pycqa/isort
       rev: 5.12.0
@@ -73,29 +74,24 @@ repos:
             types: [pyi]
             args: [--profile, black, --filter-files]
 
-    - repo: https://github.com/dfm/black_nbconvert
-      rev: v0.4.0
-      hooks:
-          - id: black_nbconvert
-
     - repo: https://github.com/asottile/blacken-docs
       rev: 1.13.0
       hooks:
           - id: blacken-docs
 
     - repo: https://github.com/asottile/pyupgrade
-      rev: v3.3.2
+      rev: v3.6.0
       hooks:
           - id: pyupgrade
 
     - repo: https://github.com/commitizen-tools/commitizen
-      rev: 3.1.1
+      rev: 3.2.2
       hooks:
           - id: commitizen
             stages: [commit-msg]
 
     - repo: https://github.com/mwouts/jupytext
-      rev: v1.14.5
+      rev: v1.14.6
       hooks:
           - id: jupytext
             args: [--from, ipynb, --to, auto:percent, --sync]
