@@ -1,5 +1,7 @@
 project('wdmtoolbox', 'c',
-    version : run_command('cat', 'VERSION').stdout().strip(),
+    version : run_command('python', '-c',
+    'print(open("@0@").readline(), end="")'.format('VERSION')
+).stdout().strip(),
     default_options : ['warning_level=3'])
 
 add_languages('fortran')
