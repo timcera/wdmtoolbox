@@ -3,17 +3,7 @@ build-backend = "mesonpy"
 requires = [
     "meson-python",
     "wheel",
-    # The following mimics the default numpy requirements that are available
-    # as using setuptools "oldest-supported-numpy".
-    # Copied from scipy pyproject.toml.
-    "numpy==1.22.4; python_version<='3.10' and platform_python_implementation != 'PyPy'",
-    "numpy==1.23.2; python_version=='3.11' and platform_python_implementation != 'PyPy'",
-    # For Python versions which aren't yet officially supported,
-    # we specify an unpinned NumPy which allows source distributions
-    # to be used and allows wheels to be used as soon as they
-    # become available.
-    "numpy; python_version>='3.12'",
-    "numpy; python_version>='3.9' and platform_python_implementation=='PyPy'"
+    "oldest-supported-numpy"
 ]
 
 [project]

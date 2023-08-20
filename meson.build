@@ -1,13 +1,21 @@
 project('wdmtoolbox', 'c',
-    version : run_command('python', '-c',
-    'print(open("@0@").readline(), end="")'.format('VERSION')
-).stdout().strip(),
-    default_options : ['warning_level=3'])
+    version : run_command(
+        [
+            'python',
+            '-c',
+'''
+print(open("VERSION").readline(), end="")
+'''
+        ],
+        check: true
+        ).stdout().strip(),
+    default_options : ['warning_level=3']
+    )
 
 add_languages('fortran')
 
 py_mod = import('python')
-py = py_mod.find_installation()
+py = py_mod.find_installation(pure: false)
 py_dep = py.dependency()
 
 incdir_numpy = meson.get_external_property('numpy-include-dir', 'not-given')
@@ -26,7 +34,7 @@ print(incdir)
 '''
         ],
         check: true
-    ).stdout().strip()
+        ).stdout().strip()
 endif
 
 incdir_f2py = incdir_numpy / '..' / '..' / 'f2py' / 'src'
