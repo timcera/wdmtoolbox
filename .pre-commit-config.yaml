@@ -4,7 +4,7 @@
 
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.4.0
+      rev: v4.5.0
       hooks:
           - id: check-case-conflict
           - id: check-docstring-first
@@ -54,7 +54,7 @@ repos:
             args: [--indent-size, '4']
 
     - repo: https://github.com/psf/black
-      rev: 23.7.0
+      rev: 23.9.1
       hooks:
           - id: black
           - id: black-jupyter
@@ -80,18 +80,18 @@ repos:
           - id: blacken-docs
 
     - repo: https://github.com/asottile/pyupgrade
-      rev: v3.10.1
+      rev: v3.15.0
       hooks:
           - id: pyupgrade
 
     - repo: https://github.com/commitizen-tools/commitizen
-      rev: 3.6.0
+      rev: 3.10.0
       hooks:
           - id: commitizen
             stages: [commit-msg]
 
     - repo: https://github.com/mwouts/jupytext
-      rev: v1.15.0
+      rev: v1.15.2
       hooks:
           - id: jupytext
             args: [--from, ipynb, --to, auto:percent, --sync]
