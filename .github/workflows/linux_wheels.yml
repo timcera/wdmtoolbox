@@ -24,7 +24,7 @@ jobs:
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.16.2
               env:
-                  CIBW_BUILD: cp38-* cp39-* cp310-* cp311-*
+                  CIBW_BUILD: cp38-* cp39-* cp310-* cp311-* cp312-*
                   CIBW_SKIP: pp* cp36-* cp37-* *_i686
 
                   CIBW_BEFORE_BUILD_LINUX: |
@@ -39,11 +39,11 @@ jobs:
             - name: Build source distribution
               run: |
                   python3 -m pip install --upgrade pip
-                  python3 -m pip install --upgrade 'setuptools>=45'
-                  python3 -m pip install --upgrade 'setuptools-scm>=6.2'
+                  python3 -m pip install --upgrade meson
                   python3 -m pip install --upgrade wheel
                   python3 -m pip install --upgrade numpy
-                  python3 setup.py sdist
+                  python3 -m pip install --upgrade build
+                  python3 -m build
 
             - name: Upload
               env:
