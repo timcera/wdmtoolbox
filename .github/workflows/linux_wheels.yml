@@ -21,6 +21,17 @@ jobs:
             - uses: actions/checkout@v3
             - uses: actions/setup-python@v4
 
+            - name: Setup Fortran
+              uses: awvwgk/setup-fortran@main
+              id: setup-fortran
+              with:
+                  compiler: gcc
+                  version: 13
+            - run: ${{ env.FC }} --version
+              env:
+                  FC: ${{ steps.setup-fortran.outputs.fc }}
+                  CC: ${{ steps.setup-fortran.outputs.cc }}
+
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.16.2
               env:
