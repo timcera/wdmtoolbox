@@ -41,6 +41,9 @@ jobs:
                   CIBW_BEFORE_BUILD_LINUX: |
                       yum upgrade -y || apt-get update -y || apk update ;
                       yum upgrade -y hdf5-devel openblas-devel || apt-get install -y libhdf5-dev libopenblas-dev || apk add --update hdf5-dev openblas-dev
+                  CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+                  CIBW_MANYLINUX_I686_IMAGE: manylinux2014
+                  CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: |
