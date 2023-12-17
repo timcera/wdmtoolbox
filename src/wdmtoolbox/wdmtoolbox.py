@@ -389,8 +389,7 @@ def extract(*wdmpath, **kwds):
     for wdmpath, dsn in nlabels:
         rng = tsutils.range_to_numlist(dsn)
         if isinstance(rng, list):
-            for dsn in rng:
-                labels.append([wdmpath, dsn])
+            labels.extend([wdmpath, dsn] for dsn in rng)
         else:
             labels.append([wdmpath, rng])
 
@@ -708,15 +707,6 @@ def _writetodsn(wdmpath, dsn, data):
     except ValueError:
         tsstep = 1
 
-    invmapcode = {
-        1: "second",
-        2: "minute",
-        3: "hour",
-        4: "day",
-        5: "month",
-        6: "annual",
-    }
-
     mapcode = {
         "A": 6,  # annual
         "A-DEC": 6,  # annual
@@ -750,6 +740,15 @@ def _writetodsn(wdmpath, dsn, data):
 
     dsntcode = desc_dsn["TCODE"]
     if finterval != dsntcode:
+        invmapcode = {
+            1: "second",
+            2: "minute",
+            3: "hour",
+            4: "day",
+            5: "month",
+            6: "annual",
+        }
+
         raise ValueError(
             tsutils.error_wrapper(
                 f"""
