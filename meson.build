@@ -1,13 +1,7 @@
 project('wdmtoolbox', 'c',
     version : run_command(
-        [
-            'python',
-            '-c',
-'''
-print(open("VERSION").readline(), end="")
-'''
-        ],
-        check: true
+            ['python', '-c', 'print(open("VERSION").readline(), end="")'],
+            check: true
         ).stdout().strip(),
     default_options : ['warning_level=3']
     )
@@ -18,28 +12,15 @@ py_mod = import('python')
 py = py_mod.find_installation(pure: false)
 py_dep = py.dependency()
 
-incdir_numpy = meson.get_external_property('numpy-include-dir', 'not-given')
-if incdir_numpy == 'not-given'
-    incdir_numpy = run_command(py,
-        [
-            '-c',
-'''
-import os
-import numpy as np
-try:
-    incdir = os.path.abspath(np.get_include())
-except Exception:
-    incdir = np.get_include()
-print(incdir)
-'''
-        ],
-        check: true
-        ).stdout().strip()
-endif
+incdir_numpy = run_command(py,
+  ['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
+  check : true
+).stdout().strip()
 
-incdir_f2py = incdir_numpy / '..' / '..' / 'f2py' / 'src'
-inc_f2py = include_directories(incdir_f2py)
-fortranobject_c = incdir_f2py / 'fortranobject.c'
+incdir_f2py = run_command(py,
+    ['-c', 'import os; os.chdir(".."); import numpy.f2py; print(numpy.f2py.get_include())'],
+    check : true
+).stdout().strip()
 
 ftn_sources = ['wdm_support/DTTM90.f', 'wdm_support/TSBUFR.f',
     'wdm_support/UTCHAR.f', 'wdm_support/UTCP90.f', 'wdm_support/UTDATE.f',
@@ -61,14 +42,12 @@ wdm_source = custom_target('_wdm_libmodule.c',
 )
 
 inc_np = include_directories(incdir_numpy, incdir_f2py)
-np_dep = declare_dependency(include_directories: inc_np)
 
 py.extension_module('_wdm_lib',
     ftn_sources,
     wdm_source,
-    fortranobject_c,
     include_directories: inc_np,
-    dependencies : np_dep,
+    dependencies : py_dep,
     install : true
 )
 
