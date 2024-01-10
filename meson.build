@@ -1,12 +1,10 @@
-project('wdmtoolbox', 'c',
+project('wdmtoolbox', ['c', 'fortran'],
     version : run_command(
             ['python', '-c', 'print(open("VERSION").readline(), end="")'],
             check: true
         ).stdout().strip(),
     default_options : ['warning_level=3']
     )
-
-add_languages('fortran')
 
 py_mod = import('python')
 py = py_mod.find_installation(pure: false)
@@ -17,11 +15,8 @@ incdir_numpy = run_command(py,
   check : true
 ).stdout().strip()
 
-incdir_f2py = run_command(py,
-    ['-c', 'import numpy.f2py; print(numpy.f2py.get_include())'],
-    check : true
-).stdout().strip()
-
+incdir_f2py = incdir_numpy / '..' / '..' / 'f2py' / 'src'
+inc_f2py = include_directories(incdir_f2py)
 fortranobject_c = incdir_f2py / 'fortranobject.c'
 
 ftn_sources = ['wdm_support/DTTM90.f', 'wdm_support/TSBUFR.f',
