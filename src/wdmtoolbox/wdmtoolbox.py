@@ -717,6 +717,7 @@ def _writetodsn(wdmpath, dsn, data):
         "H": 3,  # hour
         "T": 2,  # minute
         "S": 1,  # second
+        "min": 2,  # minute, don't know why this is different
     }
     try:
         finterval = mapcode[pandacode]
