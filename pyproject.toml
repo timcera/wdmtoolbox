@@ -1,7 +1,6 @@
 [build-system]
 build-backend = "mesonpy"
 requires = [
-    "meson",
     "meson-python",
     "wheel",
     "oldest-supported-numpy"
