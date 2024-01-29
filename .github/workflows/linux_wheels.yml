@@ -45,6 +45,9 @@ jobs:
                   CIBW_MANYLINUX_I686_IMAGE: manylinux2014
                   CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
+                  CIBW_BEFORE_BUILD: |
+                      python3 -m pip install meson-python
+
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: |
                       cd {project}
