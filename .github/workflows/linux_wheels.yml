@@ -33,7 +33,7 @@ jobs:
                   CC: ${{ steps.setup-fortran.outputs.cc }}
 
             - name: Build wheels
-              uses: pypa/cibuildwheel@v2.16.4
+              uses: pypa/cibuildwheel@v2.16.5
               env:
                   CIBW_BUILD: cp38-manylinux* cp39-manylinux* cp310-manylinux* cp311-manylinux* cp312-manylinux*
                   CIBW_SKIP: pp* cp36-* cp37-* *_i686
