@@ -46,7 +46,7 @@ jobs:
                   CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
                   CIBW_BEFORE_BUILD: |
-                      python3 -m pip install meson-python
+                      python3 -m pip install meson-python build
 
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: |
@@ -55,7 +55,7 @@ jobs:
 
             - name: Build source distribution
               run: |
-                  python3 setup.py sdist
+                  python3 -m build
 
             - name: Upload
               env:
@@ -63,5 +63,5 @@ jobs:
                   TWINE_PASSWORD: ${{ secrets.PYPI_WDMTOOLBOX_TOKEN }}
               run: |
                   python3 -m pip install --upgrade twine
-                  twine upload --verbose --skip-existing dist/*
+                  twine upload --verbose --skip-existing dist/*.tar.gz
                   twine upload --verbose --skip-existing wheelhouse/*.whl
