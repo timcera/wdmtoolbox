@@ -46,7 +46,7 @@ jobs:
                   CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
                   CIBW_BEFORE_BUILD: |
-                      python3 -m pip install meson-python build
+                      python3 -m pip install meson-python
 
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: |
@@ -55,6 +55,7 @@ jobs:
 
             - name: Build source distribution
               run: |
+                  python3 -m pip install meson-python build
                   python3 -m build
 
             - name: Upload
