@@ -42,7 +42,7 @@ jobs:
 
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: >
-                      cd {project} &&
+                      cd /d {project} &&
                       pytest
 
             - name: Upload
