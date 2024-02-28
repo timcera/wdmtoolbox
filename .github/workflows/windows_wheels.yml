@@ -41,8 +41,8 @@ jobs:
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
 
                   CIBW_TEST_REQUIRES: pytest
-                  CIBW_TEST_COMMAND: |
-                      cd {project}
+                  CIBW_TEST_COMMAND: >
+                      cd {project} &&
                       pytest
 
             - name: Upload

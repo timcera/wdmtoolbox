@@ -49,8 +49,8 @@ jobs:
                       python3 -m pip install meson-python
 
                   CIBW_TEST_REQUIRES: pytest
-                  CIBW_TEST_COMMAND: |
-                      cd {project}
+                  CIBW_TEST_COMMAND: >
+                      cd {project} &&
                       pytest
 
             - name: Build source distribution
