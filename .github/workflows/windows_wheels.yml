@@ -40,6 +40,10 @@ jobs:
 
                   CIBW_BUILD_VERBOSITY_WINDOWS: 3
 
+                  # Use delvewheel on windows
+                  CIBW_BEFORE_BUILD_WINDOWS: "pip install delvewheel"
+                  CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel repair -w {dest_dir} {wheel}"
+
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND: >
                       cd /d {project} &&
@@ -49,6 +53,6 @@ jobs:
               env:
                   TWINE_USERNAME: __token__
                   TWINE_PASSWORD: ${{ secrets.PYPI_WDMTOOLBOX_TOKEN }}
-              run: |
-                  python3 -m pip install --upgrade twine
+              run: >
+                  python3 -m pip install --upgrade twine &&
                   twine upload --verbose --skip-existing wheelhouse/*.whl
