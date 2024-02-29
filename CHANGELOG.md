@@ -1,3 +1,9 @@
+## v16.0.5 (2024-02-29)
+
+### Fix
+
+- some python/pandas combinations return "min" for freqstr instead of "T"
+
 ## v16.0.4 (2023-12-16)
 
 ### Refactor
