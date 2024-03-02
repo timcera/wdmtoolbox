@@ -2,8 +2,10 @@
 build-backend = "mesonpy"
 requires = [
     "meson-python",
-    "wheel",
-    "oldest-supported-numpy"
+    "setuptools",
+    "setuptools_scm",
+    "oldest-supported-numpy",
+    "wheel"
 ]
 
 [project]
@@ -16,6 +18,9 @@ dependencies = [
     "toolbox_utils >= 5.0.0, < 6.0.0",
     "numpy",
     "pandas",
+    "pint!=0.21.*",
+    "pint<0.22; python_version < '3.9'",
+    "pint-pandas",
     "python-dateutil"
 ]
 authors = [
@@ -107,6 +112,7 @@ license-files = ["LICENSE.txt"]
 include-package-data = true
 
 [tool.setuptools.dynamic]
+readme = {file = "README.rst"}
 version = {file = "VERSION"}
 
 [tool.setuptools.package-data]

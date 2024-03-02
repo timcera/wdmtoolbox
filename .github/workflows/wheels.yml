@@ -1,5 +1,5 @@
 ---
-name: Build linux wheels
+name: Build wheels
 
 # yamllint disable-line rule:truthy
 on: [push, pull_request]
@@ -15,7 +15,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest]
+                os: [ubuntu-latest, macOS-latest, windows-latest]
 
         steps:
             - uses: actions/checkout@v3
@@ -35,8 +35,8 @@ jobs:
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.16.5
               env:
-                  CIBW_BUILD: cp38-manylinux* cp39-manylinux* cp310-manylinux* cp311-manylinux*
-                  CIBW_SKIP: pp* cp36-* cp37-* *_i686
+                  CIBW_BUILD: cp38-* cp39-* cp310-* cp311-*
+                  CIBW_SKIP: pp* cp36-* cp37-* *_i686 *-win32
 
                   CIBW_BEFORE_BUILD_LINUX: |
                       yum upgrade -y || apt-get update -y || apk update ;
@@ -45,24 +45,43 @@ jobs:
                   CIBW_MANYLINUX_I686_IMAGE: manylinux2014
                   CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
+                  # Use delvewheel on windows
+                  CIBW_BEFORE_BUILD_WINDOWS: "pip install delvewheel"
+                  CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel repair -w {dest_dir} {wheel}"
+
                   CIBW_BEFORE_BUILD: |
                       python3 -m pip install meson-python
 
                   CIBW_TEST_REQUIRES: pytest
-                  CIBW_TEST_COMMAND: >
+                  CIBW_TEST_COMMAND_LINUX: >
                       cd {project} &&
+                      pytest
+                  CIBW_TEST_COMMAND_MACOS: >
+                      cd {project} &&
+                      pytest
+                  CIBW_TEST_COMMAND_WINDOWS: >
+                      cd /d {project} &&
                       pytest
 
             - name: Build source distribution
+              if: matrix.os == 'linux'
               run: |
                   python3 -m pip install meson-python build
                   python3 -m build
 
-            - name: Upload
+            - name: Upload source wheel
+              if: matrix.os == 'linux'
               env:
                   TWINE_USERNAME: __token__
                   TWINE_PASSWORD: ${{ secrets.PYPI_WDMTOOLBOX_TOKEN }}
               run: |
                   python3 -m pip install --upgrade twine
                   twine upload --verbose --skip-existing dist/*.tar.gz
+
+            - name: Upload binary wheels
+              env:
+                  TWINE_USERNAME: __token__
+                  TWINE_PASSWORD: ${{ secrets.PYPI_WDMTOOLBOX_TOKEN }}
+              run: |
+                  python3 -m pip install --upgrade twine
                   twine upload --verbose --skip-existing wheelhouse/*.whl
