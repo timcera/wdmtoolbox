@@ -12,6 +12,7 @@ requires = [
 name = "wdmtoolbox"
 dynamic = ["version"]
 description = "Read and write Watershed Data Management (WDM) files"
+readme = "README.rst"
 dependencies = [
     "filelock",
     "cltoolbox >= 2.0.0, < 3.0.0",
