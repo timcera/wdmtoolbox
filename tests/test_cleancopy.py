@@ -4,7 +4,6 @@ test_createnewdsn
 Tests for `wdmtoolbox` module.
 """
 
-
 import os
 import sys
 import tempfile

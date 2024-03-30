@@ -7,7 +7,6 @@ Once a DLL is preloaded, its namespace is made available to any
 subsequent DLL.
 """
 
-
 import glob
 import os
 import sysconfig

@@ -5,7 +5,6 @@ test_renumberdsn
 Tests for `wdmtoolbox` module.
 """
 
-
 import os
 import sys
 import tempfile
