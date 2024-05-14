@@ -25,7 +25,7 @@ jobs:
               uses: fortran-lang/setup-fortran@v1
               id: setup-fortran
               with:
-                  compiler: intel-classic
+                  compiler: gcc
             - run: ${{ env.FC }} --version
               env:
                   FC: ${{ steps.setup-fortran.outputs.fc }}
