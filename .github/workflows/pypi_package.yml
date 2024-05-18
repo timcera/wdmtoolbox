@@ -33,7 +33,7 @@ jobs:
         id: setup-fortran
         with:
           compiler: gcc
-          version: 11
+          version: 13
       - run: ${{ env.FC }} --version
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
