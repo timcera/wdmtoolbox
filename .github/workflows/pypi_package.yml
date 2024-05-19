@@ -13,7 +13,6 @@ env:
 
 jobs:
   build_wheels:
-    if: ${{ github.event.pull_request.merged }}
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
@@ -78,7 +77,6 @@ jobs:
           path: ./wheelhouse/*.whl
 
   build_sdist:
-    if: ${{ github.event.pull_request.merged }}
     name: Build source distribution
     runs-on: ubuntu-latest
 
@@ -94,7 +92,6 @@ jobs:
           path: dist/*.tar.gz
 
   pypi-publish:
-    if: ${{ github.event.pull_request.merged }}
     runs-on: ubuntu-latest
     environment: release
     name: upload release to PyPI
