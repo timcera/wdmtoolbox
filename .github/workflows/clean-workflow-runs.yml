@@ -2,21 +2,21 @@
 name: clean-workflow-runs
 
 on:  # yamllint disable-line rule:truthy
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
-    workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-    delete_runs:
-        runs-on: ubuntu-latest
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        steps:
-            - name: Delete workflow runs
-              uses: dmvict/clean-workflow-runs@v1.2.2
+  delete_runs:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Delete workflow runs
+        uses: dmvict/clean-workflow-runs@v1.2.2
 
-              with:
-                  save_period: 5
-                  save_min_runs_number: 1
+        with:
+          save_period: 5
+          save_min_runs_number: 1
