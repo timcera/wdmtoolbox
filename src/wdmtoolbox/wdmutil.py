@@ -9,6 +9,7 @@ import datetime
 import os
 import os.path
 import re
+import warnings
 
 import _wdm_lib
 import numpy as np
@@ -20,7 +21,11 @@ from toolbox_utils import tsutils
 # Somewhere in the distant past, these slightly diverged - don't remember the
 # reason.
 _MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
+_MAPTCODE_FUTURE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "MS", 6: "AS"}
+
 _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
+_MAPECODE_FUTURE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "M", 6: "A"}
+
 _NOTPRESENT = "<Not present on dataset>"
 
 _attrib_alias = {
@@ -426,8 +431,20 @@ class WDM:
         try:
             tcode = attrib_dict["TCODE"]
             attrib_dict["tcode_name"] = _MAPTCODE[tcode]
-            attrib_dict["start_date"] = pd.Period(sdate, freq=_MAPECODE[tcode])
-            attrib_dict["end_date"] = pd.Period(edate, freq=_MAPECODE[tcode])
+
+            warnings.filterwarnings("error")
+            try:
+                attrib_dict["start_date"] = pd.Period(sdate, freq=_MAPECODE[tcode])
+            except FutureWarning:
+                attrib_dict["start_date"] = pd.Period(
+                    sdate, freq=_MAPECODE_FUTURE[tcode]
+                )
+            try:
+                attrib_dict["end_date"] = pd.Period(edate, freq=_MAPECODE[tcode])
+            except FutureWarning:
+                attrib_dict["end_date"] = pd.Period(edate, freq=_MAPECODE_FUTURE[tcode])
+            warnings.resetwarnings()
+
             attrib_dict["llsdat"] = llsdat
             attrib_dict["lledat"] = lledat
         except KeyError:
@@ -688,11 +705,18 @@ class WDM:
 
         self._retcode_check(retcode, additional_info=f"wdtget file={wdmpath} DSN={dsn}")
 
-        index = pd.date_range(
-            datetime.datetime(*llsdat),
-            periods=iterm,
-            freq=f"{tsstep:d}{_MAPTCODE[tcode]}",
-        )
+        try:
+            index = pd.date_range(
+                datetime.datetime(*llsdat),
+                periods=iterm,
+                freq=f"{tsstep:d}{_MAPTCODE[tcode]}",
+            )
+        except FutureWarning:
+            index = pd.date_range(
+                datetime.datetime(*llsdat),
+                periods=iterm,
+                freq=f"{tsstep:d}{_MAPTCODE_FUTURE[tcode]}",
+            )
 
         # Convert time series to pandas DataFrame
         tmpval = pd.DataFrame(
