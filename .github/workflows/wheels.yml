@@ -21,9 +21,9 @@ jobs:
           - os: ubuntu-latest
             toolchain: {compiler: gcc, version: 13}
           - os: macos-13
-            toolchain: {compiler: intel-classic, version: '2021.10'}
+            toolchain: {compiler: gcc, version: 11}
           - os: macos-14
-            toolchain: {compiler: intel-classic, version: '2021.10'}
+            toolchain: {compiler: gcc, version: 11}
           - os: windows-latest
             toolchain: {compiler: gcc, version: 13}
 
