@@ -41,8 +41,8 @@ jobs:
         uses: fortran-lang/setup-fortran@v1
         id: setup-fortran
         with:
-          compiler: gcc
-          version: 13
+          compiler: ${{ matrix.toolchain.compiler }}
+          version: ${{ matrix.toolchain.version }}
       - run: ${{ env.FC }} --version
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
