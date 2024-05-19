@@ -1,3 +1,10 @@
+## v16.0.8 (2024-05-19)
+
+### Refactor
+
+- clean up of unneeded files
+- fixed FutureWarnings with lowercasing of some time offset codes
+
 ## v16.0.7 (2024-03-31)
 
 ## v16.0.6 (2024-03-03)
