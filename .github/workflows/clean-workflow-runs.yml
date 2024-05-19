@@ -1,11 +1,8 @@
 ---
 name: clean-workflow-runs
 
-on:  # yamllint disable-line rule:truthy
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+# yamllint disable-line rule:truthy
+on: [push, pull_request]
   workflow_dispatch:
 
 jobs:
