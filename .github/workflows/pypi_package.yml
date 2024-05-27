@@ -4,8 +4,9 @@ name: Build wheels and upload wheels and source distribution to PyPI
 # yamllint disable-line rule:truthy
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -27,8 +28,15 @@ jobs:
             toolchain: {compiler: gcc, version: 13}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Setup Fortran
         uses: fortran-lang/setup-fortran@v1
@@ -36,6 +44,7 @@ jobs:
         with:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
+
       - run: ${{ env.FC }} --version
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
@@ -59,19 +68,23 @@ jobs:
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "delvewheel repair -w {dest_dir} {wheel}"
 
           CIBW_BEFORE_BUILD: |
-            python3 -m pip install meson-python
+            python -m pip install --upgrade pip
+            python -m pip install pytest pytest-cov pytest-mpl
+            python -m pip install meson-python
 
           CIBW_TEST_REQUIRES: pytest
           CIBW_TEST_COMMAND_LINUX: >
             cd {project} &&
-            pytest
+            python -m pytest --cov --mpl
           CIBW_TEST_COMMAND_MACOS: >
             cd {project} &&
-            pytest
+            python -m pytest --cov --mpl
           CIBW_TEST_COMMAND_WINDOWS: >
             cd /d {project} &&
-            pytest
-      - uses: actions/upload-artifact@v4
+            python -m pytest --cov --mpl
+
+      - name: Upload to PyPI
+        uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
