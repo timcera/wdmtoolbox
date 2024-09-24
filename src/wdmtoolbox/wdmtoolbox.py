@@ -16,10 +16,10 @@ from cltoolbox import Program
 from cltoolbox.rst_text_formatter import RSTHelpFormatter
 from dateutil.parser import parse as dateparser
 from tabulate import tabulate as tb
-from toolbox_utils import tsutils
 
 # Load in WDM subroutines
 from . import wdmutil
+from .toolbox_utils.src.toolbox_utils import tsutils
 
 program = Program("wdmtoolbox", 0.0)
 
@@ -710,14 +710,19 @@ def _writetodsn(wdmpath, dsn, data):
     mapcode = {
         "A": 6,  # annual
         "A-DEC": 6,  # annual
+        "YE": 6,  # annual
         "AS": 6,  # annual start
+        "YS": 6,  # annual start
         "M": 5,  # month
+        "ME": 5,  # month
         "MS": 5,  # month start
         "D": 4,  # day
         "H": 3,  # hour
+        "h": 3,  # hour
         "T": 2,  # minute
-        "S": 1,  # second
         "min": 2,  # minute, don't know why this is different
+        "S": 1,  # second
+        "s": 1,  # second
     }
     try:
         finterval = mapcode[pandacode]

@@ -17,9 +17,9 @@ except Exception:
 from unittest import TestCase
 
 from pandas.testing import assert_frame_equal
-from toolbox_utils import tsutils
 
 from wdmtoolbox import wdmtoolbox
+from wdmtoolbox.toolbox_utils.src.toolbox_utils import tsutils
 
 
 def capture(func, *args, **kwds):

@@ -9,22 +9,25 @@ import datetime
 import os
 import os.path
 import re
-import warnings
 
 import _wdm_lib
 import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
-from toolbox_utils import tsutils
+
+from .toolbox_utils.src.toolbox_utils import tsutils
 
 # Mapping between WDM TCODE and pandas interval code
 # Somewhere in the distant past, these slightly diverged - don't remember the
 # reason.
-_MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
-_MAPTCODE_FUTURE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "MS", 6: "AS"}
-
-_MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
-_MAPECODE_FUTURE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "M", 6: "A"}
+pd_version_major, pd_version_minor = pd.__version__.split(".")[:2]
+pd_version = float(f"{pd_version_major}.{pd_version_minor}")
+if pd_version < 2.2:
+    _MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
+    _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "ME", 6: "A"}
+else:
+    _MAPTCODE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "MS", 6: "YS"}
+    _MAPECODE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "M", 6: "YE"}
 
 _NOTPRESENT = "<Not present on dataset>"
 
@@ -375,7 +378,9 @@ class WDM:
                         )
                     )
                 name = name[:6].ljust(6).upper()
-                attrib_index, attrib_type, attrib_len = self.wdbsgx(messfp, name)
+                attrib_index, attrib_type, attrib_len = self.wdbsgx(
+                    messfp, np.array(list(name))
+                )
                 if attrib_index <= 0:
                     raise ValueError(
                         tsutils.error_wrapper(f"{name} is not a valid attribute name")
@@ -431,20 +436,8 @@ class WDM:
         try:
             tcode = attrib_dict["TCODE"]
             attrib_dict["tcode_name"] = _MAPTCODE[tcode]
-
-            warnings.filterwarnings("error")
-            try:
-                attrib_dict["start_date"] = pd.Period(sdate, freq=_MAPECODE[tcode])
-            except FutureWarning:
-                attrib_dict["start_date"] = pd.Period(
-                    sdate, freq=_MAPECODE_FUTURE[tcode]
-                )
-            try:
-                attrib_dict["end_date"] = pd.Period(edate, freq=_MAPECODE[tcode])
-            except FutureWarning:
-                attrib_dict["end_date"] = pd.Period(edate, freq=_MAPECODE_FUTURE[tcode])
-            warnings.resetwarnings()
-
+            attrib_dict["start_date"] = pd.Period(sdate, freq=_MAPECODE[tcode])
+            attrib_dict["end_date"] = pd.Period(edate, freq=_MAPECODE[tcode])
             attrib_dict["llsdat"] = llsdat
             attrib_dict["lledat"] = lledat
         except KeyError:
@@ -573,8 +566,15 @@ class WDM:
                     )
 
                 saval = f"{saval: <{salen}}"
-
-                retcode = self.wdbsac(wdmfp, dsn, messfp, saind, salen, saval)
+                print(wdmfp, dsn, messfp, saind, salen, saval)
+                retcode = self.wdbsac(
+                    wdmsfl=wdmfp,
+                    dsn=dsn,
+                    messfl=messfp,
+                    saind=saind,
+                    salen=salen,
+                    saval=np.array(list(saval)),
+                )
                 if retcode != 0:
                     self.delete_dsn(wdmfp, dsn)
                 self._retcode_check(
@@ -715,7 +715,7 @@ class WDM:
             index = pd.date_range(
                 datetime.datetime(*llsdat),
                 periods=iterm,
-                freq=f"{tsstep:d}{_MAPTCODE_FUTURE[tcode]}",
+                freq=f"{tsstep:d}{_MAPTCODE[tcode]}",
             )
 
         # Convert time series to pandas DataFrame

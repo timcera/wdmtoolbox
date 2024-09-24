@@ -1,9 +1,17 @@
 import os
 import shlex
 import subprocess
+import sys
 import tempfile
+from unittest import TestCase
 
 from wdmtoolbox import wdmtoolbox
+from wdmtoolbox.wdmutil import WDMFileExists
+
+try:
+    from cStringIO import StringIO
+except Exception:
+    from io import StringIO
 
 
 def _createwdm(fname):
@@ -45,17 +53,6 @@ def test_createnewdsn_checkdefaults():
     # assert astr == tstr
 
     os.remove(fname)
-
-
-try:
-    from cStringIO import StringIO
-except Exception:
-    from io import StringIO
-
-from unittest import TestCase
-
-from wdmtoolbox import wdmtoolbox
-from wdmtoolbox.wdmutil import WDMFileExists
 
 
 def capture(func, *args, **kwds):
