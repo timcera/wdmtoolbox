@@ -18,7 +18,8 @@ from filelock import SoftFileLock
 from .toolbox_utils.src.toolbox_utils import tsutils
 
 if os.name == "nt":
-    os.add_dll_directory(sysconfig.get_paths()["purelib"])
+    for libpath in sysconfig.get_paths():
+        os.add_dll_directory(libpath)
 import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
