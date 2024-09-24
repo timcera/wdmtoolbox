@@ -37,3 +37,4 @@ src/*.so
 wdm_support/_wdm_lib-f2pywrappers.f
 wdm_support/_wdm_libmodule.c
 debug_*
+toolbox_utils
