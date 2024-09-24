@@ -3,7 +3,8 @@ build-backend = "mesonpy"
 requires = [
     "meson-python",
     "setuptools_scm",
-    "numpy>=2.0"
+    "numpy>=2.0; python_version > '3.8'",
+    "numpy; python_version < '3.9'"
 ]
 
 [project]
