@@ -11,13 +11,16 @@ py = py_mod.find_installation(pure: false)
 py_dep = py.dependency()
 
 incdir_numpy = run_command(py,
-    ['-c', 'import numpy; print(numpy.get_include())'],
+  ['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
+  check : true
+).stdout().strip()
+
+incdir_f2py = run_command(py,
+    ['-c', 'import os; os.chdir(".."); import numpy.f2py; print(numpy.f2py.get_include())'],
     check : true
 ).stdout().strip()
 
-incdir_f2py = incdir_numpy / '..' / '..' / 'f2py' / 'src'
-inc_f2py = include_directories(incdir_f2py)
-fortranobject_c = incdir_f2py / 'fortranobject.c'
+inc_np = include_directories(incdir_numpy, incdir_f2py)
 
 ftn_sources = [
     'wdm_support/DTTM90.f', 'wdm_support/TSBUFR.f', 'wdm_support/UTCHAR.f',
@@ -35,6 +38,7 @@ wdm_source = custom_target('_wdm_libmodule.c',
         '@INPUT@',
         '-m', '_wdm_lib',
         '--lower',
+        '--backend', 'meson',
         'only:',
         'timcvt', 'timdif', 'wdbopn', 'wdbsac', 'wdbsai', 'wdbsar', 'wdbsgc',
         'wdbsgi', 'wdbsgr', 'wdckdt', 'wdflcl', 'wdlbax', 'wdtget', 'wdtput',
@@ -42,12 +46,10 @@ wdm_source = custom_target('_wdm_libmodule.c',
     ]
 )
 
-inc_np = include_directories(incdir_numpy, incdir_f2py)
-
 py.extension_module('_wdm_lib',
     ftn_sources,
     wdm_source,
-    fortranobject_c,
+    incdir_f2py / 'fortranobject.c',
     include_directories: inc_np,
     dependencies : py_dep,
     install : true
