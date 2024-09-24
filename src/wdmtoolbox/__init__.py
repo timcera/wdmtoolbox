@@ -1,12 +1,5 @@
 """Package __init__.py."""
 
-import os
-
-if os.name == "nt":
-    import sysconfig
-
-    os.add_dll_directory(sysconfig.get_paths()["purelib"])
-
 __all__ = [
     "cleancopywdm",
     "copydsn",
