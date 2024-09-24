@@ -11,8 +11,8 @@ py = py_mod.find_installation(pure: false)
 py_dep = py.dependency()
 
 incdir_numpy = run_command(py,
-  ['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
-  check : true
+    ['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
+    check : true
 ).stdout().strip()
 
 incdir_f2py = run_command(py,
