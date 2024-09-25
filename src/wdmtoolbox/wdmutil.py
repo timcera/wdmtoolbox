@@ -14,8 +14,11 @@ import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
 
-from . import _wdm_lib
 from .toolbox_utils.src.toolbox_utils import tsutils
+
+if os.name == "nt":
+    os.add_dll_directory(os.path.dirname(__file__))
+from . import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
 # Somewhere in the distant past, these slightly diverged - don't remember the
