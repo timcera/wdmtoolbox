@@ -52,7 +52,8 @@ py.extension_module('_wdm_lib',
     incdir_f2py / 'fortranobject.c',
     include_directories: inc_np,
     dependencies : py_dep,
-    install : true
+    install : true,
+    subdir : 'wdmtoolbox'
 )
 
 subdir('src')

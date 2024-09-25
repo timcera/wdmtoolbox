@@ -9,18 +9,13 @@ import datetime
 import os
 import os.path
 import re
-import sysconfig
 
 import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
 
+from . import _wdm_lib
 from .toolbox_utils.src.toolbox_utils import tsutils
-
-if os.name == "nt":
-    for _, libpath in sysconfig.get_paths().items():
-        os.add_dll_directory(libpath)
-import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
 # Somewhere in the distant past, these slightly diverged - don't remember the
