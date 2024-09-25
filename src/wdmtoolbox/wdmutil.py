@@ -18,7 +18,7 @@ from filelock import SoftFileLock
 from .toolbox_utils.src.toolbox_utils import tsutils
 
 if os.name == "nt":
-    for libpath in sysconfig.get_paths():
+    for _, libpath in sysconfig.get_paths().items():
         os.add_dll_directory(libpath)
 import _wdm_lib
 
