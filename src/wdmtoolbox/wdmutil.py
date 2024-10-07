@@ -17,14 +17,18 @@ from filelock import SoftFileLock
 from .toolbox_utils.src.toolbox_utils import tsutils
 
 if os.name == "nt":
-    os.add_dll_directory(os.path.dirname(__file__))
+    _dll_dir = os.path.join(os.path.dirname(__file__), ".libs")
+    try:
+        os.add_dll_directory(_dll_dir)
+    except AttributeError:
+        pass
+    os.environ["PATH"] += os.pathsep + _dll_dir
 from . import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
 # Somewhere in the distant past, these slightly diverged - don't remember the
 # reason.
-pd_version_major, pd_version_minor = pd.__version__.split(".")[:2]
-pd_version = float(f"{pd_version_major}.{pd_version_minor}")
+pd_version = float(".".join(pd.__version__.split(".")[:2]))
 if pd_version < 2.2:
     _MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
     _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "ME", 6: "A"}
