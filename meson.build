@@ -47,9 +47,11 @@ wdm_source = custom_target('_wdm_libmodule.c',
 )
 
 py.extension_module('_wdm_lib',
-    ftn_sources,
-    wdm_source,
-    incdir_f2py / 'fortranobject.c',
+    [
+        ftn_sources,
+        wdm_source,
+        incdir_f2py / 'fortranobject.c'
+    ],
     include_directories: inc_np,
     dependencies : py_dep,
     install : true,
