@@ -17,12 +17,14 @@ from filelock import SoftFileLock
 from .toolbox_utils.src.toolbox_utils import tsutils
 
 if os.name == "nt":
-    _dll_dir = os.path.join(os.path.dirname(__file__), ".libs")
+    _dll_dir = os.path.join(os.path.dirname(__file__))
     try:
         os.add_dll_directory(_dll_dir)
     except AttributeError:
         pass
-    os.environ["PATH"] += os.pathsep + _dll_dir
+    os.environ["PATH"] = (
+        os.pathsep.join(os.environ["PATH"].split(os.pathsep) + [_dll_dir]) + _dll_dir
+    )
 from . import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
