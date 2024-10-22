@@ -81,7 +81,7 @@ version_files = ["VERSION"]
 profile = "black"
 
 [tool.meson-python.args]
-setup = ['--default-library=static', '--prefer-static']
+setup = ['--default-library=shared']
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

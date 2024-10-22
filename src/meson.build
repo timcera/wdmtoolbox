@@ -16,7 +16,6 @@ srcpython = [
 
 py.install_sources(srcpython, subdir:'wdmtoolbox/toolbox_utils/src/toolbox_utils')
 
-
 srcpython = [
              'wdmtoolbox/toolbox_utils/src/toolbox_utils/readers/hbn.py',
              'wdmtoolbox/toolbox_utils/src/toolbox_utils/readers/__init__.py',
