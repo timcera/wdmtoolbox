@@ -7,8 +7,8 @@ routines.
 
 import datetime
 import os
-import os.path
 import re
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -17,7 +17,7 @@ from filelock import SoftFileLock
 from .toolbox_utils.src.toolbox_utils import tsutils
 
 if os.name == "nt":
-    os.add_dll_directory(os.path.abspath(os.path.dirname(__file__)))
+    os.add_dll_directory(Path(__file__).parent)
 
 from . import _wdm_lib
 
@@ -154,7 +154,7 @@ class WDM:
 
     def wmsgop(self):
         """WMSGOP is a simple open of the message file."""
-        afilename = os.path.join(os.path.dirname(__file__), "message.wdm")
+        afilename = Path(__file__).parent / "message.wdm"
         return self._open(afilename, 50, ronwfg=1)
 
     def dateconverter(self, datestr):
@@ -171,9 +171,9 @@ class WDM:
 
     def _open(self, wdname, wdmsfl, ronwfg=0):
         """Private method to open WDM file."""
-        wdname = wdname.strip()
+        wdname = str(wdname).strip()
         if wdname not in self.openfiles:
-            if ronwfg in (0, 1) and not os.path.exists(wdname):
+            if ronwfg in (0, 1) and not Path(wdname).exists():
                 raise ValueError(
                     tsutils.error_wrapper(
                         f"""
@@ -449,11 +449,12 @@ class WDM:
 
     def create_new_wdm(self, wdmpath, overwrite=False):
         """Create a new WDM fileronwfg."""
-        if overwrite and os.path.exists(wdmpath):
+        wdmpath = Path(wdmpath)
+        if overwrite and wdmpath.exists():
             self._close(wdmpath)
-            os.remove(wdmpath)
-        elif os.path.exists(wdmpath):
-            raise WDMFileExists(wdmpath)
+            wdmpath.unlink()
+        elif wdmpath.exists():
+            raise WDMFileExists(str(wdmpath))
         ronwfg = 2
         self._open(wdmpath, 56, ronwfg=ronwfg)
         self._close(wdmpath)
@@ -639,7 +640,7 @@ class WDM:
 
     def read_dsn(self, wdmpath, dsn, start_date=None, end_date=None):
         """Read from a DSN."""
-        if not os.path.exists(wdmpath):
+        if not Path(wdmpath).exists():
             raise ValueError(
                 tsutils.error_wrapper(
                     f"""
@@ -723,9 +724,7 @@ class WDM:
 
         # Convert time series to pandas DataFrame
         tmpval = pd.DataFrame(
-            pd.Series(
-                dataout, index=index, name=f"{os.path.basename(wdmpath)}_DSN_{dsn}"
-            ),
+            pd.Series(dataout, index=index, name=f"{Path(wdmpath).stem}_DSN_{dsn}"),
             dtype=np.float64,
         )
 
@@ -742,7 +741,7 @@ class WDM:
 
     def _close(self, wdmpath):
         """Close the WDM file."""
-        wdmpath = wdmpath.strip()
+        wdmpath = str(wdmpath).strip()
         if wdmpath in self.openfiles:
             retcode = self.wdflcl(self.openfiles[wdmpath])
             self._retcode_check(
