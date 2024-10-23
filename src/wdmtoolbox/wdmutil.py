@@ -17,7 +17,7 @@ from filelock import SoftFileLock
 from .toolbox_utils.src.toolbox_utils import tsutils
 
 if os.name == "nt":
-    os.add_dll_directory(os.path.dirname(__file__))
+    os.add_dll_directory(os.path.abspath(os.path.dirname(__file__)))
 
 from . import _wdm_lib
 
