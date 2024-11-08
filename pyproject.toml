@@ -16,7 +16,8 @@ dependencies = [
     "cltoolbox >= 2.0.0",
     "dateparser",
     "numpy>=1.26",
-    "pandas",
+    "pandas; python_version < '3.13'",
+    "pandas>=2.2.3; python_version >= '3.13'",
     "pint!=0.21.*",
     "pint-pandas",
     "pydantic",
@@ -41,6 +42,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules"
