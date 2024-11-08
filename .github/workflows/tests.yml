@@ -20,26 +20,11 @@ jobs:
             fail-fast: false
             matrix:
                 os: [ubuntu-latest, windows-latest, macos-latest]
-                versions: >
-                    [
-                      {python: 3.9, pandas: 1.5.3},
-                      {python: 3.9, pandas: 2.0.0},
-                      {python: 3.9, pandas: 2.2.0},
-                      {python: 3.9, pandas: 2.2.3},
-                      {python: 3.10, pandas: 1.5.3},
-                      {python: 3.10, pandas: 2.0.0},
-                      {python: 3.10, pandas: 2.2.0},
-                      {python: 3.10, pandas: 2.2.3},
-                      {python: 3.11, pandas: 1.5.3},
-                      {python: 3.11, pandas: 2.0.0},
-                      {python: 3.11, pandas: 2.2.0},
-                      {python: 3.11, pandas: 2.2.3},
-                      {python: 3.12, pandas: 1.5.3},
-                      {python: 3.12, pandas: 2.0.0},
-                      {python: 3.12, pandas: 2.2.0},
-                      {python: 3.12, pandas: 2.2.3},
-                      {python: 3.13, pandas: 2.2.3}
-                    ]
+                python-versions: [3.9, 3.10, 3.11, 3.12, 3.13]
+                pandas-versions: [1.5.3, 2.0.0, 2.2.0, 2.2.3]
+                exclude:
+                    - python-versions: 3.13
+                      pandas-versions: [1.5.3, 2.0.0, 2.2.0]
 
         steps:
             - name: Checkout repository
