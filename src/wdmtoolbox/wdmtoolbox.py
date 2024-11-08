@@ -731,8 +731,10 @@ def _writetodsn(wdmpath, dsn, data):
             tsutils.error_wrapper(
                 f"""
                 wdmtoolbox only understands PANDAS time intervals of : 'A',
-                'AS', 'A-DEC' for annual, 'M', 'MS' for monthly, 'D', 'H', 'T',
-                'S' for day, hour, minute, and second.  wdmtoolbox thinks this
+                'AS', 'A-DEC' for annual, 'M', 'MS' for monthly, 'D', 'H' (or
+                "h"), 'T' (or 'min'), and 'S' (or 's') for day, hour, minute,
+                and second.  wdmtoolbox thinks this series is {pandacode}. 'S'
+                for day, hour, minute, and second.  wdmtoolbox thinks this
                 series is {pandacode}.
                 """
             )

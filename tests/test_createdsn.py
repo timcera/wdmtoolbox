@@ -78,3 +78,12 @@ class TestDescribe(TestCase):
         wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5, base_year=1870)
         with self.assertRaisesRegex(DSNExistsError, "exists."):
             wdmtoolbox.createnewdsn(self.wdmname, 101, tcode=5, base_year=1870)
+
+    def test_dsn_location_length(self):
+        wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
+        with self.assertRaisesRegex(ValueError, "too long"):
+            wdmtoolbox.createnewdsn(
+                self.wdmname, 101, tcode=5, base_year=1870, location="A" * 9
+            )
+        with self.assertRaisesRegex(Exception, "WDM library"):
+            wdmtoolbox.describedsn(self.wdmname, 101)

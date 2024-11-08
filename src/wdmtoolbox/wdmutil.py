@@ -506,88 +506,101 @@ class WDM:
         tsfill=-999.0,
     ):
         """Create self.wdmfp/dsn."""
+        function_name = ""
+        error_str = ""
         lock = SoftFileLock(wdmpath + ".lock", timeout=30)
-        with lock:
-            wdmfp = self._open(wdmpath, 57)
-            messfp = self.wmsgop()
+        for _ in (True,):
+            with lock:
+                wdmfp = self._open(wdmpath, 57)
+                messfp = self.wmsgop()
 
-            if self.wdckdt(wdmfp, dsn) == 1:
-                self._close(wdmpath)
-                raise DSNExistsError(dsn)
+                if self.wdckdt(wdmfp, dsn) == 1:
+                    self._close(wdmpath)
+                    raise DSNExistsError(dsn)
 
-            # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
-            self.wdlbax(
-                wdmfp,
-                dsn,
-                1,  # DSTYPE - always 1 for time series
-                10,  # NDN    - number of down pointers
-                10,  # NUP    - number of up pointers
-                30,  # NSA    - number of search attributes
-                100,  # NSASP  - amount of search attribute space
-                300,  # NDP    - number of data pointers
-            )  # PSA    - pointer to search attribute space
+                # Create a new DSN.
+                # Parameters for wdlbax taken from ATCTSfile/clsTSerWDM.cls
+                self.wdlbax(
+                    wdmfp,
+                    dsn,
+                    1,  # DSTYPE - always 1 for time series
+                    10,  # NDN    - number of down pointers
+                    10,  # NUP    - number of up pointers
+                    30,  # NSA    - number of search attributes
+                    100,  # NSASP  - amount of search attribute space
+                    300,  # NDP    - number of data pointers
+                )  # PSA    - pointer to search attribute space
 
-            for saind, salen, saval in (
-                (34, 1, 6),  # tgroup
-                (83, 1, 1),  # compfg
-                (84, 1, 1),  # tsform
-                (85, 1, 1),  # vbtime
-                (17, 1, int(tcode)),  # tcode
-                (33, 1, int(tsstep)),  # tsstep
-                (27, 1, int(base_year)),  # tsbyr
-            ):
-                retcode = self.wdbsai(wdmfp, dsn, messfp, saind, salen, saval)
+                # Set integer attributes with FORTRAN function wdbsai.
+                for saind, salen, saval in (
+                    (34, 1, 6),  # tgroup
+                    (83, 1, 1),  # compfg
+                    (84, 1, 1),  # tsform
+                    (85, 1, 1),  # vbtime
+                    (17, 1, int(tcode)),  # tcode
+                    (33, 1, int(tsstep)),  # tsstep
+                    (27, 1, int(base_year)),  # tsbyr
+                ):
+                    retcode = self.wdbsai(wdmfp, dsn, messfp, saind, salen, saval)
+                    if retcode != 0:
+                        function_name = "wdbsai"
+                        break  # break out of for loop
                 if retcode != 0:
-                    self.delete_dsn(wdmfp, dsn)
-                self._retcode_check(
-                    retcode, additional_info=f"wdbsai file={wdmpath} DSN={dsn}"
-                )
+                    break  # break out of with block
 
-            for saind, salen, saval in ((32, 1, tsfill),):  # tsfill
-                retcode = self.wdbsar(wdmfp, dsn, messfp, saind, salen, saval)
+                # Set real attributes with FORTRAN function wdbsar.
+                for saind, salen, saval in ((32, 1, tsfill),):  # tsfill
+                    retcode = self.wdbsar(wdmfp, dsn, messfp, saind, salen, saval)
+                    if retcode != 0:
+                        function_name = "wdbsar"
+                        break  # break out of for loop
                 if retcode != 0:
-                    self.delete_dsn(wdmfp, dsn)
-                self._retcode_check(
-                    retcode, additional_info=f"wdbsar file={wdmpath} DSN={dsn}"
-                )
+                    break  # break out of with block
 
-            for saind, salen, saval, error_name in (
-                (2, 16, statid, "Station ID"),
-                (1, 4, tstype, "Time series type - tstype"),
-                (45, 48, description, "Description"),
-                (288, 8, scenario, "Scenario"),
-                (289, 8, constituent, "Constituent"),
-                (290, 8, location, "Location"),
-            ):
-                saval = saval.strip()
-                if len(saval) > salen:
-                    self.delete_dsn(wdmfp, dsn)
-                    raise ValueError(
-                        tsutils.error_wrapper(
-                            f"""
+                # Set string attributes with FORTRAN function wdbsac.
+                for saind, salen, saval, error_name in (
+                    (2, 16, statid, "Station ID"),
+                    (1, 4, tstype, "Time series type - tstype"),
+                    (45, 48, description, "Description"),
+                    (288, 8, scenario, "Scenario"),
+                    (289, 8, constituent, "Constituent"),
+                    (290, 8, location, "Location"),
+                ):
+                    saval = saval.strip()
+                    if len(saval) > salen:
+                        error_str = f"""
                             String "{saval}" is too long for {error_name}.
                             Must have a length equal or less than {salen}.
                             """
-                        )
+                        break
+
+                    saval = f"{saval: <{salen}}"
+                    retcode = self.wdbsac(
+                        wdmsfl=wdmfp,
+                        dsn=dsn,
+                        messfl=messfp,
+                        saind=saind,
+                        salen=salen,
+                        saval=np.array(list(saval)),
                     )
+                    if retcode != 0:
+                        function_name = "wdbsac"
+                        break  # break out of for loop
+                if retcode != 0 or error_str:
+                    break  # break out of with block
 
-                saval = f"{saval: <{salen}}"
-                print(wdmfp, dsn, messfp, saind, salen, saval)
-                retcode = self.wdbsac(
-                    wdmsfl=wdmfp,
-                    dsn=dsn,
-                    messfl=messfp,
-                    saind=saind,
-                    salen=salen,
-                    saval=np.array(list(saval)),
-                )
-                if retcode != 0:
-                    self.delete_dsn(wdmfp, dsn)
+        self._close(wdmpath)
+
+        if retcode != 0 or error_str:
+            # Clean up the DSN if there was an error.
+            # Need to be outside of the with block to delete the DSN.
+            self.delete_dsn(wdmpath, dsn)
+            if error_str:
+                raise ValueError(tsutils.error_wrapper(error_str))
+            if retcode != 0:
                 self._retcode_check(
-                    retcode, additional_info=f"wdbsac file={wdmpath} DSN={dsn}"
+                    retcode, additional_info=f"{function_name} file={wdmpath} DSN={dsn}"
                 )
-
-            self._close(wdmpath)
 
     def _tcode_date(self, tcode, date):
         """Use tcode to set the significant parts of the date tuple."""
