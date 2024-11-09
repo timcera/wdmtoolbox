@@ -55,7 +55,7 @@ py.extension_module('_wdm_lib',
     include_directories: inc_np,
     dependencies : py_dep,
     install : true,
-    subdir : 'wdmtoolbox'
+    install_dir: py.get_install_dir() / 'wdmtoolbox',
 )
 
 subdir('src')
