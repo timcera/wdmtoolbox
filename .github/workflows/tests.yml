@@ -25,13 +25,6 @@ jobs:
                 toolchain:
                     - {compiler: gcc, version: 13}
                     - {compiler: intel, version: '2024.1'}
-                include:
-                    - os: ubuntu-latest
-                      toolchain: {compiler: gcc, version: 13}
-                    - os: window-latest
-                      toolchain: {compiler: intel, version: '2024.1'}
-                    - os: macos-latest
-                      toolchain: {compiler: gcc, version: 13}
                 exclude:
                     - python-versions: '3.13'
                       pandas-versions: 1.5.3
@@ -39,6 +32,12 @@ jobs:
                       pandas-versions: 2.0.0
                     - python-versions: '3.13'
                       pandas-versions: 2.2.0
+                    - os: ubuntu-latest
+                      toolchain: {compiler: intel, version: '2024.1'}
+                    - os: window-latest
+                      toolchain: {compiler: gcc, version: 13}
+                    - os: macos-latest
+                      toolchain: {compiler: intel, version: '2024.1'}
 
         steps:
             - name: Checkout repository
