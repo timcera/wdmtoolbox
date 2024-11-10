@@ -22,6 +22,13 @@ jobs:
                 os: [ubuntu-latest, windows-latest, macos-latest]
                 python-versions: ['3.9', '3.10', '3.11', '3.12', '3.13']
                 pandas-versions: [1.5.3, 2.0.0, 2.2.0, 2.2.3]
+                include:
+                    - os: ubuntu-latest
+                      toolchain: {compiler: gcc, version: 13}
+                    - os: window-latest
+                      toolchain: {compiler: intel, version: '2024.1'}
+                    - os: macos-latest
+                      toolchain: {compiler: gcc, version: 13}
                 exclude:
                     - python-versions: '3.13'
                       pandas-versions: 1.5.3
@@ -45,8 +52,8 @@ jobs:
               uses: fortran-lang/setup-fortran@v1
               id: setup-fortran
               with:
-                  compiler: gcc
-                  version: 13
+                  compiler: ${{ matrix.toolchain.compiler }}
+                  version: ${{ matrix.toolchain.version }}
 
             - name: Install dependencies
               run: |
