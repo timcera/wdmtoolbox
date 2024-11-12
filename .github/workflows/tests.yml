@@ -61,7 +61,7 @@ jobs:
                   python -m pip install pytest pytest-cov pytest-mpl
                   python -m pip install 'meson>=1.5.1' meson-python build
                   python -m build .
-                  python -m pip install .
+                  python -m pip install dist/*.whl
 
             - name: Test with pytest
               run: |
