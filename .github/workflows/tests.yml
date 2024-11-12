@@ -24,7 +24,6 @@ jobs:
                 pandas-versions: [1.5.3, 2.0.0, 2.2.0, 2.2.3]
                 toolchain:
                     - {compiler: gcc, version: 13}
-                    - {compiler: gcc, version: 12}
                 exclude:
                     - python-versions: '3.13'
                       pandas-versions: 1.5.3
@@ -32,12 +31,6 @@ jobs:
                       pandas-versions: 2.0.0
                     - python-versions: '3.13'
                       pandas-versions: 2.2.0
-                    - os: ubuntu-latest
-                      toolchain: {compiler: gcc, version: 12}
-                    - os: window-latest
-                      toolchain: {compiler: gcc, version: 13}
-                    - os: macos-latest
-                      toolchain: {compiler: gcc, version: 12}
 
         steps:
             - name: Checkout repository
@@ -66,7 +59,8 @@ jobs:
                   python -m pip install --upgrade pip
                   python -m pip install pandas==${{ matrix.pandas-versions }}
                   python -m pip install pytest pytest-cov pytest-mpl
-                  python -m pip install 'meson>=1.5.1' meson-python
+                  python -m pip install 'meson>=1.5.1' meson-python build
+                  python -m build .
                   python -m pip install .
 
             - name: Test with pytest
