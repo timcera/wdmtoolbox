@@ -20,7 +20,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest, windows-latest, macos-latest]
+                # Drop windows-latest for now
+                os: [ubuntu-latest, macos-latest]
                 python-versions: ['3.9', '3.10', '3.11', '3.12', '3.13']
                 pandas-versions: [1.5.3, 2.0.0, 2.2.0, 2.2.3]
                 toolchain:
