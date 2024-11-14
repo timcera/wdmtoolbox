@@ -1,3 +1,12 @@
+## v16.0.9 (2024-11-14)
+
+### Fix
+
+- createnewdsn now correcly fails if any string attributes are too long and deletes the partially build DSN
+- readd windows library loading function to fix windows install with meson
+- fixed meson.build
+- moved to toolbox_utils submodule, fixed changes to pandas 2.2+ offset codes, fixed SAVAL
+
 ## v16.0.8 (2024-05-19)
 
 ### Refactor
