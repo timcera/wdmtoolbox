@@ -23,13 +23,67 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest, windows-latest, macos-latest]
-                python-versions: ['3.9', '3.10', '3.11', '3.12', '3.13']
-                toolchain:
-                    - {compiler: gcc, version: 13}
-
-        env:
-            PYTHON_VERS: ${{ matrix.python-versions }}
+                include:
+                    - {os: ubuntu-latest,
+                       python-versions: '3.9',
+                       build: cp39-manylinux_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: ubuntu-latest,
+                       python-versions: '3.10',
+                       build: cp310-manylinux_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: ubuntu-latest,
+                       python-versions: '3.11',
+                       build: cp311-manylinux_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: ubuntu-latest,
+                       python-versions: '3.12',
+                       build: cp312-manylinux_*,
+                       itoolchain: {compiler: gcc, version: 13}}
+                    - {os: ubuntu-latest,
+                       python-versions: '3.13',
+                       build: cp313-manylinux_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: macos-latest,
+                       python-versions: '3.9',
+                       build: cp39-macosx_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: macos-latest,
+                       python-versions: '3.10',
+                       build: cp310-macosx_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: macos-latest,
+                       python-versions: '3.11',
+                       build: cp311-macosx_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: macos-latest,
+                       python-versions: '3.12',
+                       build: cp312-macosx_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: macos-latest,
+                       python-versions: '3.13',
+                       build: cp313-macosx_*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: windows-latest,
+                       python-versions: '3.9',
+                       build: cp39-win*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: windows-latest,
+                       python-versions: '3.10',
+                       build: cp310-win*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: windows-latest,
+                       python-versions: '3.11',
+                       build: cp311-win*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: windows-latest,
+                       python-versions: '3.12',
+                       build: cp312-win*,
+                       toolchain: {compiler: gcc, version: 13}}
+                    - {os: windows-latest,
+                       python-versions: '3.13',
+                       build: cp313-win*,
+                       toolchain: {compiler: gcc, version: 13}}
 
         steps:
             - name: Checkout source
@@ -41,12 +95,6 @@ jobs:
               uses: actions/setup-python@v5
               with:
                   python-version: ${{ matrix.python-versions }}
-
-            - name: Set additional envs
-              shell: bash
-              run: >
-                  echo "PYTHON_MINOR_VERS=$(echo $PYTHON_VERS | cut -c 3-)"
-                      >> $GITHUB_ENV
 
             - name: >
                   Setup ${{ matrix.toolchain.compiler }} fortran compiler
@@ -63,7 +111,7 @@ jobs:
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.21.3
               env:
-                  CIBW_BUILD: cp3${{ env.PYTHON_MINOR_VERS }}-*
+                  CIBW_BUILD: ${{ matrix.build }}
                   CIBW_SKIP: pp* cp36-* cp37-* cp38-* *_i686
 
                   MACOSX_DEPLOYMENT_TARGET: 14.0
