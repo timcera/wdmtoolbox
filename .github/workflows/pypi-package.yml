@@ -16,9 +16,9 @@ jobs:
     tests:
         uses: ./.github/workflows/tests.yml
 
-    pypi-publish:
+    create-wheels:
         runs-on: ${{ matrix.os }}
-        name: upload release to PyPI
+        name: ${{ matrix.os }}, python ${{ matrix.python-versions }}
         needs: tests
         environment: release
         strategy:
@@ -28,10 +28,6 @@ jobs:
                 python-versions: ['3.9', '3.10', '3.11', '3.12', '3.13']
                 toolchain:
                     - {compiler: gcc, version: 13}
-
-        permissions:
-            # IMPORTANT: this permission is mandatory for trusted publishing
-            id-token: write
 
         steps:
             - name: Checkout source
@@ -58,6 +54,24 @@ jobs:
                   python -m pip install build
                   python -m build .
 
+            - name: Upload wheel as artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: artifact-${{ matrix.os }}-${{ matrix.cibw_arch }}-wheel
+                  path: dist
+                  merge-multiple: true
+
+    upload-pypi:
+        runs-on: ubuntu-latest
+        name: upload release to PyPI
+        needs: create-wheels
+        environment: release
+
+        permissions:
+            # IMPORTANT: this permission is mandatory for trusted publishing
+            id-token: write
+
+        steps:
             - name: Download artifact
               uses: actions/download-artifact@v4
               with:
