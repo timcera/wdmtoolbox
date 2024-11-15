@@ -23,67 +23,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                include:
-                    - {os: ubuntu-latest,
-                       python-versions: '3.9',
-                       build: cp39-manylinux_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: ubuntu-latest,
-                       python-versions: '3.10',
-                       build: cp310-manylinux_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: ubuntu-latest,
-                       python-versions: '3.11',
-                       build: cp311-manylinux_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: ubuntu-latest,
-                       python-versions: '3.12',
-                       build: cp312-manylinux_*,
-                       itoolchain: {compiler: gcc, version: 13}}
-                    - {os: ubuntu-latest,
-                       python-versions: '3.13',
-                       build: cp313-manylinux_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: macos-latest,
-                       python-versions: '3.9',
-                       build: cp39-macosx_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: macos-latest,
-                       python-versions: '3.10',
-                       build: cp310-macosx_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: macos-latest,
-                       python-versions: '3.11',
-                       build: cp311-macosx_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: macos-latest,
-                       python-versions: '3.12',
-                       build: cp312-macosx_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: macos-latest,
-                       python-versions: '3.13',
-                       build: cp313-macosx_*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: windows-latest,
-                       python-versions: '3.9',
-                       build: cp39-win*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: windows-latest,
-                       python-versions: '3.10',
-                       build: cp310-win*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: windows-latest,
-                       python-versions: '3.11',
-                       build: cp311-win*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: windows-latest,
-                       python-versions: '3.12',
-                       build: cp312-win*,
-                       toolchain: {compiler: gcc, version: 13}}
-                    - {os: windows-latest,
-                       python-versions: '3.13',
-                       build: cp313-win*,
-                       toolchain: {compiler: gcc, version: 13}}
+                os: [ubuntu-latest, macos-latest, windows-latest]
 
         steps:
             - name: Checkout source
@@ -91,28 +31,27 @@ jobs:
               with:
                   submodules: recursive
 
-            - name: Set up Python ${{ matrix.python-versions }}
-              uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ matrix.python-versions }}
-
             - name: >
-                  Setup ${{ matrix.toolchain.compiler }} fortran compiler
-                  version ${{ matrix.toolchain.version }}
+                  Setup gfortran compiler version 13
               uses: fortran-lang/setup-fortran@v1
               id: setup-fortran
               with:
-                  compiler: ${{ matrix.toolchain.compiler }}
-                  version: ${{ matrix.toolchain.version }}
+                  compiler: gfortran
+                  version: 13
               env:
                   FC: ${{ steps.setup-fortran.outputs.fc }}
                   CC: ${{ steps.setup-fortran.outputs.cc }}
 
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.21.3
+              with:
+                  output-dir: dist
               env:
-                  CIBW_BUILD: ${{ matrix.build }}
-                  CIBW_SKIP: pp* cp36-* cp37-* cp38-* *_i686
+                  CIBW_SKIP: |
+                      pp*
+                      cp36-* cp37-* cp38-*
+                      *_i686 *_win32
+                      macosx_x86_64 macosx_arm64
 
                   MACOSX_DEPLOYMENT_TARGET: 14.0
 
