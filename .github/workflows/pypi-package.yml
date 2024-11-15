@@ -47,16 +47,49 @@ jobs:
               with:
                   compiler: ${{ matrix.toolchain.compiler }}
                   version: ${{ matrix.toolchain.version }}
+              env:
+                  FC: ${{ steps.setup-fortran.outputs.fc }}
+                  CC: ${{ steps.setup-fortran.outputs.cc }}
 
-            - name: Build sdist and wheel
-              run: |
-                  python -m pip install build
-                  python -m build --wheel .
+            - name: Build wheels
+              uses: pypa/cibuildwheel@v2.21.3
+              env:
+                  CIBW_BUILD: cp39-* cp310-* cp311-* cp312-* cp313-*
+                  CIBW_SKIP: pp* cp36-* cp37-* cp38-* *_i686
+
+                  CIBW_BEFORE_BUILD_LINUX: |
+                      yum upgrade -y || apt-get update -y || apk update ;
+                      yum upgrade -y hdf5-devel openblas-devel || \
+                          apt-get install -y libhdf5-dev libopenblas-dev || \
+                          apk add --update hdf5-dev openblas-dev
+                  CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+                  CIBW_MANYLINUX_I686_IMAGE: manylinux2014
+                  CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
+
+                  # Use delvewheel on windows
+                  CIBW_BEFORE_BUILD_WINDOWS: |
+                      pip install delvewheel
+                  CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: |
+                      delvewheel repair -w {dest_dir} {wheel}
+
+                  CIBW_BEFORE_BUILD: |
+                      python -m pip install --upgrade pip
+                      python -m pip install pytest pytest-cov pytest-mpl
+                      python -m pip install meson-python
+                  CIBW_TEST_REQUIRES: pytest
+                  CIBW_TEST_COMMAND_LINUX: >
+                      cd {project} &&
+                      python -m pytest --cov --mpl
+                  CIBW_TEST_COMMAND_MACOS: >
+                      cd {project} &&
+                      python -m pytest --cov --mpl
+                  CIBW_TEST_COMMAND_WINDOWS: >
+                      cd /d {project} &&
+                      python -m pytest --cov --mpl
 
             - name: Upload wheel as artifact
               uses: actions/upload-artifact@v4
               with:
-                  name: artifact-${{ matrix.os }}-${{ matrix.cibw_arch }}-wheel
                   path: dist
 
     create-sdist:
@@ -91,7 +124,7 @@ jobs:
     upload-pypi:
         runs-on: ubuntu-latest
         name: upload release to PyPI
-        needs: create-wheels
+        needs: [create-wheels, create-sdist]
         environment: release
 
         permissions:
