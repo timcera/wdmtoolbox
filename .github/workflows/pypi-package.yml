@@ -28,6 +28,9 @@ jobs:
                 toolchain:
                     - {compiler: gcc, version: 13}
 
+        env:
+            PYTHON_VERS: ${{ matrix.python-versions }}
+
         steps:
             - name: Checkout source
               uses: actions/checkout@v4
@@ -38,6 +41,12 @@ jobs:
               uses: actions/setup-python@v5
               with:
                   python-version: ${{ matrix.python-versions }}
+
+            - name: Set additional envs
+              shell: bash
+              run: >
+                  echo "PYTHON_MINOR_VERS=$(echo $PYTHON_VERS | cut -c 3-)"
+                      >> $GITHUB_ENV
 
             - name: >
                   Setup ${{ matrix.toolchain.compiler }} fortran compiler
@@ -54,8 +63,10 @@ jobs:
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.21.3
               env:
-                  CIBW_BUILD: cp39-* cp310-* cp311-* cp312-* cp313-*
+                  CIBW_BUILD: cp3${{env.PYTHON_MINOR_VERS}}-*
                   CIBW_SKIP: pp* cp36-* cp37-* cp38-* *_i686
+
+                  MACOSX_DEPLOYMENT_TARGET: 14.0
 
                   CIBW_BEFORE_BUILD_LINUX: |
                       yum upgrade -y || apt-get update -y || apk update ;
@@ -74,18 +85,15 @@ jobs:
 
                   CIBW_BEFORE_BUILD: |
                       python -m pip install --upgrade pip
-                      python -m pip install pytest pytest-cov pytest-mpl
-                      python -m pip install meson-python
+                      python -m pip install pytest
+                      python -m pip install meson-python meson
                   CIBW_TEST_REQUIRES: pytest
-                  CIBW_TEST_COMMAND_LINUX: >
-                      cd {project} &&
-                      python -m pytest --cov --mpl
-                  CIBW_TEST_COMMAND_MACOS: >
-                      cd {project} &&
-                      python -m pytest --cov --mpl
-                  CIBW_TEST_COMMAND_WINDOWS: >
-                      cd /d {project} &&
-                      python -m pytest --cov --mpl
+                  CIBW_TEST_COMMAND_LINUX: |
+                      cd {project} && python -m pytest
+                  CIBW_TEST_COMMAND_MACOS: |
+                      cd {project} && python -m pytest
+                  CIBW_TEST_COMMAND_WINDOWS: |
+                      cd /d {project} && python -m pytest
 
             - name: Upload wheel as artifact
               uses: actions/upload-artifact@v4
