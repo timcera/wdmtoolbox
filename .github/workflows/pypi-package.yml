@@ -15,11 +15,18 @@ on:  # yamllint disable-line rule:truthy
 jobs:
     tests:
         uses: ./.github/workflows/tests.yml
+
     pypi-publish:
-        needs: tests
-        runs-on: ubuntu-latest
-        environment: release
         name: upload release to PyPI
+        needs: tests
+        environment: release
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest, macos-latest]
+                python-versions: ['3.9', '3.10', '3.11', '3.12', '3.13']
+                toolchain:
+                    - {compiler: gcc, version: 13}
 
         permissions:
             # IMPORTANT: this permission is mandatory for trusted publishing
@@ -31,10 +38,24 @@ jobs:
               with:
                   submodules: recursive
 
+            - name: Set up Python ${{ matrix.python-versions }}
+              uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python-versions }}
+
+            - name: >
+                  Setup ${{ matrix.toolchain.compiler }} fortran compiler
+                  version ${{ matrix.toolchain.version }}
+              uses: fortran-lang/setup-fortran@v1
+              id: setup-fortran
+              with:
+                  compiler: ${{ matrix.toolchain.compiler }}
+                  version: ${{ matrix.toolchain.version }}
+
             - name: Build sdist and wheel
               run: |
                   python -m pip install build
-                  python -m build
+                  python -m build .
 
             - name: Download artifact
               uses: actions/download-artifact@v4
