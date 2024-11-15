@@ -69,7 +69,7 @@ repos:
       rev: 0.2.3
       hooks:
           - id: yamlfmt
-            args: [--width, '79']
+            args: [--width, '72']
 
     - repo: https://github.com/jumanjihouse/pre-commit-hooks
       rev: 3.0.0
