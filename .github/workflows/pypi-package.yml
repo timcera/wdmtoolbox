@@ -63,7 +63,7 @@ jobs:
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.21.3
               env:
-                  CIBW_BUILD: cp3${{env.PYTHON_MINOR_VERS}}-*
+                  CIBW_BUILD: cp3${{ env.PYTHON_MINOR_VERS }}-*
                   CIBW_SKIP: pp* cp36-* cp37-* cp38-* *_i686
 
                   MACOSX_DEPLOYMENT_TARGET: 14.0
