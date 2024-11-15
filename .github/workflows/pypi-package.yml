@@ -17,6 +17,7 @@ jobs:
         uses: ./.github/workflows/tests.yml
 
     pypi-publish:
+        runs-on: ${{ matrix.os }}
         name: upload release to PyPI
         needs: tests
         environment: release
