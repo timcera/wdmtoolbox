@@ -41,8 +41,12 @@ jobs:
                   FC: ${{ steps.setup-fortran.outputs.fc }}
                   CC: ${{ steps.setup-fortran.outputs.cc }}
 
+            - name: Set up dev env on Windows.  Nothing on other platforms.
+              uses: ilammy/msvc-dev-cmd@v1
+
             - name: Build wheels
               uses: pypa/cibuildwheel@v2.21.3
+
               with:
                   output-dir: dist
               env:
