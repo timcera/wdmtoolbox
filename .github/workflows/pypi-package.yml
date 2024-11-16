@@ -35,7 +35,7 @@ jobs:
               uses: fortran-lang/setup-fortran@v1
               id: setup-fortran
               with:
-                  compiler: gfortran
+                  compiler: gcc
                   version: 13
               env:
                   FC: ${{ steps.setup-fortran.outputs.fc }}
