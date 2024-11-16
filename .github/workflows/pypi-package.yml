@@ -55,13 +55,7 @@ jobs:
 
                   MACOSX_DEPLOYMENT_TARGET: 14.0
 
-                  CIBW_BEFORE_BUILD_LINUX: |
-                      yum upgrade -y || apt-get update -y || apk update ;
-                      yum upgrade -y hdf5-devel openblas-devel || \
-                          apt-get install -y libhdf5-dev libopenblas-dev || \
-                          apk add --update hdf5-dev openblas-dev
                   CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-                  CIBW_MANYLINUX_I686_IMAGE: manylinux2014
                   CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
                   # Use delvewheel on windows
@@ -73,7 +67,6 @@ jobs:
                   CIBW_BEFORE_BUILD: |
                       python -m pip install --upgrade pip
                       python -m pip install pytest
-                      python -m pip install meson-python meson
                   CIBW_TEST_REQUIRES: pytest
                   CIBW_TEST_COMMAND_LINUX: |
                       cd {project} && python -m pytest
