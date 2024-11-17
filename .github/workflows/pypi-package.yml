@@ -41,22 +41,23 @@ jobs:
                       python: 313
                       platform: manylinux_x86_64
 
-                    # 64-bit macOS (universal2)
-                    - os: macos-latest
-                      python: 39
-                      platform: macosx_universal2
-                    - os: macos-latest
-                      python: 310
-                      platform: macosx_universal2
-                    - os: macos-latest
-                      python: 311
-                      platform: macosx_universal2
-                    - os: macos-latest
-                      python: 312
-                      platform: macosx_universal2
-                    - os: macos-latest
-                      python: 313
-                      platform: macosx_universal2
+                    # For the time being, skipping macos
+                    # # 64-bit macOS (universal2)
+                    # - os: macos-latest
+                    #   python: 39
+                    #   platform: macosx_universal2
+                    # - os: macos-latest
+                    #   python: 310
+                    #   platform: macosx_universal2
+                    # - os: macos-latest
+                    #   python: 311
+                    #   platform: macosx_universal2
+                    # - os: macos-latest
+                    #   python: 312
+                    #   platform: macosx_universal2
+                    # - os: macos-latest
+                    #   python: 313
+                    #   platform: macosx_universal2
 
                     # 64-bit Windows
                     - os: windows-latest
