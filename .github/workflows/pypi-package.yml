@@ -17,19 +17,93 @@ jobs:
         uses: ./.github/workflows/tests.yml
 
     create-wheels:
+        name: Build wheel for cp${{ matrix.python }}-${{ matrix.platform }}
         runs-on: ${{ matrix.os }}
-        name: ${{ matrix.os }}
         needs: tests
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest, macos-latest, windows-latest]
+                include:
+                    # 64-bit Linux
+                    - os: ubuntu-latest
+                      python: 39
+                      platform: manylinux_x86_64
+                    - os: ubuntu-latest
+                      python: 310
+                      platform: manylinux_x86_64
+                    - os: ubuntu-latest
+                      python: 311
+                      platform: manylinux_x86_64
+                    - os: ubuntu-latest
+                      python: 312
+                      platform: manylinux_x86_64
+                    - os: ubuntu-latest
+                      python: 313
+                      platform: manylinux_x86_64
+
+                    # 64-bit macOS (x86_64)
+                    - os: macos-latest
+                      python: 39
+                      platform: macosx_x86_64
+                    - os: macos-latest
+                      python: 310
+                      platform: macosx_x86_64
+                    - os: macos-latest
+                      python: 311
+                      platform: macosx_x86_64
+                    - os: macos-latest
+                      python: 312
+                      platform: macosx_x86_64
+                    - os: macos-latest
+                      python: 313
+                      platform: macosx_x86_64
+
+                    # 64-bit macOS (arm64)
+                    - os: macos-latest
+                      python: 39
+                      platform: macosx_arm64
+                    - os: macos-latest
+                      python: 310
+                      platform: macosx_arm64
+                    - os: macos-latest
+                      python: 311
+                      platform: macosx_arm64
+                    - os: macos-latest
+                      python: 312
+                      platform: macosx_arm64
+                    - os: macos-latest
+                      python: 313
+                      platform: macosx_arm64
+
+                    # 64-bit Windows
+                    - os: windows-latest
+                      python: 39
+                      platform: win_amd64
+                    - os: windows-latest
+                      python: 310
+                      platform: win_amd64
+                    - os: windows-latest
+                      python: 311
+                      platform: win_amd64
+                    - os: windows-latest
+                      python: 312
+                      platform: win_amd64
+                    - os: windows-latest
+                      python: 313
+                      platform: win_amd64
 
         steps:
-            - name: Checkout source
+            - name: Checkout repository
               uses: actions/checkout@v4
               with:
                   submodules: recursive
+
+            - name: Install mingw-w64 on Windows
+              if: ${{ runner.os == 'Windows' }}
+              uses: msys2/setup-msys2@v2
+              with:
+                  path-type: inherit
+                  install: mingw-w64-x86_64-gcc-fortran
 
             - name: Setup gfortran compiler version 13
               uses: fortran-lang/setup-fortran@v1
@@ -41,17 +115,12 @@ jobs:
                   FC: ${{ steps.setup-fortran.outputs.fc }}
                   CC: ${{ steps.setup-fortran.outputs.cc }}
 
-            - name: Set up dev env on Windows.  Nothing on other platforms.
-              uses: ilammy/msvc-dev-cmd@v1
-
-            - name: Build wheels
+            - name: Build and test wheels
               uses: pypa/cibuildwheel@v2.21.3
-
               with:
                   output-dir: dist
               env:
-                  CIBW_BUILD: cp39-* cp310-* cp311-* cp312-* cp313-*
-                  CIBW_SKIP: "*_i686 *_win32"
+                  CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
 
                   MACOSX_DEPLOYMENT_TARGET: 14.0
 
