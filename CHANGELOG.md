@@ -1,3 +1,9 @@
+## v16.0.10 (2025-10-05)
+
+### Fix
+
+- pass numpy array to all wdm functions
+
 ## v16.0.9 (2024-11-14)
 
 ### Fix
