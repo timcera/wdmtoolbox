@@ -17,6 +17,7 @@ dependencies = [
     "cltoolbox >= 2.0.0",
     "dateparser",
     "numpy>=1.26",
+    "packaging",
     "pandas; python_version < '3.13'",
     "pandas>=2.2.3; python_version >= '3.13'",
     "pint!=0.21.*",

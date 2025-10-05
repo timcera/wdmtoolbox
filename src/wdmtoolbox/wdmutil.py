@@ -468,7 +468,10 @@ class WDM:
 
         name = attrib_name.ljust(6).upper()
         name = _attrib_alias.get(name, name)
-        attrib_index, attrib_type, attrib_len = self.wdbsgx(messfp, name)
+        name = name[:6].ljust(6).upper()
+        attrib_index, attrib_type, attrib_len = self.wdbsgx(
+            messfp, np.array(list(name))
+        )
 
         if attrib_type == 0:
             raise ValueError(

@@ -18,11 +18,6 @@
     :target: https://pypi.python.org/pypi/wdmtoolbox/
     :height: 20
 
-.. image:: https://img.shields.io/pypi/dd/wdmtoolbox.svg
-    :alt: wdmtoolbox downloads
-    :target: https://pypi.python.org/pypi/wdmtoolbox/
-    :height: 20
-
 .. image:: https://img.shields.io/pypi/pyversions/wdmtoolbox
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/wdmtoolbox/
