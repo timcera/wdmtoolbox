@@ -78,27 +78,37 @@ _common_docs = {
         specified defaults to first 4 characters of 'constituent'.  Must
         match what is used in HSPF UCI file.
 
-        Limited to 4 characters.""",
+        Limited to 4 characters.
+
+        The FORTRAN name is 'TSTYPE'.""",
     "base_year": r"""base_year: int
         [optional, defaults to 1900]
 
         Base year of time series.  The DSN will not
         accept any time-series before this date and with the default settings
-        of TGROUP=6 (i.e. yearly) would allow time-series up to 2199.""",
+        of TGROUP=6 (i.e. yearly) would allow time-series up to 2199.
+
+        The FORTRAN name is 'TSBYR'.""",
     "tcode": r"""tcode: int
         [optional, defaults to 4=daily time series]
 
         Time series code, (1=second, 2=minute, 3=hour, 4=day, 5=month,
-        6=year)""",
+        6=year)
+
+        The FORTRAN name is 'TCODE'.""",
     "tsstep": r"""tsstep: int
         [optional, defaults to 1]
 
         Time series steps, defaults (and almost always is)
-        1.""",
+        1.
+
+        The FORTRAN name is 'TSSTEP'.""",
     "statid": r"""statid: str
         [optional, defaults to '']
 
-        The station name, limited to 16 characters.""",
+        The station name, limited to 16 characters.
+
+        The FORTRAN name is 'IDLOCN'.""",
     "scenario": r"""scenario: str
         [optional defaults to '']
 
@@ -106,25 +116,33 @@ _common_docs = {
         typically, 'OBSERVED' for calibration and input time-series and
         'SIMULATE' for model results.
 
-        Limited to 8 characters.""",
+        Limited to 8 characters.
+
+        The FORTRAN name is 'IDSCEN'.""",
     "location": r"""location: str
         [optional defaults to '']
 
         The location name.
 
-        Limited to 8 characters.""",
+        Limited to 8 characters.
+
+        The FORTRAN name is 'IDLOCN'.""",
     "description": r"""description: str
         [optional, defaults to '']
 
         Descriptive text.
 
-        Limited to 48 characters.""",
+        Limited to 48 characters.
+
+        The FORTRAN name is 'STANAM'.""",
     "constituent": r"""constituent: str
         [optional, defaults to '']
 
         The constituent that the time series represents.
 
-        Limited to 8 characters.""",
+        Limited to 8 characters.
+
+        The FORTRAN name is 'IDCONS'.""",
     "tsfill": r"""tsfill: int
         [optional, defaults to -999]
 
@@ -132,7 +150,9 @@ _common_docs = {
         The "tsfill" number is used as a placeholder for missing values.
 
         Change to a number that is guaranteed to not be a valid number in your
-        time-series.""",
+        time-series.
+
+        The FORTRAN name is 'TSFILL'.""",
 }
 
 _common_docs.update(tsutils.docstrings)
@@ -490,7 +510,7 @@ def listdsns_cli(wdmpath):
         ):
             nkey = alias_attrib.get(key, key)
             collect.setdefault(nkey, []).append(testv[key])
-    return tsutils.printiso(collect, tablefmt="plain")
+    return tsutils.printiso(collect, tablefmt="plain", showindex=False)
 
 
 def listdsns(wdmpath):
@@ -733,9 +753,7 @@ def _writetodsn(wdmpath, dsn, data):
                 wdmtoolbox only understands PANDAS time intervals of : 'A',
                 'AS', 'A-DEC' for annual, 'M', 'MS' for monthly, 'D', 'H' (or
                 "h"), 'T' (or 'min'), and 'S' (or 's') for day, hour, minute,
-                and second.  wdmtoolbox thinks this series is {pandacode}. 'S'
-                for day, hour, minute, and second.  wdmtoolbox thinks this
-                series is {pandacode}.
+                and second.  wdmtoolbox thinks this series is {pandacode}.
                 """
             )
         ) from exc
@@ -784,20 +802,45 @@ def _writetodsn(wdmpath, dsn, data):
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def setattrib(wdmpath, dsn, attrib_name, attrib_val):
-    """Set an attribute value for the DSN.  See WDM documentation for full list
-       of possible attributes and valid values.
+    """
+    Set an attribute value for the DSN.
+
+    See WDM documentation for full list of possible attributes and valid
+    values.
 
     Parameters
     ----------
     ${wdmpath}
     ${dsn}
     attrib_name
-        Six character name of attribute, or "Location", "Scenario",
-        "Constituent"
+        There are over 400 attributes that can be set for a DSN.  Some of the
+        more commonly used ones are:
+
+        +-------------+-------------+-------+--------+-----------------------+
+        | attrib_name | Alias       | Type  | Length | Description           |
+        +=============+=============+=======+========+=======================+
+        | IDCONS      | Constituent | str   | 8      | Constituent           |
+        +-------------+-------------+-------+--------+-----------------------+
+        | IDLOCN      | Location    | str   | 16     | Station ID / Location |
+        +-------------+-------------+-------+--------+-----------------------+
+        | IDSCEN      | Scenario    | str   | 8      | Scenario              |
+        +-------------+-------------+-------+--------+-----------------------+
+        | STANAM      |             | str   | 48     | Descriptive Name      |
+        +-------------+-------------+-------+--------+-----------------------+
+        | TCODE       |             | int   |        | Time Series Code      |
+        +-------------+-------------+-------+--------+-----------------------+
+        | TSBYR       |             | int   |        | Base Year             |
+        +-------------+-------------+-------+--------+-----------------------+
+        | TSTYPE      |             | str   | 4      | Time Series Type      |
+        +-------------+-------------+-------+--------+-----------------------+
+        | TSFILL      |             | float |        | Time Series Fill      |
+        +-------------+-------------+-------+--------+-----------------------+
+        | TSSTEP      |             | int   |        | Time Series Step      |
+        +-------------+-------------+-------+--------+-----------------------+
+
     attrib_val
         Value for attribute.
         Must be correct type and a valid value.
-
     """
     WDM.set_attribute(wdmpath, int(dsn), attrib_name, attrib_val)
 

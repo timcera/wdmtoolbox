@@ -8,6 +8,7 @@ routines.
 import datetime
 import os
 import re
+from io import StringIO
 from pathlib import Path
 
 import numpy as np
@@ -631,6 +632,13 @@ class WDM:
         tsstep = desc_dsn["TSSTEP"]
         tsfill = desc_dsn["TSFILL"]
         tsbyr = desc_dsn["TSBYR"]
+
+        # This next line correctly converts dtype where in some situations
+        # convert_dtypes does not.  It is ugly and I want it to go away.
+        # Addresses a rare situation where data is kept (for an unknown reason)
+        # as object dtype instead of float or int.  This solution was found on
+        # https://stackoverflow.com/questions/65915048/pandas-convert-dtypes-not-working-on-numbers-marked-as-objects
+        data = pd.read_csv(StringIO(data.to_csv()), index_col=0, parse_dates=True)
 
         data.fillna(tsfill, inplace=True)
         start_date = data.index[0]
