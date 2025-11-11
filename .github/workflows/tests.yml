@@ -20,7 +20,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest, macos-latest, windows-2019]
+                os: [ubuntu-latest, macos-latest, windows-2022]
                 python-versions: ['3.9', '3.10', '3.11', '3.12', '3.13']
                 pver: [1.5.3, 2.0.0, 2.2.0, 2.2.3]
                 toolchain:
@@ -36,21 +36,21 @@ jobs:
                       pver: 2.2.0
                     - python-versions: '3.8'
                       pver: 2.2.3
-                    - os: windows-2019
+                    - os: windows-2022
                       python-versions: '3.8'
-                    - os: windows-2019
+                    - os: windows-2022
                       python-versions: '3.9'
                       pver: 2.2.0
-                    - os: windows-2019
+                    - os: windows-2022
                       python-versions: '3.10'
                       pver: 2.2.0
-                    - os: windows-2019
+                    - os: windows-2022
                       python-versions: '3.11'
                       pver: 2.2.0
-                    - os: windows-2019
+                    - os: windows-2022
                       python-versions: '3.12'
                       pver: 2.2.0
-                    - os: windows-2019
+                    - os: windows-2022
                       python-versions: '3.13'
 
         steps:
