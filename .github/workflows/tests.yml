@@ -22,34 +22,34 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
                 python-versions: ['3.9', '3.10', '3.11', '3.12', '3.13']
-                pandas-versions: [1.5.3, 2.0.0, 2.2.0, 2.2.3]
+                pver: [1.5.3, 2.0.0, 2.2.0, 2.2.3]
                 toolchain:
                     - {compiler: gcc, version: 13}
                 exclude:
                     - python-versions: '3.13'
-                      pandas-versions: 1.5.3
+                      pver: 1.5.3
                     - python-versions: '3.13'
-                      pandas-versions: 2.0.0
+                      pver: 2.0.0
                     - python-versions: '3.13'
-                      pandas-versions: 2.2.0
+                      pver: 2.2.0
                     - python-versions: '3.8'
-                      pandas-versions: 2.2.0
+                      pver: 2.2.0
                     - python-versions: '3.8'
-                      pandas-versions: 2.2.3
+                      pver: 2.2.3
                     - os: windows-latest
                       python-versions: '3.8'
                     - os: windows-latest
                       python-versions: '3.9'
-                      pandas-versions: 2.2.0
+                      pver: 2.2.0
                     - os: windows-latest
                       python-versions: '3.10'
-                      pandas-versions: 2.2.0
+                      pver: 2.2.0
                     - os: windows-latest
                       python-versions: '3.11'
-                      pandas-versions: 2.2.0
+                      pver: 2.2.0
                     - os: windows-latest
                       python-versions: '3.12'
-                      pandas-versions: 2.2.0
+                      pver: 2.2.0
                     - os: windows-latest
                       python-versions: '3.13'
 
@@ -78,13 +78,11 @@ jobs:
 
             - name: >
                   Install dependencies with pandas
-                  version ${{ matrix.pandas-versions }}
+                  version ${{ matrix.pver }}
               run: |
                   python -m pip install --upgrade pip
-                  "python -m pip install pandas==${{ matrix.pandas-versions }}\
-                                        'numpy>=2'"
-                  "python -m pip install 'meson>=1.5.1' 'ninja>=1.8.2'\
-                                        meson-python"
+                  python -m pip install pandas==${{ matrix.pver }} 'numpy>=2'
+                  python -m pip install meson ninja meson-python
                   python -m pip install setuptools_scm
                   python -m pip install --no-build-isolation .
 
