@@ -78,7 +78,7 @@ jobs:
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
               with:
                   submodules: recursive
 
@@ -148,7 +148,7 @@ jobs:
 
         steps:
             - name: Checkout source
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
               with:
                   submodules: recursive
 
