@@ -1,3 +1,9 @@
+## v16.0.11 (2025-11-25)
+
+### Fix
+
+- under rare situations pandas was not correctly converting object to float or int
+
 ## v16.0.10 (2025-10-05)
 
 ### Fix
