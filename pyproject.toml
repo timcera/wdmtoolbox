@@ -1,25 +1,42 @@
 [build-system]
 build-backend = 'mesonpy'
 requires = [
-    "meson-python",
     "meson >= 1.5.1",
-    "setuptools_scm",
-    "numpy>=2.0"
+    "meson-python",
+    "numpy>=2.0",
+    "setuptools-scm[simple]>=8"
 ]
 
 [project]
-name = "wdmtoolbox"
-dynamic = ["version"]
-description = "Read and write Watershed Data Management (WDM) files"
-readme = "README.rst"
+authors = [
+    {email = "tim@cerazone.net", name = "Tim Cera"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
 dependencies = [
-    "filelock",
     "cltoolbox >= 2.0.0",
     "dateparser",
-    "numpy>=1.26",
+    "filelock",
+    "numpy",
     "packaging",
-    "pandas; python_version < '3.13'",
-    "pandas>=2.2.3; python_version >= '3.13'",
+    "pandas[excel]",
     "pint!=0.21.*",
     "pint-pandas",
     "pydantic",
@@ -27,49 +44,31 @@ dependencies = [
     "scipy",
     "tabulate"
 ]
-authors = [
-    {name = "Tim Cera", email = "tim@cerazone.net"}
-]
-classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Science/Research",
-    "Intended Audience :: End Users/Desktop",
-    "Intended Audience :: Developers",
-    "Environment :: Console",
-    "License :: OSI Approved :: BSD License",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Scientific/Engineering :: Information Analysis",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Software Development :: Libraries :: Python Modules"
-]
+description = "Read and write Watershed Data Management (WDM) files"
+dynamic = ["version"]
 keywords = [
+    "HSPF",
     "WDM",
-    "watershed",
-    "data_management",
     "data",
-    "hydrology",
-    "hydrological",
-    "simulation",
+    "data_management",
     "fortran",
-    "HSPF"
+    "hydrological",
+    "hydrology",
+    "simulation",
+    "watershed"
 ]
 license = {text = "BSD-3-Clause"}
-requires-python = ">=3.9"
+name = "wdmtoolbox"
+readme = "README.rst"
+requires-python = ">=3.10"
 
 [project.scripts]
 wdmtoolbox = "wdmtoolbox.wdmtoolbox:main"
 
 [project.urls]
+bitbucket = "https://bitbucket.org/timcera/wdmtoolbox/src/main/"
 documentation = "https://timcera.bitbucket.io/wdmtoolbox/docs/index.html"
 github = "https://github.com/timcera/wdmtoolbox"
-bitbucket = "https://bitbucket.org/timcera/wdmtoolbox/src/main/"
 
 [tool.check-manifest]
 ignore = ["docs/_function_autosummary/*"]
@@ -91,8 +90,8 @@ setup = ['--default-library=shared']
 testpaths = ["tests"]
 
 [tool.setuptools]
-license-files = ["LICENSE.txt"]
 include-package-data = true
+license-files = ["LICENSE.txt"]
 
 [tool.setuptools.dynamic]
 readme = {file = "README.rst"}
@@ -103,5 +102,3 @@ wdmtoolbox = ["message.wdm"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[tool.setuptools_scm]
