@@ -29,11 +29,11 @@ from . import _wdm_lib
 # reason.
 pd_version = float(".".join(pd.__version__.split(".")[:2]))
 if pd_version < 2.2:
-    _MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
-    _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "ME", 6: "A"}
+    _MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
+    _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
 else:
     _MAPTCODE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "MS", 6: "YS"}
-    _MAPECODE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "M", 6: "YE"}
+    _MAPECODE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "ME", 6: "YE"}
 
 _NOTPRESENT = "<Not present on dataset>"
 
