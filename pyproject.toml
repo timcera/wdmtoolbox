@@ -4,7 +4,8 @@ requires = [
     "meson >= 1.5.1",
     "meson-python",
     "numpy>=2.0",
-    "setuptools-scm[simple]>=8"
+    "setuptools-scm[simple]>=8",
+    "wheel"
 ]
 
 [project]

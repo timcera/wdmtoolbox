@@ -77,6 +77,7 @@ jobs:
                   python -m pip install meson ninja meson-python
                   python -m pip install setuptools_scm
                   python -m pip install 'numpy>=2.0.0'
+                  python -m pip install wheel
 
             - name: >
                   Install package and dependencies
