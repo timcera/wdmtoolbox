@@ -45,7 +45,7 @@ dependencies = [
     "tabulate"
 ]
 description = "Read and write Watershed Data Management (WDM) files"
-dynamic = ["version"]
+dynamic = ["readme", "version"]
 keywords = [
     "HSPF",
     "WDM",
@@ -59,7 +59,6 @@ keywords = [
 ]
 license = {text = "BSD-3-Clause"}
 name = "wdmtoolbox"
-readme = "README.rst"
 requires-python = ">=3.10"
 
 [project.scripts]
