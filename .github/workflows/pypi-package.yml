@@ -133,7 +133,7 @@ jobs:
                       cd /d {project} && python -m pytest
 
             - name: Upload wheel as artifact
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v6
               with:
                   name: |
                     ${{ matrix.os }}-${{ matrix.python }}-${{ matrix.platform }}
@@ -163,7 +163,7 @@ jobs:
                   python -m build --sdist .
 
             - name: Upload sdist as artifact
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v6
               with:
                   name: artifact-sdist
                   path: dist
