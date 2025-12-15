@@ -20,7 +20,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest, macos-latest, windows-latest]
+                # "windows-latest" does not work on Github Actions
+                os: [ubuntu-latest, macos-latest]
                 python-versions: ['3.10', '3.11', '3.12', '3.13', '3.14']
                 pandas-versions: [pandas<2.0.0, pandas>=2.0.0]
                 numpy-versions: [numpy<2.0.0, numpy>=2.0.0]

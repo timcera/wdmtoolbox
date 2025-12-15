@@ -28,12 +28,14 @@ from . import _wdm_lib
 # Somewhere in the distant past, these slightly diverged - don't remember the
 # reason.
 pd_version = float(".".join(pd.__version__.split(".")[:2]))
+# _MAPECODE is only used in the Pandas Period function so can't use "S" (start)
+# or "E" (end) after the Period alias.
 if pd_version < 2.2:
     _MAPTCODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "MS", 6: "AS"}
     _MAPECODE = {1: "S", 2: "T", 3: "H", 4: "D", 5: "M", 6: "A"}
 else:
     _MAPTCODE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "MS", 6: "YS"}
-    _MAPECODE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "ME", 6: "YE"}
+    _MAPECODE = {1: "s", 2: "min", 3: "h", 4: "D", 5: "M", 6: "Y"}
 
 _NOTPRESENT = "<Not present on dataset>"
 
