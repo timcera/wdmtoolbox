@@ -1,3 +1,10 @@
+## v16.0.12 (2026-01-12)
+
+### Fix
+
+- fix pandas period identifiers
+- fixed choosing the correct offset alias per pandas version
+
 ## v16.0.11 (2025-11-25)
 
 ### Fix
