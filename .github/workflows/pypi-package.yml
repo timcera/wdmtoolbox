@@ -17,63 +17,22 @@ jobs:
         uses: ./.github/workflows/tests.yml
 
     create-wheels:
-        name: Build wheel for cp${{ matrix.python }}-${{ matrix.platform }}
+        name: Build wheel for cp${{ matrix.python }}-*
         runs-on: ${{ matrix.os }}
         needs: tests
         strategy:
             fail-fast: false
             matrix:
-                include:
-                    # 64-bit Linux
-                    - os: ubuntu-latest
-                      python: 310
-                      platform: manylinux_x86_64
-                    - os: ubuntu-latest
-                      python: 311
-                      platform: manylinux_x86_64
-                    - os: ubuntu-latest
-                      python: 312
-                      platform: manylinux_x86_64
-                    - os: ubuntu-latest
-                      python: 313
-                      platform: manylinux_x86_64
-                    - os: ubuntu-latest
-                      python: 314
-                      platform: manylinux_x86_64
-
-                    # 64-bit macOS (universal2)
-                    - os: macos-latest
-                      python: 310
-                      platform: macosx_universal2
-                    - os: macos-latest
-                      python: 311
-                      platform: macosx_universal2
-                    - os: macos-latest
-                      python: 312
-                      platform: macosx_universal2
-                    - os: macos-latest
-                      python: 313
-                      platform: macosx_universal2
-                    - os: macos-latest
-                      python: 314
-                      platform: macosx_universal2
-
-                    # 64-bit Windows
-                    - os: windows-latest
-                      python: 310
-                      platform: win_amd64
-                    - os: windows-latest
-                      python: 311
-                      platform: win_amd64
-                    - os: windows-latest
-                      python: 312
-                      platform: win_amd64
-                    - os: windows-latest
-                      python: 313
-                      platform: win_amd64
-                    - os: windows-latest
-                      python: 314
-                      platform: win_amd64
+                os: >
+                  [
+                  ubuntu-latest,
+                  ubuntu-24.04-arm,
+                  windows-latest,
+                  windows-11-arm,
+                  macos-15-intel,
+                  macos-14
+                  ]
+                python: ['3.10', '3.11', '3.12', '3.13', '3.14']
 
         steps:
             - name: Checkout repository
@@ -102,12 +61,9 @@ jobs:
               uses: pypa/cibuildwheel@v3.3.1
 
               env:
-                  CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
+                  CIBW_BUILD: cp${{ matrix.python }}-*
 
                   MACOSX_DEPLOYMENT_TARGET: 14.0
-
-                  CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-                  CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
                   CIBW_BUILD_FRONTEND: build
 
@@ -135,7 +91,7 @@ jobs:
               uses: actions/upload-artifact@v6
               with:
                   name: |
-                    ${{ matrix.os }}-${{ matrix.python }}-${{ matrix.platform }}
+                    ${{ matrix.os }}-${{ matrix.python }}-*
                   path: wheelhouse/*.whl
 
     create-sdist:
