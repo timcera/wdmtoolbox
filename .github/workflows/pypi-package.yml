@@ -23,15 +23,13 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: >
-                  [
-                  ubuntu-latest,
-                  ubuntu-24.04-arm,
-                  windows-latest,
-                  windows-11-arm,
-                  macos-15-intel,
-                  macos-14
-                  ]
+                os:
+                    - ubuntu-latest
+                    - ubuntu-24.04-arm
+                    - windows-latest
+                    - windows-11-arm
+                    - macos-15-intel
+                    - macos-14
                 python: ['3.10', '3.11', '3.12', '3.13', '3.14']
 
         steps:
