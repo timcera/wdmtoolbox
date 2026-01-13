@@ -126,8 +126,6 @@ jobs:
               env:
                   CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
 
-                  MACOSX_DEPLOYMENT_TARGET: 14.0
-
                   CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.manylinux_image }}
                   CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.manylinux_image }}
 
@@ -138,10 +136,10 @@ jobs:
                       python -m pip install build meson meson-python 'numpy>=2'
                       python -m pip install setuptools_scm
                       python -m pip install pytest
+
                   # Use delvewheel on windows
                   CIBW_BEFORE_BUILD_WINDOWS: |
                       python -m pip install delvewheel
-
                   CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: |
                       delvewheel repair -w {dest_dir} {wheel}
 
