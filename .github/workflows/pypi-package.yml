@@ -126,7 +126,7 @@ jobs:
               env:
                   CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
 
-                  MACOSX_DEPLOYMENT_TARGET: 10.9
+                  MACOSX_DEPLOYMENT_TARGET: 14.0
 
                   CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.manylinux_image }}
                   CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.manylinux_image }}
