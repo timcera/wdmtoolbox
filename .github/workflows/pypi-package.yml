@@ -122,7 +122,7 @@ jobs:
                   CC: ${{ steps.setup-fortran.outputs.cc }}
 
             - name: Build and test wheels
-              uses: pypa/cibuildwheel@v3.4.0
+              uses: pypa/cibuildwheel@v3.4.1
 
               env:
                   CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
