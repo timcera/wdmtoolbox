@@ -25,8 +25,7 @@ program = Program("wdmtoolbox", 0.0)
 
 _common_docs = {
     "wdmpath": r"""wdmpath: str
-        Path and WDM
-        filename.""",
+        Path and WDM filename.""",
     "inwdmpath": r"""inwdmpath: str
         Path and WDM filename of the input
         WDM file.""",
@@ -160,8 +159,18 @@ _common_docs.update(tsutils.docstrings)
 WDM = wdmutil.WDM()
 
 
+@tsutils.doc(_common_docs)
 def describedsn(wdmpath, dsn, attrs="default"):
-    """Private function used by routines that need a description of DSN."""
+    """
+    Return attributes of a single DSN.
+
+    Parameters
+    ----------
+    ${wdmpath}
+    ${dsn}
+    ${attrs}
+    ${tablefmt}
+    """
     return WDM.describe_dsn(wdmpath, int(dsn), attrs)
 
 
@@ -286,8 +295,7 @@ def deletedsn(wdmpath, dsn):
     ----------
     ${wdmpath}
     dsn
-        DSN to
-        delete.
+        DSN to delete.
 
     """
     WDM.delete_dsn(wdmpath, dsn)
@@ -361,10 +369,25 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
             )
 
 
+@tsutils.doc(_common_docs)
 def extract(*wdmpath, **kwds):
-    """Print out DSN data to the screen with ISO-8601 dates.
+    """
+    Extract time-series data from WDM files.
 
-    This is the API version also used by 'extract_cli'
+    Parameters
+    ----------
+    wdmpath
+        Path to WDM filename followed by space separated list of DSNs. For
+        example::
+
+            'file.wdm 234 345 456'
+
+            OR
+            `wdmpath` can be space separated sets of 'wdmpath,dsn'.
+
+            'file.wdm,101 file2.wdm,104 file.wdm,227'
+    ${start_date}
+    ${end_date}
     """
     try:
         start_date = kwds.pop("start_date")
@@ -424,97 +447,21 @@ def extract(*wdmpath, **kwds):
     return tsutils.asbestfreq(result)
 
 
-@program.command("extract", formatter_class=RSTHelpFormatter)
-@tsutils.doc(_common_docs)
-def extract_cli(start_date=None, end_date=None, *wdmpath):
-    """Print out DSN data to the screen with ISO-8601 dates.
-
-    Parameters
-    ----------
-    ${wdmpath}
-        followed by space separated list of
-        DSNs. For example::
-
-            'file.wdm 234 345 456'
-
-            OR
-            `wdmpath` can be space separated sets of 'wdmpath,dsn'.
-
-            'file.wdm,101 file2.wdm,104 file.wdm,227'
-
-    ${start_date}
-
-    ${end_date}
-
-    """
-    return tsutils.printiso(extract(*wdmpath, start_date=start_date, end_date=end_date))
-
-
 @program.command(formatter_class=RSTHelpFormatter)
 def wdmtostd(wdmpath, *dsns, **kwds):  # start_date=None, end_date=None):
     """DEPRECATED: New scripts use 'extract'. Will be removed in the future."""
     return extract(wdmpath, *dsns, **kwds)
 
 
-@program.command("describedsn", formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
-def describedsn_cli(wdmpath, dsn, attrs="default", tablefmt="dict"):
-    """Print out attributes of a single DSN
-
-    Parameters
-    ----------
-    ${wdmpath}
-    ${dsn}
-    ${attrs}
-    ${tablefmt}
-
-    """
-    if tablefmt != "dict":
-        attrib_dict = describedsn(wdmpath, dsn, attrs)
-        attrib_df = pd.DataFrame.transpose(pd.DataFrame([attrib_dict]))
-        attrib_table = tb(
-            attrib_df,
-            tablefmt=tablefmt,
-            showindex="always",
-            headers=["Attribute", "Value"],
-        )
-        print(attrib_table)
-    else:
-        print(describedsn(wdmpath, dsn, attrs))
-
-
-@program.command("listdsns", formatter_class=RSTHelpFormatter)
-@tsutils.doc(_common_docs)
-def listdsns_cli(wdmpath):
-    """Print out a table describing all DSNs in the WDM.
-
-    Parameters
-    ----------
-    ${wdmpath}
-
-    """
-    nvars = listdsns(wdmpath)
-    collect = OrderedDict()
-    alias_attrib = {v: k for k, v in wdmutil._attrib_alias.items()}
-    for _, testv in nvars.items():
-        for key in (
-            "DSN",
-            "IDSCEN",
-            "IDLOCN",
-            "IDCONS",
-            "TSTYPE",
-            "start_date",
-            "end_date",
-            "TCODE",
-            "TSSTEP",
-        ):
-            nkey = alias_attrib.get(key, key)
-            collect.setdefault(nkey, []).append(testv[key])
-    return tsutils.printiso(collect, tablefmt="plain", showindex=False)
-
-
 def listdsns(wdmpath):
-    """Print out a table describing all DSNs in the WDM."""
+    """
+    Print out a table describing all DSNs in the WDM.
+
+    Parameters
+    ----------
+    ${wdmpath}
+    """
     if not os.path.exists(wdmpath):
         raise ValueError(
             tsutils.error_wrapper(
@@ -845,15 +792,56 @@ def setattrib(wdmpath, dsn, attrib_name, attrib_val):
     WDM.set_attribute(wdmpath, int(dsn), attrib_name, attrib_val)
 
 
-extract.__doc__ = extract_cli.__doc__
-describedsn.__doc__ = describedsn_cli.__doc__
-listdsns.__doc__ = listdsns_cli.__doc__
-
-
 def main():
     """Run the main function."""
     if not os.path.exists("debug_wdmtoolbox"):
         sys.tracebacklimit = 0
+
+    @program.command("describedsn", formatter_class=RSTHelpFormatter)
+    @tsutils.copy_doc(describedsn)
+    def describedsn_cli(wdmpath, dsn, attrs="default", tablefmt="dict"):
+        if tablefmt == "dict":
+            print(describedsn(wdmpath, dsn, attrs))
+        else:
+            attrib_dict = describedsn(wdmpath, dsn, attrs)
+            attrib_df = pd.DataFrame.transpose(pd.DataFrame([attrib_dict]))
+            attrib_table = tb(
+                attrib_df,
+                tablefmt=tablefmt,
+                showindex="always",
+                headers=["Attribute", "Value"],
+            )
+            print(attrib_table)
+
+    @program.command("listdsns", formatter_class=RSTHelpFormatter)
+    @tsutils.copy_doc(listdsns)
+    def listdsns_cli(wdmpath):
+        nvars = listdsns(wdmpath)
+        collect = OrderedDict()
+        alias_attrib = {v: k for k, v in wdmutil._attrib_alias.items()}
+        for _, testv in nvars.items():
+            for key in (
+                "DSN",
+                "IDSCEN",
+                "IDLOCN",
+                "IDCONS",
+                "TSTYPE",
+                "start_date",
+                "end_date",
+                "TCODE",
+                "TSSTEP",
+            ):
+                nkey = alias_attrib.get(key, key)
+                collect.setdefault(nkey, []).append(testv[key])
+        return tsutils.printiso(collect, tablefmt="plain", showindex=False)
+
+    @program.command("extract", formatter_class=RSTHelpFormatter)
+    @tsutils.copy_doc(extract)
+    def extract_cli(start_date=None, end_date=None, *wdmpath):
+        return tsutils.printiso(
+            extract(*wdmpath, start_date=start_date, end_date=end_date)
+        )
+
     program()
 
 

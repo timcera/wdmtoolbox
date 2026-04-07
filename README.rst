@@ -57,13 +57,6 @@ conda
 
     conda install -c conda-forge wdmtoolbox
 
-Compile From Source
--------------------
-To compile from source you need a "C" compiler (gcc on Linux, Visual Studio
-2019 for Windows), a FORTRAN compiler (gfortran on Linux, MSYS2/MINGW gfortran
-on Windows), Python 3.7, 3.8, or 3.9 with "numpy" installed to be able to access
-`f2py`.
-
 Additional Software
 ===================
 https://timcera.bitbucket.io/index.html
