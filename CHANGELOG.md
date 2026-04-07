@@ -1,3 +1,9 @@
+## v16.2.0 (2026-04-07)
+
+### Feat
+
+- collect command line interface into "main" function, docstring improvements, ci improvements
+
 ## v16.1.0 (2026-03-13)
 
 ## v16.0.12 (2026-01-12)
