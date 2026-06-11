@@ -21,6 +21,7 @@ srcpython = [
              'wdmtoolbox/toolbox_utils/src/toolbox_utils/readers/__init__.py',
              'wdmtoolbox/toolbox_utils/src/toolbox_utils/readers/hbn.py',
              'wdmtoolbox/toolbox_utils/src/toolbox_utils/readers/plotgen.py',
+             'wdmtoolbox/toolbox_utils/src/toolbox_utils/readers/utils.py',
              'wdmtoolbox/toolbox_utils/src/toolbox_utils/readers/wdm.py',
              ]
 

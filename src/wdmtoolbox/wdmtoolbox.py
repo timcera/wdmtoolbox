@@ -665,6 +665,7 @@ def csvtowdm(
 
 def _writetodsn(wdmpath, dsn, data):
     """Local function to write Pandas data frame to DSN."""
+    data = data.dropna()
     data = tsutils.asbestfreq(data)
     infer = data.index.freqstr
     pandacode = infer.lstrip("0123456789")

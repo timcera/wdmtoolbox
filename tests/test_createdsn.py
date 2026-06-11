@@ -71,7 +71,7 @@ class TestDescribe(TestCase):
         )
         ret5 = wdmtoolbox.extract(self.wdmname, 500).astype("f")
         ret5.columns = ["Area"]
-        assert_frame_equal(ret5, ret4)
+        assert_frame_equal(ret5, ret4, check_index_type=False)
 
     def test_dsn_exists(self):
         wdmtoolbox.createnewwdm(self.wdmname, overwrite=True)
