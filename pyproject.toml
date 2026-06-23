@@ -80,9 +80,13 @@ tag_format = "v$version"
 update_changelog_on_bump = true
 version = "16.2.3"
 version_files = ["VERSION"]
+multiline = true
 
 [tool.isort]
 profile = "black"
+
+[tool.jupytext]
+formats = "auto:percent"
 
 [tool.meson-python.args]
 setup = ['--default-library=shared']
@@ -90,11 +94,30 @@ setup = ['--default-library=shared']
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+[tool.ruff]
+fix = true
+exclude = [
+    "src/*/toolbox_utils/**/*.py"
+]
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.ruff.lint.isort.import-heading]
+future = "Future imports"
+standard-library = "Standard library imports"
+third-party = "Third party imports"
+first-party = "First party imports"
+local-folder = "Local folder imports"
+
 [tool.setuptools]
 include-package-data = true
 license-files = ["LICENSE.txt"]
 
 [tool.setuptools.dynamic]
+# meson build system does not handle a dynamic
+# "README.rst" like in the rest of my projects.
+# So, I will just hardcode it above.
 version = {file = "VERSION"}
 
 [tool.setuptools.package-data]
