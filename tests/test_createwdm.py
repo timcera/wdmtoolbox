@@ -1,3 +1,4 @@
+# Standard library imports
 import os
 import shlex
 import subprocess
@@ -5,12 +6,15 @@ import sys
 import tempfile
 from unittest import TestCase
 
+# First party imports
 from wdmtoolbox import wdmtoolbox
 from wdmtoolbox.wdmutil import WDMFileExists
 
 try:
+    # Third party imports
     from cStringIO import StringIO
-except Exception:
+except ImportError:
+    # Standard library imports
     from io import StringIO
 
 
@@ -61,7 +65,7 @@ def capture(func, *args, **kwds):
     out = sys.stdout.getvalue()  # release output
     try:
         out = bytes(out, "utf-8")
-    except Exception:
+    except TypeError:
         pass
     return out
 

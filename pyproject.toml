@@ -10,7 +10,7 @@ requires = [
 
 [project]
 authors = [
-    {email = "tim@cerazone.net", name = "Tim Cera"}
+    { email = "tim@cerazone.net", name = "Tim Cera" }
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -58,7 +58,7 @@ keywords = [
     "simulation",
     "watershed"
 ]
-license = {text = "BSD-3-Clause"}
+license = { text = "BSD-3-Clause" }
 name = "wdmtoolbox"
 readme = "README.rst"
 requires-python = ">=3.10"
@@ -75,12 +75,12 @@ github = "https://github.com/timcera/wdmtoolbox"
 ignore = ["docs/_function_autosummary/*"]
 
 [tool.commitizen]
+multiline = true
 name = "cz_conventional_commits"
 tag_format = "v$version"
 update_changelog_on_bump = true
 version = "16.2.3"
 version_files = ["VERSION"]
-multiline = true
 
 [tool.isort]
 profile = "black"
@@ -95,20 +95,20 @@ setup = ['--default-library=shared']
 testpaths = ["tests"]
 
 [tool.ruff]
-fix = true
 exclude = [
-    "src/*/toolbox_utils/**/*.py"
+    "src/wdmtoolbox/toolbox_utils"
 ]
+fix = true
 
 [tool.ruff.lint]
 extend-select = ["I"]
 
 [tool.ruff.lint.isort.import-heading]
+first-party = "First party imports"
 future = "Future imports"
+local-folder = "Local folder imports"
 standard-library = "Standard library imports"
 third-party = "Third party imports"
-first-party = "First party imports"
-local-folder = "Local folder imports"
 
 [tool.setuptools]
 include-package-data = true
@@ -118,7 +118,7 @@ license-files = ["LICENSE.txt"]
 # meson build system does not handle a dynamic
 # "README.rst" like in the rest of my projects.
 # So, I will just hardcode it above.
-version = {file = "VERSION"}
+version = { file = "VERSION" }
 
 [tool.setuptools.package-data]
 wdmtoolbox = ["message.wdm"]

@@ -4,17 +4,22 @@ test_createnewdsn
 Tests for `wdmtoolbox` module.
 """
 
+# Standard library imports
 import os
 import sys
 import tempfile
 
 try:
+    # Third party imports
     from cStringIO import StringIO
-except Exception:
+except ImportError:
+    # Standard library imports
     from io import StringIO
 
+# Standard library imports
 from unittest import TestCase
 
+# First party imports
 from wdmtoolbox import wdmtoolbox
 
 
@@ -24,7 +29,7 @@ def capture(func, *args, **kwds):
     out = sys.stdout.getvalue()  # release output
     try:
         out = bytes(out, "utf-8")
-    except Exception:
+    except TypeError:
         pass
     return out
 

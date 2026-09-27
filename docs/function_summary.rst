@@ -20,5 +20,4 @@ Python API Function Summary
     wdmtoolbox.renumberdsn
     wdmtoolbox.setattrib
     wdmtoolbox.stdtowdm
-    wdmtoolbox.wdmtostd
     wdmtoolbox.wdmtoswmm5rdii

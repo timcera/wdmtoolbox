@@ -77,11 +77,6 @@ stdtowdm
 .. program-output:: wdmtoolbox stdtowdm --help
    :prompt:
 
-wdmtostd
-~~~~~~~~
-.. program-output:: wdmtoolbox wdmtostd --help
-   :prompt:
-
 wdmtoswmm5rdii
 ~~~~~~~~~~~~~~
 .. program-output:: wdmtoolbox wdmtoswmm5rdii --help

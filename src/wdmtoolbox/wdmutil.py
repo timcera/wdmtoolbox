@@ -5,16 +5,19 @@ with Python.  The class uses f2py to wrap the minimally necessary WDM
 routines.
 """
 
+# Standard library imports
 import datetime
 import os
 import re
 from io import StringIO
 from pathlib import Path
 
+# Third party imports
 import numpy as np
 import pandas as pd
 from filelock import SoftFileLock
 
+# Local folder imports
 from .toolbox_utils.src.toolbox_utils import tsutils
 
 if os.name == "nt":
@@ -22,6 +25,7 @@ if os.name == "nt":
     os.add_dll_directory(contain_dir)
     os.environ["PATH"] = str(contain_dir) + ";" + os.environ["PATH"]
 
+# Local folder imports
 from . import _wdm_lib
 
 # Mapping between WDM TCODE and pandas interval code
@@ -359,11 +363,11 @@ class WDM:
         self.timcvt(llsdat)
         self.timcvt(lledat)
         try:
-            sdate = datetime.datetime(*llsdat).date()
+            sdate = datetime.datetime(*llsdat).date()  # noqa: DTZ001
         except ValueError:
             sdate = None
         try:
-            edate = datetime.datetime(*lledat).date()
+            edate = datetime.datetime(*lledat).date()  # noqa: DTZ001
         except ValueError:
             edate = None
 
@@ -695,29 +699,29 @@ class WDM:
 
         if start_date is not None:
             start_date = self.dateconverter(start_date)
-            start_date = datetime.datetime(*start_date)
-            if start_date > datetime.datetime(*lledat):
+            start_date = datetime.datetime(*start_date)  # noqa: DTZ001
+            if start_date > datetime.datetime(*lledat):  # noqa: DTZ001
                 raise ValueError(
                     tsutils.error_wrapper(
                         f"""
                         The requested start date ({start_date}) is after the
                         end date ({datetime.datetime(*lledat)}) of the time
                         series in the WDM file.
-                        """
+                        """  # noqa: DTZ001
                     )
                 )
 
         if end_date is not None:
             end_date = self.dateconverter(end_date)
-            end_date = datetime.datetime(*end_date)
-            if end_date < datetime.datetime(*llsdat):
+            end_date = datetime.datetime(*end_date)  # noqa: DTZ001
+            if end_date < datetime.datetime(*llsdat):  # noqa: DTZ001
                 raise ValueError(
                     tsutils.error_wrapper(
                         f"""
                         The requested end date ({end_date}) is before the start
                         date ({datetime.datetime(*llsdat)}) of the time series
                         in the WDM file.
-                        """
+                        """  # noqa: DTZ001
                     )
                 )
 
@@ -739,13 +743,13 @@ class WDM:
 
         try:
             index = pd.date_range(
-                datetime.datetime(*llsdat),
+                datetime.datetime(*llsdat),  # noqa: DTZ001
                 periods=iterm,
                 freq=f"{tsstep:d}{_MAPTCODE[tcode]}",
             )
         except FutureWarning:
             index = pd.date_range(
-                datetime.datetime(*llsdat),
+                datetime.datetime(*llsdat),  # noqa: DTZ001
                 periods=iterm,
                 freq=f"{tsstep:d}{_MAPTCODE[tcode]}",
             )

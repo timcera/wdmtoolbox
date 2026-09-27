@@ -5,19 +5,25 @@ test_createnewdsn
 Tests for `wdmtoolbox` module.
 """
 
+# Standard library imports
 import os
 import sys
 import tempfile
 
 try:
+    # Third party imports
     from cStringIO import StringIO
-except Exception:
+except ImportError:
+    # Standard library imports
     from io import StringIO
 
+# Standard library imports
 from unittest import TestCase
 
+# Third party imports
 from pandas.testing import assert_frame_equal
 
+# First party imports
 from wdmtoolbox import wdmtoolbox
 from wdmtoolbox.toolbox_utils.src.toolbox_utils import tsutils
 from wdmtoolbox.wdmutil import DSNExistsError
@@ -29,7 +35,7 @@ def capture(func, *args, **kwds):
     out = sys.stdout.getvalue()  # release output
     try:
         out = bytes(out, "utf-8")
-    except Exception:
+    except TypeError:
         pass
     return out
 
@@ -85,5 +91,5 @@ class TestDescribe(TestCase):
             wdmtoolbox.createnewdsn(
                 self.wdmname, 101, tcode=5, base_year=1870, location="A" * 9
             )
-        with self.assertRaisesRegex(Exception, "WDM library"):
+        with self.assertRaisesRegex(ValueError, "WDM library"):
             wdmtoolbox.describedsn(self.wdmname, 101)

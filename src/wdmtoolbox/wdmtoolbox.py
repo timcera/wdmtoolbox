@@ -3,6 +3,7 @@
 Used to manipulate Watershed Data Management files for time-series.
 """
 
+# Standard library imports
 import datetime
 import os
 import sys
@@ -10,6 +11,7 @@ import tempfile
 from collections import OrderedDict
 from contextlib import suppress
 
+# Third party imports
 import numpy as np
 import pandas as pd
 from cltoolbox import Program
@@ -17,6 +19,7 @@ from cltoolbox.rst_text_formatter import RSTHelpFormatter
 from dateutil.parser import parse as dateparser
 from tabulate import tabulate as tb
 
+# Local folder imports
 # Load in WDM subroutines
 from . import wdmutil
 from .toolbox_utils.src.toolbox_utils import tsutils
@@ -337,8 +340,8 @@ def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
     assert len(collect_tcodes) == 1
     assert len(collect_tssteps) == 1
 
-    collect_tcodes = list(collect_tcodes.keys())[0]
-    collect_tssteps = list(collect_tssteps.keys())[0]
+    collect_tcodes = next(iter(collect_tcodes.keys()))
+    collect_tssteps = next(iter(collect_tssteps.keys()))
 
     collected_start_dates = []
     collected_end_dates = []
@@ -429,17 +432,17 @@ def extract(*wdmpath, **kwds):
     # to become:
     # [[file.wdm, 101], [file.wdm, 102], [file.wdm, 103], [file.wdm, 150], [file.wdm, 151], [file.wdm, 152], ...]
     labels = []
-    for wdmpath, dsn in nlabels:
+    for lwdmpath, dsn in nlabels:
         rng = tsutils.range_to_numlist(dsn)
         if isinstance(rng, list):
-            labels.extend([wdmpath, dsn] for dsn in rng)
+            labels.extend([lwdmpath, dsn] for dsn in rng)
         else:
-            labels.append([wdmpath, rng])
+            labels.append([lwdmpath, rng])
 
     result = pd.DataFrame()
     cnt = 0
-    for wdmpath, dsn in labels:
-        nts = WDM.read_dsn(wdmpath, int(dsn), start_date=start_date, end_date=end_date)
+    for lwdmpath, dsn in labels:
+        nts = WDM.read_dsn(lwdmpath, int(dsn), start_date=start_date, end_date=end_date)
         if nts.columns[0] in result.columns:
             cnt = cnt + 1
             nts.columns = [f"{nts.columns[0]}_{cnt}"]
@@ -579,13 +582,13 @@ def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
                 if ampmflag == 1:
                     dates = np.append(
                         dates,
-                        [datetime.datetime(year, month, day, i) for i in range(12)],
+                        [datetime.datetime(year, month, day, i) for i in range(12)],  # noqa: DTZ001
                     )
 
                 elif ampmflag == 2:
                     dates = np.append(
                         dates,
-                        [datetime.datetime(year, month, day, i) for i in range(12, 24)],
+                        [datetime.datetime(year, month, day, i) for i in range(12, 24)],  # noqa: DTZ001
                     )
             except ValueError:
                 print(start_century, line)
@@ -820,7 +823,7 @@ def main():
         nvars = listdsns(wdmpath)
         collect = OrderedDict()
         alias_attrib = {v: k for k, v in wdmutil._attrib_alias.items()}
-        for _, testv in nvars.items():
+        for testv in nvars.values():
             for key in (
                 "DSN",
                 "IDSCEN",
