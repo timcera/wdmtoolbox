@@ -7,9 +7,9 @@ Help::
 
     wdmtoolbox --help
 
-cleancopywdm
+copydsnlabel
 ~~~~~~~~~~~~
-.. program-output:: wdmtoolbox cleancopywdm --help
+.. program-output:: wdmtoolbox copydsnlabel --help
    :prompt:
 
 copydsn
@@ -17,49 +17,9 @@ copydsn
 .. program-output:: wdmtoolbox copydsn --help
    :prompt:
 
-copydsnlabel
+cleancopywdm
 ~~~~~~~~~~~~
-.. program-output:: wdmtoolbox copydsnlabel --help
-   :prompt:
-
-createnewdsn
-~~~~~~~~~~~~
-.. program-output:: wdmtoolbox createnewdsn --help
-   :prompt:
-
-createnewwdm
-~~~~~~~~~~~~
-.. program-output:: wdmtoolbox createnewwdm --help
-   :prompt:
-
-csvtowdm
-~~~~~~~~
-.. program-output:: wdmtoolbox csvtowdm --help
-   :prompt:
-
-deletedsn
-~~~~~~~~~
-.. program-output:: wdmtoolbox deletedsn --help
-   :prompt:
-
-describedsn
-~~~~~~~~~~~
-.. program-output:: wdmtoolbox describedsn --help
-   :prompt:
-
-extract
-~~~~~~~
-.. program-output:: wdmtoolbox extract --help
-   :prompt:
-
-hydhrseqtowdm
-~~~~~~~~~~~~~
-.. program-output:: wdmtoolbox hydhrseqtowdm --help
-   :prompt:
-
-listdsns
-~~~~~~~~
-.. program-output:: wdmtoolbox listdsns --help
+.. program-output:: wdmtoolbox cleancopywdm --help
    :prompt:
 
 renumberdsn
@@ -67,9 +27,34 @@ renumberdsn
 .. program-output:: wdmtoolbox renumberdsn --help
    :prompt:
 
-setattrib
+deletedsn
 ~~~~~~~~~
-.. program-output:: wdmtoolbox setattrib --help
+.. program-output:: wdmtoolbox deletedsn --help
+   :prompt:
+
+wdmtoswmm5rdii
+~~~~~~~~~~~~~~
+.. program-output:: wdmtoolbox wdmtoswmm5rdii --help
+   :prompt:
+
+wdmtostd
+~~~~~~~~
+.. program-output:: wdmtoolbox wdmtostd --help
+   :prompt:
+
+createnewwdm
+~~~~~~~~~~~~
+.. program-output:: wdmtoolbox createnewwdm --help
+   :prompt:
+
+createnewdsn
+~~~~~~~~~~~~
+.. program-output:: wdmtoolbox createnewdsn --help
+   :prompt:
+
+hydhrseqtowdm
+~~~~~~~~~~~~~
+.. program-output:: wdmtoolbox hydhrseqtowdm --help
    :prompt:
 
 stdtowdm
@@ -77,7 +62,27 @@ stdtowdm
 .. program-output:: wdmtoolbox stdtowdm --help
    :prompt:
 
-wdmtoswmm5rdii
-~~~~~~~~~~~~~~
-.. program-output:: wdmtoolbox wdmtoswmm5rdii --help
+csvtowdm
+~~~~~~~~
+.. program-output:: wdmtoolbox csvtowdm --help
+   :prompt:
+
+setattrib
+~~~~~~~~~
+.. program-output:: wdmtoolbox setattrib --help
+   :prompt:
+
+describedsn
+~~~~~~~~~~~
+.. program-output:: wdmtoolbox describedsn --help
+   :prompt:
+
+listdsns
+~~~~~~~~
+.. program-output:: wdmtoolbox listdsns --help
+   :prompt:
+
+extract
+~~~~~~~
+.. program-output:: wdmtoolbox extract --help
    :prompt:

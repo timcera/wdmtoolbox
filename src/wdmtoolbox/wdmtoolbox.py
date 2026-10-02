@@ -28,51 +28,62 @@ program = Program("wdmtoolbox", 0.0)
 
 _common_docs = {
     "wdmpath": r"""wdmpath: str
-        Path and WDM filename.""",
+        Path and WDM
+        filename.
+""",
     "inwdmpath": r"""inwdmpath: str
         Path and WDM filename of the input
-        WDM file.""",
+        WDM file.
+""",
     "outwdmpath": r"""outwdmpath: str
         Path and WDM filename of the output
-        WDM file.""",
+        WDM file.
+""",
     "dsn": r"""dsn: int
         The Data Set Number (DSN) for the time series in the WDM file.
         This number must be greater or equal to 1 and less than or
         equal to 32000.  HSPF can only use for input or output
-        DSNs of 1 to 9999, inclusive.""",
+        DSNs of 1 to 9999, inclusive.
+""",
     "indsn": r"""indsn: int
         Source
-        DSN.""",
+        DSN.
+""",
     "outdsn": r"""outdsn: int
         Target
-        DSN.""",
+        DSN.
+""",
     "overwrite": r"""overwrite: bool
         Whether to overwrite the target DSN if it
-        exists.""",
+        exists.
+""",
     "olddsn": r"""olddsn : int
         Old DSN to
-        renumber.""",
+        renumber.
+""",
     "newdsn": r"""newdsn : int
         New DSN to change old DSN
-        to.""",
+        to.
+""",
     "attrs": r"""attrs : str
         [optional, default to "default"]
 
         Attributes to retrieve from the DSN.
 
-        +--------------------+---------------------------------------------+
-        | attrs              | Attributes Retrieved                        |
-        +====================+=============================================+
-        | default            | DSN, TSSTEP, TCODE, TSFILL, IDLOCN, IDSCEN, |
-        |                    | IDCONS, TSBYR, STANAM, TSTYPE               |
-        +--------------------+---------------------------------------------+
-        | all                | All attributes set of the 450 total         |
-        +--------------------+---------------------------------------------+
-        | comma separated    | Specific attributes named in the list       |
-        | list of attribute  |                                             |
-        | names              |                                             |
-        +--------------------+---------------------------------------------+
-    """,
+        +-------------------+----------------------------------------------+
+        | attrs             | Attributes Retrieved                         |
+        +===================+==============================================+
+        | default           | DSN, TSSTEP, TCODE, TSFILL, IDLOCN, IDSCEN,  |
+        |                   | IDCONS, TSBYR, STANAM, TSTYPE                |
+        +-------------------+----------------------------------------------+
+        | all               | All attributes set of the 450 total          |
+        +-------------------+----------------------------------------------+
+        | comma separated   | Specific attributes named in the list        |
+        | list of attribute |                                              |
+        | names             |                                              |
+        +-------------------+----------------------------------------------+
+
+""",
     "tstype": r"""tstype: str
         [optional, default to first 4 characters of 'constituent']
 
@@ -82,7 +93,8 @@ _common_docs = {
 
         Limited to 4 characters.
 
-        The FORTRAN name is 'TSTYPE'.""",
+        The FORTRAN name is 'TSTYPE'.
+""",
     "base_year": r"""base_year: int
         [optional, defaults to 1900]
 
@@ -90,27 +102,31 @@ _common_docs = {
         accept any time-series before this date and with the default settings
         of TGROUP=6 (i.e. yearly) would allow time-series up to 2199.
 
-        The FORTRAN name is 'TSBYR'.""",
+        The FORTRAN name is 'TSBYR'.
+""",
     "tcode": r"""tcode: int
         [optional, defaults to 4=daily time series]
 
         Time series code, (1=second, 2=minute, 3=hour, 4=day, 5=month,
         6=year)
 
-        The FORTRAN name is 'TCODE'.""",
+        The FORTRAN name is 'TCODE'.
+""",
     "tsstep": r"""tsstep: int
         [optional, defaults to 1]
 
         Time series steps, defaults (and almost always is)
         1.
 
-        The FORTRAN name is 'TSSTEP'.""",
+        The FORTRAN name is 'TSSTEP'.
+""",
     "statid": r"""statid: str
         [optional, defaults to '']
 
         The station name, limited to 16 characters.
 
-        The FORTRAN name is 'IDLOCN'.""",
+        The FORTRAN name is 'IDLOCN'.
+""",
     "scenario": r"""scenario: str
         [optional defaults to '']
 
@@ -120,7 +136,8 @@ _common_docs = {
 
         Limited to 8 characters.
 
-        The FORTRAN name is 'IDSCEN'.""",
+        The FORTRAN name is 'IDSCEN'.
+""",
     "location": r"""location: str
         [optional defaults to '']
 
@@ -128,7 +145,8 @@ _common_docs = {
 
         Limited to 8 characters.
 
-        The FORTRAN name is 'IDLOCN'.""",
+        The FORTRAN name is 'IDLOCN'.
+""",
     "description": r"""description: str
         [optional, defaults to '']
 
@@ -136,7 +154,8 @@ _common_docs = {
 
         Limited to 48 characters.
 
-        The FORTRAN name is 'STANAM'.""",
+        The FORTRAN name is 'STANAM'.
+""",
     "constituent": r"""constituent: str
         [optional, defaults to '']
 
@@ -144,7 +163,8 @@ _common_docs = {
 
         Limited to 8 characters.
 
-        The FORTRAN name is 'IDCONS'.""",
+        The FORTRAN name is 'IDCONS'.
+""",
     "tsfill": r"""tsfill: int
         [optional, defaults to -999]
 
@@ -154,7 +174,8 @@ _common_docs = {
         Change to a number that is guaranteed to not be a valid number in your
         time-series.
 
-        The FORTRAN name is 'TSFILL'.""",
+        The FORTRAN name is 'TSFILL'.
+""",
 }
 
 _common_docs.update(tsutils.docstrings)
@@ -208,7 +229,8 @@ def _copydsn_core(inwdmpath, indsn, outwdmpath, outdsn, func, overwrite=False):
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
-    r"""Make a copy of a DSN label (no data).
+    r"""
+    Make a copy of a DSN label (no data).
 
     Parameters
     ----------
@@ -227,7 +249,8 @@ def copydsnlabel(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
-    """Make a copy of a DSN.
+    """
+    Make a copy of a DSN.
 
     Parameters
     ----------
@@ -244,7 +267,8 @@ def copydsn(inwdmpath, indsn, outwdmpath, outdsn, overwrite=False):
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
-    """Make a clean copy of a WDM file.
+    """
+    Make a clean copy of a WDM file.
 
     Parameters
     ----------
@@ -277,7 +301,8 @@ def cleancopywdm(inwdmpath, outwdmpath, overwrite=False):
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def renumberdsn(wdmpath, olddsn, newdsn):
-    """Renumber olddsn to newdsn.
+    """
+    Renumber olddsn to newdsn.
 
     Parameters
     ----------
@@ -292,13 +317,15 @@ def renumberdsn(wdmpath, olddsn, newdsn):
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def deletedsn(wdmpath, dsn):
-    """Delete DSN.
+    """
+    Delete DSN.
 
     Parameters
     ----------
     ${wdmpath}
     dsn
-        DSN to delete.
+        DSN to
+        delete.
 
     """
     WDM.delete_dsn(wdmpath, dsn)
@@ -307,15 +334,16 @@ def deletedsn(wdmpath, dsn):
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def wdmtoswmm5rdii(wdmpath, *dsns, **kwds):
-    """Print out DSN data to the screen in SWMM5 RDII format.
+    """
+    Print out DSN data to the screen in SWMM5 RDII format.
 
     Parameters
     ----------
     ${wdmpath}
-    *dsns
+    dsns
         The Data Set Numbers in the WDM
         file.
-    **kwds
+    kwds
         Current supported keywords are "start_date" and
         "end_date".
 
@@ -514,7 +542,8 @@ def createnewdsn(
     constituent="",
     tsfill=-999.0,
 ):
-    """Create a new DSN.
+    """
+    Create a new DSN.
 
     Parameters
     ----------
@@ -553,7 +582,8 @@ def createnewdsn(
 @program.command(formatter_class=RSTHelpFormatter)
 @tsutils.doc(_common_docs)
 def hydhrseqtowdm(wdmpath, dsn, input_ts=sys.stdin, start_century=1900):
-    """Write HYDHR sequential file to a DSN.
+    """
+    Write HYDHR sequential file to a DSN.
 
     Parameters
     ----------
@@ -618,7 +648,8 @@ def csvtowdm(
     source_units=None,
     input_ts="-",
 ):
-    """Write data from a CSV file to a DSN.
+    """
+    Write data from a CSV file to a DSN.
 
     File can have comma separated
     'year', 'month', 'day', 'hour', 'minute', 'second', 'value'
@@ -778,15 +809,23 @@ def setattrib(wdmpath, dsn, attrib_name, attrib_val):
         +-------------+-------------+-------+--------+-----------------------+
         | STANAM      |             | str   | 48     | Descriptive Name      |
         +-------------+-------------+-------+--------+-----------------------+
-        | TCODE       |             | int   |        | Time Series Code      |
+        | TCODE       |             | int   |        | Time Series Code,     |
+        |             |             |       |        | 1=second, 2=minute,   |
+        |             |             |       |        | 3=hour, 4=day,        |
+        |             |             |       |        | 5=month, 6=year       |
         +-------------+-------------+-------+--------+-----------------------+
-        | TSBYR       |             | int   |        | Base Year             |
+        | TSBYR       |             | int   |        | Base Year,            |
+        |             |             |       |        | default=1900          |
         +-------------+-------------+-------+--------+-----------------------+
         | TSTYPE      |             | str   | 4      | Time Series Type      |
         +-------------+-------------+-------+--------+-----------------------+
-        | TSFILL      |             | float |        | Time Series Fill      |
+        | TSFILL      |             | float |        | Time Series Fill,     |
+        |             |             |       |        | place-holder for      |
+        |             |             |       |        | missing values,       |
+        |             |             |       |        | default=-999          |
         +-------------+-------------+-------+--------+-----------------------+
-        | TSSTEP      |             | int   |        | Time Series Step      |
+        | TSSTEP      |             | int   |        | Time Series Step,     |
+        |             |             |       |        | default=1             |
         +-------------+-------------+-------+--------+-----------------------+
 
     attrib_val
