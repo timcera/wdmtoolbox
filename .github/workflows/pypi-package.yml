@@ -17,7 +17,7 @@ jobs:
         uses: ./.github/workflows/tests.yml
 
     create-wheels:
-        name: Build wheel for cp${{ matrix.python }}-${{ matrix.platform }}
+        name: Build wheel for cp${{ matrix.py }}-${{ matrix.platform }}
         runs-on: ${{ matrix.os }}
         needs: tests
         strategy:
@@ -26,23 +26,23 @@ jobs:
                 include:
                     # 64-bit Linux
                     - os: ubuntu-latest
-                      python: 310
+                      py: 310
                       platform: manylinux_x86_64
                       manylinux_image: manylinux_2_28
                     - os: ubuntu-latest
-                      python: 311
+                      py: 311
                       platform: manylinux_x86_64
                       manylinux_image: manylinux_2_28
                     - os: ubuntu-latest
-                      python: 312
+                      py: 312
                       platform: manylinux_x86_64
                       manylinux_image: manylinux_2_28
                     - os: ubuntu-latest
-                      python: 313
+                      py: 313
                       platform: manylinux_x86_64
                       manylinux_image: manylinux_2_28
                     - os: ubuntu-latest
-                      python: 314
+                      py: 314
                       platform: manylinux_x86_64
                       manylinux_image: manylinux_2_28
 
@@ -56,53 +56,53 @@ jobs:
                     #
                     # # MacOS Intel x86_64
                     # - os: macos-15-intel
-                    #   python: 310
+                    #   py: 310
                     #   platform: macosx_x86_64
                     # - os: macos-15-intel
-                    #   python: 311
+                    #   py: 311
                     #   platform: macosx_x86_64
                     # - os: macos-15-intel
-                    #   python: 312
+                    #   py: 312
                     #   platform: macosx_x86_64
                     # - os: macos-15-intel
-                    #   python: 313
+                    #   py: 313
                     #   platform: macosx_x86_64
                     # - os: macos-15-intel
-                    #   python: 314
+                    #   py: 314
                     #   platform: macosx_x86_64
 
                     # # MacOS ARM
                     # - os: macos-14
-                    #   python: 310
+                    #   py: 310
                     #   platform: macosx_arm64
                     # - os: macos-14
-                    #   python: 311
+                    #   py: 311
                     #   platform: macosx_arm64
                     # - os: macos-14
-                    #   python: 312
+                    #   py: 312
                     #   platform: macosx_arm64
                     # - os: macos-14
-                    #   python: 313
+                    #   py: 313
                     #   platform: macosx_arm64
                     # - os: macos-14
-                    #   python: 314
+                    #   py: 314
                     #   platform: macosx_arm64
 
                     # 64-bit Windows
                     - os: windows-latest
-                      python: 310
+                      py: 310
                       platform: win_amd64
                     - os: windows-latest
-                      python: 311
+                      py: 311
                       platform: win_amd64
                     - os: windows-latest
-                      python: 312
+                      py: 312
                       platform: win_amd64
                     - os: windows-latest
-                      python: 313
+                      py: 313
                       platform: win_amd64
                     - os: windows-latest
-                      python: 314
+                      py: 314
                       platform: win_amd64
 
         steps:
@@ -122,10 +122,10 @@ jobs:
                   CC: ${{ steps.setup-fortran.outputs.cc }}
 
             - name: Build and test wheels
-              uses: pypa/cibuildwheel@v4.2.1
+              uses: pypa/cibuildwheel@v4.3.4
 
               env:
-                  CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
+                  CIBW_BUILD: cp${{ matrix.py }}-${{ matrix.platform }}
 
                   CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.manylinux_image }}
                   CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.manylinux_image }}
@@ -156,7 +156,7 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                   name: |
-                    ${{ matrix.os }}-${{ matrix.python }}-${{ matrix.platform }}
+                      ${{ matrix.os }}-${{ matrix.py }}-${{ matrix.platform }}
                   path: wheelhouse/*.whl
 
     create-sdist:

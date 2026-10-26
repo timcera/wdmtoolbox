@@ -95,20 +95,20 @@ setup = ['--default-library=shared']
 testpaths = ["tests"]
 
 [tool.ruff]
-exclude = [
-    "src/wdmtoolbox/toolbox_utils"
-]
 fix = true
+exclude = [
+    "src/*/toolbox_utils/**/*.py"
+]
 
 [tool.ruff.lint]
 extend-select = ["I"]
 
 [tool.ruff.lint.isort.import-heading]
-first-party = "First party imports"
 future = "Future imports"
-local-folder = "Local folder imports"
 standard-library = "Standard library imports"
 third-party = "Third party imports"
+first-party = "First party imports"
+local-folder = "Local folder imports"
 
 [tool.setuptools]
 include-package-data = true
